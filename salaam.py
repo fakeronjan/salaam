@@ -117,20 +117,28 @@ def prepare_game_data(raw_df):
         cutoff = sub['date'].median() - pd.Timedelta(days=5)
         df.loc[sub[sub['date'] < cutoff].index, 'week'] = 0
 
-    # Postseason week numbering: CFBD stores every postseason game with week=1
-    # (the entire bowl + CFP slate collapses together). Re-derive from the
-    # ISO calendar week of the game date so each round becomes its own week.
+    # Postseason week numbering: tier-based, NOT date-based. The bowl schedule
+    # is elongated (mid-Dec through mid-Jan) but bowls aren't sequential rounds —
+    # treating them as separate weeks gave inflated weight to late bowls. Collapse
+    # all bowls + CFP First Round into one week. Tiers (era-agnostic):
+    #   101 = bowls + CFP First Round (anything not tagged as a later round)
+    #   102 = CFP Quarterfinals (CFP12 era only, 2024+)
+    #   103 = CFP Semifinals
+    #   104 = National Championship (CFP-era CFP final, BCS-era BCS title game)
     post_mask = df['seasonType'] == 'postseason'
     if post_mask.any():
-        iso = df.loc[post_mask, 'date'].dt.isocalendar()
-        iso_key = iso['year'].astype(int) * 100 + iso['week'].astype(int)
-        post_df = df.loc[post_mask].assign(_iso_key=iso_key.values)
-        post_round = (
-            post_df.groupby('season')['_iso_key']
-                   .rank(method='dense')
-                   .astype(int)
+        def postseason_tier(notes):
+            n = (notes or '').lower()
+            if 'national championship' in n or 'bcs championship' in n:
+                return 4
+            if 'semifinal' in n:
+                return 3
+            if 'quarterfinal' in n:
+                return 2
+            return 1
+        df.loc[post_mask, 'week'] = (
+            POSTSEASON_WEEK_OFFSET + df.loc[post_mask, 'notes'].apply(postseason_tier)
         )
-        df.loc[post_mask, 'week'] = POSTSEASON_WEEK_OFFSET + post_round.values
 
     # Result strings for last-game display
     df['winner_marker'] = np.where(

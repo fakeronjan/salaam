@@ -9,14 +9,14 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f8f5ed;
+    background: #f8f8f6;
     color: #1a1a1a;
     font-size: 14px;
     line-height: 1.5;
   }
 
   header {
-    background: #6b3410;
+    background: #1a6b8a;
     color: #fff;
     padding: 20px 24px 16px;
   }
@@ -24,23 +24,23 @@
     font-size: 28px;
     font-weight: 800;
     letter-spacing: 3px;
-    color: #f0b04a;
+    color: #ff6eb4;
   }
   header p.subtitle {
     font-size: 12px;
-    color: rgba(255,255,255,0.78);
+    color: rgba(255,255,255,0.75);
     margin-top: 2px;
     letter-spacing: 1px;
     text-transform: uppercase;
   }
   header p.updated {
     font-size: 11px;
-    color: rgba(255,255,255,0.62);
+    color: rgba(255,255,255,0.6);
     margin-top: 6px;
   }
 
   nav {
-    background: #5a2c0e;
+    background: #155a75;
     display: flex;
     gap: 0;
     overflow-x: auto;
@@ -48,7 +48,7 @@
   nav button {
     background: none;
     border: none;
-    color: #b8a890;
+    color: #aaa;
     padding: 12px 20px;
     font-size: 13px;
     font-weight: 600;
@@ -59,7 +59,7 @@
     transition: color 0.15s, border-color 0.15s;
   }
   nav button:hover { color: #fff; }
-  nav button.active { color: #f0b04a; border-bottom-color: #f0b04a; }
+  nav button.active { color: #ff6eb4; border-bottom-color: #ff6eb4; }
 
   .tab { display: none; padding: 16px; max-width: 1100px; margin: 0 auto; }
   .tab.active { display: block; }
@@ -73,7 +73,7 @@
   }
   select {
     padding: 7px 10px;
-    border: 1px solid #d8cdb8;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 13px;
     background: #fff;
@@ -87,8 +87,8 @@
   }
   .conf-pills button {
     background: #fff;
-    border: 1px solid #d8cdb8;
-    color: #5a2c0e;
+    border: 1px solid #ddd;
+    color: #155a75;
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 600;
@@ -96,8 +96,8 @@
     cursor: pointer;
     letter-spacing: 0.3px;
   }
-  .conf-pills button:hover { background: #faf2e0; }
-  .conf-pills button.active { background: #6b3410; color: #f0b04a; border-color: #6b3410; }
+  .conf-pills button:hover { background: #fafafa; }
+  .conf-pills button.active { background: #1a6b8a; color: #ff6eb4; border-color: #1a6b8a; }
 
   .count-label {
     font-size: 12px;
@@ -114,8 +114,8 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
   thead th {
-    background: #6b3410;
-    color: #f0b04a;
+    background: #1a6b8a;
+    color: #ff6eb4;
     padding: 10px 12px;
     text-align: left;
     font-size: 11px;
@@ -124,9 +124,9 @@
     text-transform: uppercase;
     white-space: nowrap;
   }
-  tbody tr { border-bottom: 1px solid #f0e8d4; }
+  tbody tr { border-bottom: 1px solid #f0f0f0; }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #faf6ec; }
+  tbody tr:hover { background: #fafafa; }
   tbody td {
     padding: 9px 12px;
     font-size: 13px;
@@ -144,25 +144,40 @@
   .rating-cell {
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: #6b3410;
+    color: #1a6b8a;
   }
   .rating-bar-wrap { display: flex; align-items: center; gap: 8px; }
   .rating-bar-track {
     width: 80px; height: 6px;
-    background: #eee5d2;
+    background: #eee;
     border-radius: 3px;
     position: relative;
     flex-shrink: 0;
   }
   .rating-bar-center-line {
     position: absolute; left: 50%; top: 0;
-    width: 1px; height: 6px; background: #c9b890;
+    width: 1px; height: 6px; background: #ccc;
   }
   .rating-bar-fill {
     position: absolute; height: 6px; border-radius: 3px; top: 0;
   }
-  .bar-pos { background: #6b3410; }
-  .bar-neg { background: #f0b04a; }
+  .bar-pos { background: #1a6b8a; }
+  .bar-neg { background: #ff6eb4; }
+
+  /* Honors badges (mirrors ZIDANE pattern: name + trophy/medal emoji) */
+  .finish-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-right: 2px;
+  }
+  .finish-champion  { background: #c8a84b; color: #1a6b8a; }
+  .finish-runner    { background: #ddd; color: #444; }
+  .finish-conf      { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .finish-appearance { background: #f0f0f0; color: #777; font-weight: 500; }
 
   .last-match-cell {
     font-size: 12px;
@@ -170,7 +185,7 @@
     max-width: 240px;
   }
   .result-W { color: #2e7d32; font-weight: 700; }
-  .result-L { color: #b53a25; font-weight: 700; }
+  .result-L { color: #c62828; font-weight: 700; }
 
   /* Season chart */
   #chart-wrap {
@@ -187,10 +202,10 @@
   .data-note { font-size: 11px; color: #888; margin-bottom: 10px; }
 
   /* Champions table */
-  .col-champ  { background: #fdf6e0; }
-  .col-ru     { background: #faf7ee; }
-  .season-cell { font-weight: 700; color: #6b3410; white-space: nowrap; }
-  .divider-col { width: 4px; background: #ece4cf; padding: 0; }
+  .col-champ  { background: #fffdf3; }
+  .col-ru     { background: #fafafa; }
+  .season-cell { font-weight: 700; color: #1a6b8a; white-space: nowrap; }
+  .divider-col { width: 4px; background: #e8e8e8; padding: 0; }
   #history-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   #standings-table-wrap, #team-table-wrap, #goat-table-wrap {
     overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -214,7 +229,7 @@
 <body>
 
 <header>
-  <h1>SALAAM 🏈</h1>
+  <h1>SALAAM 🎓🏈</h1>
   <p class="subtitle">NCAA Football Power Rankings · Beta</p>
   <p class="updated" id="last-updated">Loading...</p>
 </header>
@@ -222,7 +237,7 @@
 <nav>
   <button class="active" data-tab="standings">Standings</button>
   <button data-tab="team-summary">Team Summary</button>
-  <button data-tab="league-history">CFP Champions</button>
+  <button data-tab="league-history">Champions</button>
   <button data-tab="goat">GOAT Table</button>
 </nav>
 
@@ -236,6 +251,9 @@
   <div class="conf-pills" id="conf-pills" style="margin-bottom:14px"></div>
   <p class="data-note" id="warmup-note" style="display:none">
     Note: ratings need a 20-week warm-up window, so 1982 has no ranked snapshots and 1983's first ranked snapshot lands mid-season.
+  </p>
+  <p class="data-note" id="covid-note" style="display:none;color:#c62828">
+    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak — some ratings will look inflated relative to AP/Coaches polls.
   </p>
   <div id="standings-table-wrap"><p class="loading">Loading standings...</p></div>
 </div>
@@ -260,10 +278,10 @@
   <div id="team-table-wrap"><p class="loading">Select a team above.</p></div>
 </div>
 
-<!-- ── CFP CHAMPIONS ────────────────────────────────────────────────────── -->
+<!-- ── CHAMPIONS ─────────────────────────────────────────────────────────── -->
 <div id="league-history" class="tab">
   <p class="data-note">
-    Phase 1 covers the College Football Playoff era (2014-present). BCS-era and pre-BCS title attribution coming soon. Conference shown is the team's affiliation in that season — accounts for realignment.
+    National champion + runner-up per season. Phase 1 covers the College Football Playoff era (2014-present); BCS-era (1998-2013) and poll-era (1982-1997, with split-championship handling) coming soon. Conference shown is the team's affiliation in that season — accounts for realignment.
   </p>
   <div id="history-table-wrap"><p class="loading">Loading champions...</p></div>
 </div>
@@ -346,11 +364,23 @@ function fmtHottake(rating2, rank2) {
   return `${r} <span style="color:#888;font-size:0.85em">(#${rank2})</span>`;
 }
 
-function finishBadge(cfpStatus, cfpAppearance) {
-  if (cfpStatus === 2) return `<span title="CFP National Champion" style="font-size:14px">🏆</span>`;
-  if (cfpStatus === 1) return `<span title="CFP Runner-Up" style="font-size:14px">🥈</span>`;
-  if (cfpAppearance === 1) return `<span title="CFP Appearance" style="font-size:12px;color:#999">●</span>`;
-  return '';
+// Conference shorthand for compact badges (matches ZIDANE league-shortener pattern)
+const CONF_SHORT = {
+  'ACC': 'ACC', 'Big Ten': 'B1G', 'Big 12': 'Big 12', 'Pac-12': 'Pac-12',
+  'Pac-10': 'Pac-10', 'SEC': 'SEC', 'Big East': 'Big East', 'Big 8': 'Big 8',
+  'FBS Independents': 'IND', 'Mountain West': 'MWC', 'American Athletic': 'AAC',
+  'Conference USA': 'C-USA', 'Mid-American': 'MAC', 'Sun Belt': 'SBC',
+  'Western Athletic': 'WAC', 'Southwest': 'SWC',
+};
+function shortConf(c) { return CONF_SHORT[c] || c; }
+
+function finishBadge(cfpStatus, cfpAppearance, confChamp) {
+  const bits = [];
+  if (cfpStatus === 2)      bits.push(`<span class="finish-badge finish-champion">CFP 🏆</span>`);
+  else if (cfpStatus === 1) bits.push(`<span class="finish-badge finish-runner">CFP 🥈</span>`);
+  else if (cfpAppearance === 1) bits.push(`<span class="finish-badge finish-appearance">CFP App.</span>`);
+  if (confChamp) bits.push(`<span class="finish-badge finish-conf">${shortConf(confChamp)} 🏆</span>`);
+  return bits.join(' ');
 }
 
 function resultClass(match) {
@@ -432,6 +462,8 @@ async function loadSeason(season) {
     selectSnapshot(snaps[snaps.length - 1].date);
     document.getElementById('warmup-note').style.display =
       (parseInt(season) === 1983) ? 'block' : 'none';
+    document.getElementById('covid-note').style.display =
+      (parseInt(season) === 2020) ? 'block' : 'none';
   } catch(e) {
     document.getElementById('standings-table-wrap').innerHTML =
       `<p class="error">Could not load season data.</p>`;
@@ -462,7 +494,7 @@ function renderStandings() {
         <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
       </td>
       <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
-      <td class="col-hide-mobile" style="text-align:center">${finishBadge(t.cfp_status, t.cfp_appearance)}</td>
+      <td class="col-hide-mobile" style="text-align:center">${finishBadge(t.cfp_status, t.cfp_appearance, t.conference_champ)}</td>
     </tr>`;
   }).join('');
 
@@ -567,7 +599,7 @@ function renderTeamTable() {
     <td>${ratingBar(g.rating)}</td>
     <td class="rank-cell">${g.rank}</td>
     <td class="rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44;white-space:nowrap">${hottake}</td>
-    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(g.cfp_status, g.cfp_appearance)}</td>
+    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(g.cfp_status, g.cfp_appearance, g.conference_champ)}</td>
   </tr>`;
   }).join('');
 
@@ -629,12 +661,12 @@ function drawChart(rows, seasonFilter) {
   svg.innerHTML = `
     <defs>
       <linearGradient id="lineGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${H}">
-        <stop offset="${(zeroY / H - 0.0001).toFixed(4)}" stop-color="#6b3410"/>
-        <stop offset="${(zeroY / H + 0.0001).toFixed(4)}" stop-color="#f0b04a"/>
+        <stop offset="${(zeroY / H - 0.0001).toFixed(4)}" stop-color="#1a6b8a"/>
+        <stop offset="${(zeroY / H + 0.0001).toFixed(4)}" stop-color="#ff6eb4"/>
       </linearGradient>
     </defs>
     <line x1="10" y1="${zeroY.toFixed(1)}" x2="${(W - 10).toFixed(1)}" y2="${zeroY.toFixed(1)}"
-          stroke="#c9b890" stroke-width="1" stroke-dasharray="4,3"/>
+          stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
     <line x1="10" y1="${CBOT + 2}" x2="${(W - 10).toFixed(1)}" y2="${CBOT + 2}"
           stroke="#ddd" stroke-width="1"/>
     ${ticks.join('')}
@@ -736,7 +768,7 @@ function renderGoat() {
     <td class="col-hide-mobile" style="font-size:11px;color:#888">${t.conference_raw || t.conference || ''}</td>
     <td>${ratingBar(t.rating)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
-    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(t.cfp_status, t.cfp_appearance)}</td>
+    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(t.cfp_status, t.cfp_appearance, t.conference_champ)}</td>
   </tr>`).join('');
 
   document.getElementById('goat-table-wrap').innerHTML = `

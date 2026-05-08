@@ -91,50 +91,44 @@ def conf(team, season):
     return conf_bucket(conf_raw(team, season), season)
 
 
-# ── CFP attribution (Phase 1: 2014+) ──────────────────────────────────────────
-print('Building CFP attribution...')
-cfp_outcomes = {}             # season → {champion, runner_up, final_score, appearances}
-post_week_labels_by_season = {}  # season → {post_week_int → label}
+# ── CFP + Conference championship attribution ────────────────────────────────
+print('Building championship attribution...')
+cfp_outcomes = {}        # season → {champion, runner_up, final_score, appearances}
+conf_champs = {}         # (team, season) → conference name (e.g., 'SEC')
+
+# Tier-based postseason week labels (matches salaam.py tier numbering)
+POSTSEASON_LABELS = {
+    101: 'Bowls / CFP 1st Round',
+    102: 'CFP Quarterfinals',
+    103: 'CFP Semifinals',
+    104: 'National Championship',
+}
 
 for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
     year = int(f.stem.split('_')[1])
     raw = json.loads(f.read_text())
+
+    # Conference championships from regular-season games tagged "championship".
+    # Each conference has at most one championship game per year — winner = champ.
+    reg = [g for g in raw if g.get('seasonType') == 'regular' and g.get('completed')
+           and g.get('homeClassification') == 'fbs' and g.get('awayClassification') == 'fbs']
+    for g in reg:
+        notes = (g.get('notes') or '').lower()
+        if 'championship' not in notes:
+            continue
+        # Winner of the championship game = conference champion
+        if g['homePoints'] is None or g['awayPoints'] is None:
+            continue
+        winner = g['homeTeam'] if g['homePoints'] >= g['awayPoints'] else g['awayTeam']
+        # Tag with the team's actual conference for this season (resolved later)
+        conf_champs[(winner, year)] = team_conf_raw.get((winner, year), 'Conference')
+
     post = [g for g in raw if g.get('seasonType') == 'postseason' and g.get('completed')]
-    if not post:
+    if not post or year < CFP_FIRST_SEASON:
         continue
 
-    # Recompute the postseason week numbers same way salaam.py does
-    pdf = pd.DataFrame(post)
-    pdf['date'] = pd.to_datetime(pdf['startDate'], utc=True).dt.tz_convert(None)
-    iso = pdf['date'].dt.isocalendar()
-    pdf['_iso_key']   = iso['year'].astype(int) * 100 + iso['week'].astype(int)
-    pdf['post_round'] = pdf['_iso_key'].rank(method='dense').astype(int)
-    pdf['post_week']  = 100 + pdf['post_round']
-
-    # Per-(season, post_week) label from the most-significant note in that week
-    week_labels = {}
-    for wk, sub in pdf.groupby('post_week'):
-        notes_lower = sub['notes'].fillna('').str.lower()
-        if (notes_lower.str.contains('national championship')).any():
-            label = 'National Championship'
-        elif (notes_lower.str.contains('semifinal')).any():
-            label = 'CFP Semifinals'
-        elif (notes_lower.str.contains('quarterfinal')).any():
-            label = 'CFP Quarterfinals'
-        elif (notes_lower.str.contains('first round') & notes_lower.str.contains('playoff')).any():
-            label = 'CFP First Round'
-        else:
-            label = 'Bowl Games'
-        week_labels[int(wk)] = label
-    post_week_labels_by_season[year] = week_labels
-
-    # Phase 1: only emit cfp_outcomes for CFP era
-    if year < CFP_FIRST_SEASON:
-        continue
-
-    # Find the championship game (national championship, not semifinal)
     title_game = None
-    for _, g in pdf.iterrows():
+    for g in post:
         notes = (g.get('notes') or '').lower()
         if 'national championship' in notes:
             title_game = g
@@ -149,9 +143,8 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
         champ, ru = title_game['awayTeam'], title_game['homeTeam']
         score = f"{int(title_game['awayPoints'])}-{int(title_game['homePoints'])}"
 
-    # Every CFP-tagged game's participants count as a CFP appearance
     cfp_appearances = set()
-    for _, g in pdf.iterrows():
+    for g in post:
         notes = (g.get('notes') or '').lower()
         if 'college football playoff' in notes or 'cfp ' in notes:
             cfp_appearances.add(g['homeTeam'])
@@ -166,7 +159,7 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
 
 
 def cfp_status(team, season):
-    """0 = none, 1 = runner-up, 2 = champion. Matches DILLON's sb_status pattern."""
+    """0 = none, 1 = runner-up, 2 = champion."""
     out = cfp_outcomes.get(int(season))
     if not out:
         return 0
@@ -184,12 +177,17 @@ def cfp_appearance(team, season):
     return 1 if team in out['appearances'] else 0
 
 
-# ── Postseason week labels (era-agnostic, derived from game notes) ────────────
+def conf_champ(team, season):
+    """Returns the conference name string if team won their conference championship game that year, else ''."""
+    return conf_champs.get((team, int(season)), '')
+
+
+# ── Postseason week labels (tier-based, era-agnostic) ─────────────────────────
 def week_label(season, wk):
     wk = int(wk)
     if wk < 100:
         return f'Week {wk}'
-    return post_week_labels_by_season.get(int(season), {}).get(wk, 'Bowl Games')
+    return POSTSEASON_LABELS.get(wk, 'Postseason')
 
 
 def snapshot_label(season, wk, flag):
@@ -314,8 +312,9 @@ standings_data = {
             'rating2':         round(float(r['rating2']), 3) if not pd.isna(r['rating2']) else None,
             'record':          clean(r['record']),
             'last_match':      clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(r['name'], r['season_week']),
-            'cfp_status':      cfp_status(r['name'], r['season']),
-            'cfp_appearance':  cfp_appearance(r['name'], r['season']),
+            'cfp_status':       cfp_status(r['name'], r['season']),
+            'cfp_appearance':   cfp_appearance(r['name'], r['season']),
+            'conference_champ': conf_champ(r['name'], r['season']),
         }
         for _, r in latest.iterrows()
     ],
@@ -343,8 +342,9 @@ for i, (_, r) in enumerate(eos_top.iterrows()):
         'record':          clean(r['record']),
         'regular_record':  reg,
         'playoff_record':  playoff_record(r['record'], reg),
-        'cfp_status':      cfp_status(r['name'], r['season']),
-        'cfp_appearance':  cfp_appearance(r['name'], r['season']),
+        'cfp_status':       cfp_status(r['name'], r['season']),
+        'cfp_appearance':   cfp_appearance(r['name'], r['season']),
+        'conference_champ': conf_champ(r['name'], r['season']),
     })
 with open(OUT_DIR / 'goat_teams.json', 'w') as f:
     json.dump(goat_data, f, separators=(',', ':'))
@@ -401,6 +401,7 @@ for team in all_teams:
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
                 'cfp_status':        cfp_status(team, season),
                 'cfp_appearance':    cfp_appearance(team, season),
+                'conference_champ':  conf_champ(team, season),
                 'conference':        conf(team, season),
             })
         seasons[int(season)] = entries
@@ -456,8 +457,9 @@ for season in all_seasons:
                 'playoff_record':  po,
                 'last_match':      clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw),
                 'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw),
-                'cfp_status':      cfp_status(r['name'], season),
-                'cfp_appearance':  cfp_appearance(r['name'], season),
+                'cfp_status':       cfp_status(r['name'], season),
+                'cfp_appearance':   cfp_appearance(r['name'], season),
+                'conference_champ': conf_champ(r['name'], season),
             })
         snapshots.append({
             'date':        snap_date,
