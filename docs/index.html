@@ -174,10 +174,12 @@
     white-space: nowrap;
     margin-right: 2px;
   }
-  .finish-champion  { background: #c8a84b; color: #1a6b8a; }
-  .finish-runner    { background: #ddd; color: #444; }
-  .finish-conf      { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .finish-champion   { background: #c8a84b; color: #1a6b8a; }
+  .finish-runner     { background: #ddd; color: #444; }
   .finish-appearance { background: #f0f0f0; color: #777; font-weight: 500; }
+  .conf-pill         { background: #f4f4f4; color: #555; border: 1px solid #e8e8e8; }
+  .conf-pill-gold    { background: #c8a84b; color: #1a6b8a; }
+  .covid-tag         { background: #fde0e0; color: #c62828; border: 1px solid #f5b3b3; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin-left: 4px; letter-spacing: 0.5px; }
 
   .last-match-cell {
     font-size: 12px;
@@ -291,6 +293,9 @@
 <!-- ── GOAT TABLE ───────────────────────────────────────────────────────── -->
 <div id="goat" class="tab">
   <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
+  <p class="data-note" id="goat-covid-note" style="display:none;color:#c62828">
+    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak — some 2020 ratings will look inflated relative to AP/Coaches polls.
+  </p>
   <p class="data-note">Top 50 single-season ratings · Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
   <div id="goat-table-wrap"><p class="loading">Loading GOAT table...</p></div>
 </div>
@@ -361,13 +366,6 @@ function fmtRecordSmart(reg, playoff, fallback) {
   return `${top}<div style="font-size:10px;color:#888;font-weight:400;line-height:1.2">${playoff}</div>`;
 }
 
-function fmtHottake(rating2, rank2) {
-  if (rating2 == null) return '—';
-  const r = rating2.toFixed(2);
-  if (rank2 == null) return r;
-  return `${r} <span style="color:#888;font-size:0.85em">(#${rank2})</span>`;
-}
-
 // Conference shorthand for compact badges (matches ZIDANE league-shortener pattern)
 const CONF_SHORT = {
   'ACC': 'ACC', 'Big Ten': 'B1G', 'Big 12': 'Big 12', 'Pac-12': 'Pac-12',
@@ -378,13 +376,25 @@ const CONF_SHORT = {
 };
 function shortConf(c) { return CONF_SHORT[c] || c; }
 
-function finishBadge(cfpStatus, cfpAppearance, confChamp) {
-  const bits = [];
-  if (cfpStatus === 2)      bits.push(`<span class="finish-badge finish-champion">CFP 🏆</span>`);
-  else if (cfpStatus === 1) bits.push(`<span class="finish-badge finish-runner">CFP 🥈</span>`);
-  else if (cfpAppearance === 1) bits.push(`<span class="finish-badge finish-appearance">CFP App.</span>`);
-  if (confChamp) bits.push(`<span class="finish-badge finish-conf">${shortConf(confChamp)} 🏆</span>`);
-  return bits.join(' ');
+// CFP-only honors (national champ / RU / appearance). 👑 for the national title
+// (sets up the pattern for Phase 2/3 BCS/AP/Coaches which will use 🏆).
+function honorsBadge(cfpStatus, cfpAppearance) {
+  if (cfpStatus === 2)        return `<span class="finish-badge finish-champion">CFP 👑</span>`;
+  if (cfpStatus === 1)        return `<span class="finish-badge finish-runner">CFP 🥈</span>`;
+  if (cfpAppearance === 1)    return `<span class="finish-badge finish-appearance">CFP App.</span>`;
+  return '';
+}
+
+// Conference badge — gold (with 🏆) when team won the conference championship that
+// season; plain pill with the conference name otherwise. Use rawConf when you want
+// the full historical name (e.g., "Pac-10" for old USC seasons), bucketConf when
+// you want the modern grouping (e.g., always "Pac-12").
+function confBadge(rawConf, isChamp) {
+  if (!rawConf) return '';
+  const label = shortConf(rawConf);
+  return isChamp
+    ? `<span class="finish-badge conf-pill-gold">${label} 🏆</span>`
+    : `<span class="finish-badge conf-pill">${label}</span>`;
 }
 
 function resultClass(match) {
@@ -485,22 +495,18 @@ function renderStandings() {
   let teams = currentSnapshot.teams;
   if (standingsConf !== 'all') teams = teams.filter(t => t.conference === standingsConf);
 
-  const rows = teams.map(t => {
-    const hottake = fmtHottake(t.rating2, t.rank2);
-    return `<tr>
-      <td class="team-cell">${t.team}</td>
-      <td class="col-hide-mobile" style="font-size:11px;color:#888">${t.conference_raw || t.conference}</td>
-      <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
-      <td>${ratingBar(t.rating)}</td>
-      <td class="rank-cell">${t.rank}</td>
-      <td class="rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44;white-space:nowrap">${hottake}</td>
-      <td class="last-match-cell">
-        <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
-      </td>
-      <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
-      <td class="col-hide-mobile" style="text-align:center">${finishBadge(t.cfp_status, t.cfp_appearance, t.conference_champ)}</td>
-    </tr>`;
-  }).join('');
+  const rows = teams.map(t => `<tr>
+    <td class="team-cell">${t.team}</td>
+    <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
+    <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
+    <td>${ratingBar(t.rating)}</td>
+    <td class="rank-cell">${t.rank}</td>
+    <td class="last-match-cell">
+      <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
+    </td>
+    <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
+    <td class="col-hide-mobile" style="text-align:center">${honorsBadge(t.cfp_status, t.cfp_appearance)}</td>
+  </tr>`).join('');
 
   document.getElementById('standings-count').textContent =
     `${teams.length} team${teams.length !== 1 ? 's' : ''}`;
@@ -513,7 +519,6 @@ function renderStandings() {
         <th>W-L</th>
         <th>REACT</th>
         <th>Rank</th>
-        <th class="col-hide-mobile">HOTTAKE</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
@@ -600,7 +605,6 @@ function renderTeamTable() {
   drawChart(rows, seasonFilter);
 
   const tableRows = [...rows].reverse().map(g => {
-    const hottake = fmtHottake(g.rating2, g.rank2);
     const wkLabel = g.week_label || '';
     return `<tr>
     <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
@@ -611,8 +615,8 @@ function renderTeamTable() {
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td>${ratingBar(g.rating)}</td>
     <td class="rank-cell">${g.rank}</td>
-    <td class="rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44;white-space:nowrap">${hottake}</td>
-    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(g.cfp_status, g.cfp_appearance, g.conference_champ)}</td>
+    <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
+    <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance)}</td>
   </tr>`;
   }).join('');
 
@@ -623,7 +627,7 @@ function renderTeamTable() {
         <th>W-L</th>
         <th>REACT</th>
         <th>Rank</th>
-        <th class="col-hide-mobile">HOTTAKE</th>
+        <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
@@ -719,21 +723,19 @@ function renderChampions() {
   }
 
   function teamCell(t, bg) {
-    if (!t) return `<td class="${bg}" colspan="5">—</td>`;
+    if (!t) return `<td class="${bg}" colspan="4">—</td>`;
     const rating  = t.rating != null ? t.rating.toFixed(2) : '—';
-    const rating2 = fmtHottake(t.rating2, t.rank2);
     const rank    = t.rank != null ? `#${t.rank}` : '—';
-    const conf    = t.conference_raw || t.conference || '';
+    const conf    = confBadge(t.conference_raw || t.conference, !!t.conference_champ);
     const countStr = t.title_count
-      ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.title_count} 🏆)</span>`
+      ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.title_count} 👑)</span>`
       : t.runner_up_count
       ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.runner_up_count} 🥈)</span>`
       : '';
     return `
-      <td class="${bg} team-cell" style="white-space:nowrap">${t.team}${countStr}<div style="font-size:10px;color:#888;font-weight:400">${conf}</div></td>
+      <td class="${bg} team-cell" style="white-space:nowrap">${t.team}${countStr}<div style="margin-top:3px">${conf}</div></td>
       <td class="${bg} rating-cell" style="font-variant-numeric:tabular-nums">${rating}</td>
       <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;color:#888;font-size:0.85em">${rank}</td>
-      <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44">${rating2}</td>
       <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>`;
   }
 
@@ -753,13 +755,11 @@ function renderChampions() {
         <th class="col-champ">Champion</th>
         <th class="col-champ">REACT</th>
         <th class="col-champ col-hide-mobile">Rank</th>
-        <th class="col-champ col-hide-mobile">HOTTAKE</th>
         <th class="col-champ col-hide-mobile">W-L</th>
         <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
         <th class="col-ru">Runner-Up</th>
         <th class="col-ru">REACT</th>
         <th class="col-ru col-hide-mobile">Rank</th>
-        <th class="col-ru col-hide-mobile">HOTTAKE</th>
         <th class="col-ru col-hide-mobile">W-L</th>
       </tr></thead>
       <tbody>${rows}</tbody>
@@ -781,15 +781,22 @@ function renderGoat() {
   if (!goatData) return;
   const filtered = goatConf === 'all' ? goatData : goatData.filter(t => t.conference === goatConf);
   let displayRank = 1;
-  const rows = filtered.map(t => `<tr>
-    <td class="rank-cell">${displayRank++}</td>
-    <td style="text-align:center">${t.season}</td>
-    <td class="team-cell">${t.team}</td>
-    <td class="col-hide-mobile" style="font-size:11px;color:#888">${t.conference_raw || t.conference || ''}</td>
-    <td>${ratingBar(t.rating)}</td>
-    <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
-    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(t.cfp_status, t.cfp_appearance, t.conference_champ)}</td>
-  </tr>`).join('');
+  // Show top-of-tab COVID note iff there's a 2020 entry visible
+  const has2020 = filtered.some(t => t.season === 2020);
+  document.getElementById('goat-covid-note').style.display = has2020 ? 'block' : 'none';
+
+  const rows = filtered.map(t => {
+    const covidTag = t.season === 2020 ? `<span class="covid-tag">COVID</span>` : '';
+    return `<tr>
+      <td class="rank-cell">${displayRank++}</td>
+      <td style="text-align:center;white-space:nowrap">${t.season}${covidTag}</td>
+      <td class="team-cell">${t.team}</td>
+      <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
+      <td>${ratingBar(t.rating)}</td>
+      <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
+      <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(t.cfp_status, t.cfp_appearance)}</td>
+    </tr>`;
+  }).join('');
 
   document.getElementById('goat-table-wrap').innerHTML = `
     <table>
