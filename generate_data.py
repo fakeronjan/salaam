@@ -364,10 +364,16 @@ for team in all_teams:
 
     team_slug = slug(team)
     most_recent_season = int(tdf['season'].max())
+    # Every conference bucket the team has been in across all seasons
+    # (lets the conference pill filter on Team Summary catch teams that
+    # have switched leagues — USC pre-2024 Pac-12 vs USC 2024+ Big Ten).
+    team_seasons_played = sorted(tdf['season'].unique())
+    all_confs = sorted(set(conf(team, s) for s in team_seasons_played))
     teams_index.append({
-        'name':       team,
-        'conference': conf(team, most_recent_season),
-        'slug':       team_slug,
+        'name':            team,
+        'conference':      conf(team, most_recent_season),
+        'all_conferences': all_confs,
+        'slug':            team_slug,
     })
 
     seasons = {}
