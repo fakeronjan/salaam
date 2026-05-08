@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SALAAM — NCAA Football Power Rankings</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f5ed;
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  header {
+    background: #6b3410;
+    color: #fff;
+    padding: 20px 24px 16px;
+  }
+  header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #f0b04a;
+  }
+  header p.subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.78);
+    margin-top: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  header p.updated {
+    font-size: 11px;
+    color: rgba(255,255,255,0.62);
+    margin-top: 6px;
+  }
+
+  nav {
+    background: #5a2c0e;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: #b8a890;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav button:hover { color: #fff; }
+  nav button.active { color: #f0b04a; border-bottom-color: #f0b04a; }
+
+  .tab { display: none; padding: 16px; max-width: 1100px; margin: 0 auto; }
+  .tab.active { display: block; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  select {
+    padding: 7px 10px;
+    border: 1px solid #d8cdb8;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 160px;
+  }
+  .conf-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .conf-pills button {
+    background: #fff;
+    border: 1px solid #d8cdb8;
+    color: #5a2c0e;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+  .conf-pills button:hover { background: #faf2e0; }
+  .conf-pills button.active { background: #6b3410; color: #f0b04a; border-color: #6b3410; }
+
+  .count-label {
+    font-size: 12px;
+    color: #888;
+    margin-left: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  thead th {
+    background: #6b3410;
+    color: #f0b04a;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #f0e8d4; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #faf6ec; }
+  tbody td {
+    padding: 9px 12px;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .rank-cell {
+    font-weight: 700;
+    color: #888;
+    width: 36px;
+    text-align: center;
+  }
+  .team-cell { font-weight: 600; }
+
+  .rating-cell {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #6b3410;
+  }
+  .rating-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .rating-bar-track {
+    width: 80px; height: 6px;
+    background: #eee5d2;
+    border-radius: 3px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .rating-bar-center-line {
+    position: absolute; left: 50%; top: 0;
+    width: 1px; height: 6px; background: #c9b890;
+  }
+  .rating-bar-fill {
+    position: absolute; height: 6px; border-radius: 3px; top: 0;
+  }
+  .bar-pos { background: #6b3410; }
+  .bar-neg { background: #f0b04a; }
+
+  .last-match-cell {
+    font-size: 12px;
+    color: #555;
+    max-width: 240px;
+  }
+  .result-W { color: #2e7d32; font-weight: 700; }
+  .result-L { color: #b53a25; font-weight: 700; }
+
+  /* Season chart */
+  #chart-wrap {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  #season-chart { width: 100%; height: 180px; display: block; }
+
+  .loading { color: #888; padding: 20px; text-align: center; font-size: 13px; }
+  .error   { color: #b53a25; padding: 20px; font-size: 13px; }
+  .data-note { font-size: 11px; color: #888; margin-bottom: 10px; }
+
+  /* Champions table */
+  .col-champ  { background: #fdf6e0; }
+  .col-ru     { background: #faf7ee; }
+  .season-cell { font-weight: 700; color: #6b3410; white-space: nowrap; }
+  .divider-col { width: 4px; background: #ece4cf; padding: 0; }
+  #history-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #standings-table-wrap, #team-table-wrap, #goat-table-wrap {
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px 12px; }
+    header h1 { font-size: 20px; letter-spacing: 2px; }
+    nav button { padding: 10px 14px; font-size: 12px; }
+    .tab { padding: 12px; }
+    td, th { padding: 7px 8px; font-size: 12px; }
+    .last-match-cell { max-width: 180px; }
+    .controls { flex-direction: column; align-items: stretch; }
+    select { min-width: unset; width: 100%; }
+    .rating-bar-track { display: none; }
+    .col-hide-mobile { display: none; }
+    .conf-pills button { font-size: 11px; padding: 5px 9px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SALAAM 🏈</h1>
+  <p class="subtitle">NCAA Football Power Rankings · Beta</p>
+  <p class="updated" id="last-updated">Loading...</p>
+</header>
+
+<nav>
+  <button class="active" data-tab="standings">Standings</button>
+  <button data-tab="team-summary">Team Summary</button>
+  <button data-tab="league-history">CFP Champions</button>
+  <button data-tab="goat">GOAT Table</button>
+</nav>
+
+<!-- ── STANDINGS ────────────────────────────────────────────────────────── -->
+<div id="standings" class="tab active">
+  <div class="controls">
+    <select id="season-filter"></select>
+    <select id="date-filter" style="min-width:240px"></select>
+    <span class="count-label" id="standings-count"></span>
+  </div>
+  <div class="conf-pills" id="conf-pills" style="margin-bottom:14px"></div>
+  <p class="data-note" id="warmup-note" style="display:none">
+    Note: ratings need a 20-week warm-up window, so 1982 has no ranked snapshots and 1983's first ranked snapshot lands mid-season.
+  </p>
+  <div id="standings-table-wrap"><p class="loading">Loading standings...</p></div>
+</div>
+
+<!-- ── TEAM SUMMARY ─────────────────────────────────────────────────────── -->
+<div id="team-summary" class="tab">
+  <div class="controls">
+    <select id="team-select"><option value="">— Select a team —</option></select>
+    <select id="season-select"><option value="all">All Seasons</option></select>
+    <select id="date-type-select">
+      <option value="all">All dates</option>
+      <option value="eos">End of season</option>
+    </select>
+    <select id="scope-select">
+      <option value="full">Include bowls / CFP</option>
+      <option value="regular">Regular season only</option>
+    </select>
+  </div>
+  <div id="chart-wrap" style="display:none">
+    <svg id="season-chart"></svg>
+  </div>
+  <div id="team-table-wrap"><p class="loading">Select a team above.</p></div>
+</div>
+
+<!-- ── CFP CHAMPIONS ────────────────────────────────────────────────────── -->
+<div id="league-history" class="tab">
+  <p class="data-note">
+    Phase 1 covers the College Football Playoff era (2014-present). BCS-era and pre-BCS title attribution coming soon. Conference shown is the team's affiliation in that season — accounts for realignment.
+  </p>
+  <div id="history-table-wrap"><p class="loading">Loading champions...</p></div>
+</div>
+
+<!-- ── GOAT TABLE ───────────────────────────────────────────────────────── -->
+<div id="goat" class="tab">
+  <p class="data-note">Top 50 single-season ratings · Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
+  <div id="goat-table-wrap"><p class="loading">Loading GOAT table...</p></div>
+</div>
+
+<script>
+const BASE = './data';
+const CONFERENCES = ['ACC', 'Big Ten', 'Big 12', 'Pac-12', 'SEC', 'Big East', 'Other'];
+let currentSeasonData = null;
+let currentSnapshot   = null;
+let currentConfFilter = 'all';
+let goatData          = null;
+let teamsIndex        = null;
+let teamCache         = {};
+
+// ── Conference pills ────────────────────────────────────────────────────────
+function buildConfPills() {
+  const wrap = document.getElementById('conf-pills');
+  const all = document.createElement('button');
+  all.textContent = 'All';
+  all.dataset.conf = 'all';
+  all.classList.add('active');
+  wrap.appendChild(all);
+  CONFERENCES.forEach(c => {
+    const b = document.createElement('button');
+    b.textContent = c;
+    b.dataset.conf = c;
+    wrap.appendChild(b);
+  });
+  wrap.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    wrap.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentConfFilter = e.target.dataset.conf;
+    renderStandings();
+  });
+}
+
+// ── Utilities ───────────────────────────────────────────────────────────────
+function fmtRecord(rec) {
+  // CFB records can be "12-1" or "11-2-1" pre-1996 (ties allowed). Show win pct in dimmed parens.
+  if (!rec || rec === '—') return rec || '—';
+  const m = rec.match(/^(\d+)-(\d+)(?:-(\d+))?$/);
+  if (!m) return rec;
+  const w = parseInt(m[1]);
+  const l = parseInt(m[2]);
+  const t = m[3] ? parseInt(m[3]) : 0;
+  const games = w + l + t;
+  if (games === 0) return rec;
+  const pct = ((w + 0.5 * t) / games).toFixed(3).replace(/^0/, '');
+  return `${rec} <span style="color:#888;font-size:0.85em">(${pct})</span>`;
+}
+
+function fmtRecordStacked(reg, playoff) {
+  if (!reg) return '—';
+  const top = fmtRecord(reg);
+  const pm = playoff ? playoff.match(/^(\d+)-(\d+)$/) : null;
+  const hasPlayoffs = pm && (parseInt(pm[1]) + parseInt(pm[2]) > 0);
+  if (!hasPlayoffs) return top;
+  return `${top}<div style="font-size:10px;color:#888;font-weight:400;line-height:1.2">${playoff}</div>`;
+}
+
+function fmtRecordSmart(reg, playoff, fallback) {
+  const top = fmtRecord(reg || fallback);
+  const pm = playoff ? playoff.match(/^(\d+)-(\d+)$/) : null;
+  const hasPlayoffs = pm && (parseInt(pm[1]) + parseInt(pm[2]) > 0);
+  if (!hasPlayoffs) return top;
+  return `${top}<div style="font-size:10px;color:#888;font-weight:400;line-height:1.2">${playoff}</div>`;
+}
+
+function fmtHottake(rating2, rank2) {
+  if (rating2 == null) return '—';
+  const r = rating2.toFixed(2);
+  if (rank2 == null) return r;
+  return `${r} <span style="color:#888;font-size:0.85em">(#${rank2})</span>`;
+}
+
+function finishBadge(cfpStatus, cfpAppearance) {
+  if (cfpStatus === 2) return `<span title="CFP National Champion" style="font-size:14px">🏆</span>`;
+  if (cfpStatus === 1) return `<span title="CFP Runner-Up" style="font-size:14px">🥈</span>`;
+  if (cfpAppearance === 1) return `<span title="CFP Appearance" style="font-size:12px;color:#999">●</span>`;
+  return '';
+}
+
+function resultClass(match) {
+  if (!match) return '';
+  const first = match[0];
+  if (first === 'W') return 'result-W';
+  if (first === 'L') return 'result-L';
+  return '';
+}
+
+const BAR_MIN = -25, BAR_MAX = 25, BAR_RANGE = 50;
+function ratingBar(rating) {
+  const clipped = Math.max(BAR_MIN, Math.min(BAR_MAX, rating));
+  let leftPct, widthPct;
+  if (clipped >= 0) {
+    leftPct  = 50;
+    widthPct = (clipped / BAR_RANGE) * 100;
+  } else {
+    widthPct = (-clipped / BAR_RANGE) * 100;
+    leftPct  = 50 - widthPct;
+  }
+  return `<div class="rating-bar-wrap">
+    <span class="rating-cell">${rating.toFixed(2)}</span>
+    <div class="rating-bar-track">
+      <div class="rating-bar-center-line"></div>
+      <div class="rating-bar-fill ${rating >= 0 ? 'bar-pos' : 'bar-neg'}" style="left:${leftPct.toFixed(1)}%;width:${widthPct.toFixed(1)}%"></div>
+    </div>
+  </div>`;
+}
+
+// ── Tab switching ────────────────────────────────────────────────────────────
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Standings ────────────────────────────────────────────────────────────────
+function fmtDate(ds) {
+  const d = new Date(ds + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+}
+
+async function initStandings() {
+  try {
+    const res  = await fetch(`${BASE}/seasons_index.json`);
+    const meta = await res.json();
+    document.getElementById('last-updated').textContent =
+      `Ratings include games from ${fmtDate(meta.first_date)} to ${fmtDate(meta.last_date)}`;
+    const sel = document.getElementById('season-filter');
+    meta.seasons.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      sel.appendChild(opt);
+    });
+    await loadSeason(meta.seasons[0]);
+  } catch(e) {
+    document.getElementById('standings-table-wrap').innerHTML =
+      `<p class="error">Could not load standings.</p>`;
+  }
+}
+
+async function loadSeason(season) {
+  try {
+    const res = await fetch(`${BASE}/seasons/${season}.json`);
+    currentSeasonData = await res.json();
+    const snaps = currentSeasonData.snapshots;
+    const dateSel = document.getElementById('date-filter');
+    dateSel.innerHTML = '';
+    [...snaps].reverse().forEach(snap => {
+      const opt = document.createElement('option');
+      opt.value = snap.date;
+      opt.textContent = snap.label ? `${snap.date} — ${snap.label}` : snap.date;
+      dateSel.appendChild(opt);
+    });
+    selectSnapshot(snaps[snaps.length - 1].date);
+    document.getElementById('warmup-note').style.display =
+      (parseInt(season) === 1983) ? 'block' : 'none';
+  } catch(e) {
+    document.getElementById('standings-table-wrap').innerHTML =
+      `<p class="error">Could not load season data.</p>`;
+  }
+}
+
+function selectSnapshot(date) {
+  currentSnapshot = currentSeasonData.snapshots.find(s => s.date === date);
+  document.getElementById('date-filter').value = date;
+  renderStandings();
+}
+
+function renderStandings() {
+  if (!currentSnapshot) return;
+  let teams = currentSnapshot.teams;
+  if (currentConfFilter !== 'all') teams = teams.filter(t => t.conference === currentConfFilter);
+
+  const rows = teams.map(t => {
+    const hottake = fmtHottake(t.rating2, t.rank2);
+    return `<tr>
+      <td class="team-cell">${t.team}</td>
+      <td class="col-hide-mobile" style="font-size:11px;color:#888">${t.conference_raw || t.conference}</td>
+      <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
+      <td>${ratingBar(t.rating)}</td>
+      <td class="rank-cell">${t.rank}</td>
+      <td class="rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44;white-space:nowrap">${hottake}</td>
+      <td class="last-match-cell">
+        <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
+      </td>
+      <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
+      <td class="col-hide-mobile" style="text-align:center">${finishBadge(t.cfp_status, t.cfp_appearance)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('standings-count').textContent =
+    `${teams.length} team${teams.length !== 1 ? 's' : ''}`;
+
+  document.getElementById('standings-table-wrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Team</th>
+        <th class="col-hide-mobile">Conf</th>
+        <th>W-L</th>
+        <th>REACT</th>
+        <th>Rank</th>
+        <th class="col-hide-mobile">HOTTAKE</th>
+        <th>Last Game</th>
+        <th class="col-hide-mobile">Date</th>
+        <th class="col-hide-mobile">Honors</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+document.getElementById('season-filter').addEventListener('change', e => loadSeason(e.target.value));
+document.getElementById('date-filter').addEventListener('change', e => selectSnapshot(e.target.value));
+
+// ── Team Summary ─────────────────────────────────────────────────────────────
+async function loadTeamsIndex() {
+  try {
+    const res = await fetch(`${BASE}/teams_index.json`);
+    teamsIndex = await res.json();
+    const sel = document.getElementById('team-select');
+    teamsIndex.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.slug;
+      opt.textContent = t.name;
+      sel.appendChild(opt);
+    });
+  } catch(e) {
+    document.getElementById('team-select').innerHTML = '<option>Could not load teams</option>';
+  }
+}
+
+async function loadTeam(slug) {
+  if (!slug) return;
+  if (!teamCache[slug]) {
+    document.getElementById('team-table-wrap').innerHTML = '<p class="loading">Loading team data...</p>';
+    try {
+      const res = await fetch(`${BASE}/teams/${slug}.json`);
+      teamCache[slug] = await res.json();
+    } catch(e) {
+      document.getElementById('team-table-wrap').innerHTML = '<p class="error">Could not load team data.</p>';
+      return;
+    }
+  }
+  const data = teamCache[slug];
+  const seasons = Object.keys(data.seasons).sort().reverse();
+  const seasonSel = document.getElementById('season-select');
+  seasonSel.innerHTML = '<option value="all">All Seasons</option>';
+  seasons.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    seasonSel.appendChild(opt);
+  });
+  renderTeamTable();
+}
+
+function renderTeamTable() {
+  const slug = document.getElementById('team-select').value;
+  if (!slug || !teamCache[slug]) return;
+  const data = teamCache[slug];
+  const seasonFilter = document.getElementById('season-select').value;
+  const dateType     = document.getElementById('date-type-select').value;
+  const scope        = document.getElementById('scope-select').value;
+
+  let rows = [];
+  const seasons = Object.keys(data.seasons).sort();
+  seasons.forEach(s => {
+    if (seasonFilter !== 'all' && s !== seasonFilter) return;
+    data.seasons[s].forEach(g => rows.push({...g, season: s}));
+  });
+
+  if (scope === 'regular') rows = rows.filter(g => !g.is_playoff);
+
+  if (dateType === 'eos') {
+    const flag = scope === 'regular' ? 1 : 2;
+    rows = rows.filter(g => g.season_flag === flag);
+  }
+
+  drawChart(rows, seasonFilter);
+
+  const tableRows = [...rows].reverse().map(g => {
+    const hottake = fmtHottake(g.rating2, g.rank2);
+    const wkLabel = g.week_label || '';
+    return `<tr>
+    <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
+    <td style="font-size:11px;color:#555">${g.season} · ${wkLabel}</td>
+    <td class="last-match-cell">
+      <span class="${resultClass(g.last_match)}">${g.last_match || '—'}</span>
+    </td>
+    <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
+    <td>${ratingBar(g.rating)}</td>
+    <td class="rank-cell">${g.rank}</td>
+    <td class="rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44;white-space:nowrap">${hottake}</td>
+    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(g.cfp_status, g.cfp_appearance)}</td>
+  </tr>`;
+  }).join('');
+
+  document.getElementById('team-table-wrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Date</th><th>Season · Week</th><th>Last Game</th>
+        <th>W-L</th>
+        <th>REACT</th>
+        <th>Rank</th>
+        <th class="col-hide-mobile">HOTTAKE</th>
+        <th class="col-hide-mobile">Honors</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>`;
+}
+
+function drawChart(rows, seasonFilter) {
+  const wrap = document.getElementById('chart-wrap');
+  if (rows.length < 2) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  const svg = document.getElementById('season-chart');
+  const W = svg.parentElement.clientWidth - 32;
+  const H = 180;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const CHART_MIN = -25, CHART_MAX = 25;
+  const CTOP = 10, CBOT = 152;
+
+  const px = (i) => (i / (rows.length - 1)) * (W - 20) + 10;
+  const py = (r) => CBOT - ((r - CHART_MIN) / (CHART_MAX - CHART_MIN)) * (CBOT - CTOP);
+
+  const zeroY  = py(0);
+  const points = rows.map((r, i) => `${px(i).toFixed(1)},${py(r.rating).toFixed(1)}`).join(' ');
+
+  const isSingle = seasonFilter !== 'all';
+  const MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const ticks = [], xlabels = [];
+  const seen = {};
+  let lastX = -99;
+
+  rows.forEach((r, i) => {
+    const key   = isSingle ? r.date.substring(0, 7) : r.date.substring(0, 4);
+    const label = isSingle
+      ? MONTHS[parseInt(r.date.substring(5, 7)) - 1]
+      : r.date.substring(0, 4);
+    if (!seen[key]) {
+      seen[key] = true;
+      const x = parseFloat(px(i).toFixed(1));
+      if (x - lastX >= 24) {
+        lastX = x;
+        ticks.push(`<line x1="${x}" y1="${CBOT + 2}" x2="${x}" y2="${CBOT + 6}" stroke="#bbb" stroke-width="1"/>`);
+        xlabels.push(`<text x="${x}" y="${CBOT + 16}" font-size="9" fill="#999" text-anchor="middle">${label}</text>`);
+      }
+    }
+  });
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="lineGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${H}">
+        <stop offset="${(zeroY / H - 0.0001).toFixed(4)}" stop-color="#6b3410"/>
+        <stop offset="${(zeroY / H + 0.0001).toFixed(4)}" stop-color="#f0b04a"/>
+      </linearGradient>
+    </defs>
+    <line x1="10" y1="${zeroY.toFixed(1)}" x2="${(W - 10).toFixed(1)}" y2="${zeroY.toFixed(1)}"
+          stroke="#c9b890" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="10" y1="${CBOT + 2}" x2="${(W - 10).toFixed(1)}" y2="${CBOT + 2}"
+          stroke="#ddd" stroke-width="1"/>
+    ${ticks.join('')}
+    ${xlabels.join('')}
+    <polyline points="${points}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linejoin="round"/>`;
+}
+
+document.getElementById('team-select').addEventListener('change', e => loadTeam(e.target.value));
+document.getElementById('season-select').addEventListener('change', renderTeamTable);
+document.getElementById('date-type-select').addEventListener('change', renderTeamTable);
+document.getElementById('scope-select').addEventListener('change', renderTeamTable);
+
+// ── CFP Champions ────────────────────────────────────────────────────────────
+let championsData = null;
+
+async function loadChampions() {
+  try {
+    const res = await fetch(`${BASE}/champions.json`);
+    championsData = await res.json();
+    renderChampions();
+  } catch(e) {
+    document.getElementById('history-table-wrap').innerHTML = `<p class="error">Could not load champions.</p>`;
+  }
+}
+
+function renderChampions() {
+  if (!championsData) return;
+  const entries = championsData['CFB'] || [];
+  if (!entries.length) {
+    document.getElementById('history-table-wrap').innerHTML = `<p class="loading">No champions data.</p>`;
+    return;
+  }
+
+  function teamCell(t, bg) {
+    if (!t) return `<td class="${bg}" colspan="5">—</td>`;
+    const rating  = t.rating != null ? t.rating.toFixed(2) : '—';
+    const rating2 = fmtHottake(t.rating2, t.rank2);
+    const rank    = t.rank != null ? `#${t.rank}` : '—';
+    const conf    = t.conference_raw || t.conference || '';
+    const countStr = t.title_count
+      ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.title_count} 🏆)</span>`
+      : t.runner_up_count
+      ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.runner_up_count} 🥈)</span>`
+      : '';
+    return `
+      <td class="${bg} team-cell" style="white-space:nowrap">${t.team}${countStr}<div style="font-size:10px;color:#888;font-weight:400">${conf}</div></td>
+      <td class="${bg} rating-cell" style="font-variant-numeric:tabular-nums">${rating}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;color:#888;font-size:0.85em">${rank}</td>
+      <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#a44">${rating2}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>`;
+  }
+
+  const rows = entries.map(e => `<tr>
+    <td class="season-cell" style="line-height:1.3">${e.season}</td>
+    ${teamCell(e.champion,  'col-champ')}
+    <td class="divider-col" style="text-align:center;font-size:11px;font-weight:600;white-space:nowrap;width:64px;padding:2px 4px;line-height:1.3">
+      ${e.final_score || ''}
+    </td>
+    ${teamCell(e.runner_up, 'col-ru')}
+  </tr>`).join('');
+
+  document.getElementById('history-table-wrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Season</th>
+        <th class="col-champ">Champion</th>
+        <th class="col-champ">REACT</th>
+        <th class="col-champ col-hide-mobile">Rank</th>
+        <th class="col-champ col-hide-mobile">HOTTAKE</th>
+        <th class="col-champ col-hide-mobile">W-L</th>
+        <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
+        <th class="col-ru">Runner-Up</th>
+        <th class="col-ru">REACT</th>
+        <th class="col-ru col-hide-mobile">Rank</th>
+        <th class="col-ru col-hide-mobile">HOTTAKE</th>
+        <th class="col-ru col-hide-mobile">W-L</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── GOAT Table ────────────────────────────────────────────────────────────────
+async function loadGoat() {
+  try {
+    const res = await fetch(`${BASE}/goat_teams.json`);
+    goatData = await res.json();
+    renderGoat();
+  } catch(e) {
+    document.getElementById('goat-table-wrap').innerHTML = `<p class="error">Could not load GOAT table.</p>`;
+  }
+}
+
+function renderGoat() {
+  let displayRank = 1;
+  const rows = goatData.map(t => `<tr>
+    <td class="rank-cell">${displayRank++}</td>
+    <td style="text-align:center">${t.season}</td>
+    <td class="team-cell">${t.team}</td>
+    <td class="col-hide-mobile" style="font-size:11px;color:#888">${t.conference_raw || t.conference || ''}</td>
+    <td>${ratingBar(t.rating)}</td>
+    <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
+    <td class="col-hide-mobile" style="font-size:11px">${finishBadge(t.cfp_status, t.cfp_appearance)}</td>
+  </tr>`).join('');
+
+  document.getElementById('goat-table-wrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th style="text-align:center">All time rank</th>
+        <th style="text-align:center">Season</th>
+        <th>Team</th>
+        <th class="col-hide-mobile">Conf</th>
+        <th>REACT</th>
+        <th class="col-hide-mobile">W-L</th>
+        <th class="col-hide-mobile">Honors</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+buildConfPills();
+initStandings();
+loadTeamsIndex();
+loadChampions();
+loadGoat();
+</script>
+</body>
+</html>

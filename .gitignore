@@ -1,0 +1,8 @@
+.DS_Store
+.swp
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+Backup*/
+*.bak
+*.bak2

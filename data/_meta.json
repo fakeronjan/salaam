@@ -1,0 +1,381 @@
+{
+  "runs": [
+    {
+      "run_at": "2026-05-08T03:23:30",
+      "years": [
+        1980,
+        2025
+      ],
+      "updates": {
+        "games_1980": {
+          "count": 816,
+          "fetched_at": "2026-05-08T03:21:44"
+        },
+        "teams_1980": {
+          "count": 138,
+          "fetched_at": "2026-05-08T03:21:44"
+        },
+        "games_1981": {
+          "count": 804,
+          "fetched_at": "2026-05-08T03:21:46"
+        },
+        "teams_1981": {
+          "count": 137,
+          "fetched_at": "2026-05-08T03:21:46"
+        },
+        "games_1982": {
+          "count": 687,
+          "fetched_at": "2026-05-08T03:21:48"
+        },
+        "teams_1982": {
+          "count": 113,
+          "fetched_at": "2026-05-08T03:21:48"
+        },
+        "games_1983": {
+          "count": 696,
+          "fetched_at": "2026-05-08T03:21:50"
+        },
+        "teams_1983": {
+          "count": 112,
+          "fetched_at": "2026-05-08T03:21:51"
+        },
+        "games_1984": {
+          "count": 676,
+          "fetched_at": "2026-05-08T03:21:52"
+        },
+        "teams_1984": {
+          "count": 110,
+          "fetched_at": "2026-05-08T03:21:53"
+        },
+        "games_1985": {
+          "count": 673,
+          "fetched_at": "2026-05-08T03:21:54"
+        },
+        "teams_1985": {
+          "count": 110,
+          "fetched_at": "2026-05-08T03:21:55"
+        },
+        "games_1986": {
+          "count": 637,
+          "fetched_at": "2026-05-08T03:21:56"
+        },
+        "teams_1986": {
+          "count": 105,
+          "fetched_at": "2026-05-08T03:21:57"
+        },
+        "games_1987": {
+          "count": 633,
+          "fetched_at": "2026-05-08T03:21:59"
+        },
+        "teams_1987": {
+          "count": 104,
+          "fetched_at": "2026-05-08T03:21:59"
+        },
+        "games_1988": {
+          "count": 636,
+          "fetched_at": "2026-05-08T03:22:01"
+        },
+        "teams_1988": {
+          "count": 105,
+          "fetched_at": "2026-05-08T03:22:02"
+        },
+        "games_1989": {
+          "count": 632,
+          "fetched_at": "2026-05-08T03:22:03"
+        },
+        "teams_1989": {
+          "count": 106,
+          "fetched_at": "2026-05-08T03:22:04"
+        },
+        "games_1990": {
+          "count": 646,
+          "fetched_at": "2026-05-08T03:22:05"
+        },
+        "teams_1990": {
+          "count": 107,
+          "fetched_at": "2026-05-08T03:22:06"
+        },
+        "games_1991": {
+          "count": 639,
+          "fetched_at": "2026-05-08T03:22:07"
+        },
+        "teams_1991": {
+          "count": 107,
+          "fetched_at": "2026-05-08T03:22:08"
+        },
+        "games_1992": {
+          "count": 637,
+          "fetched_at": "2026-05-08T03:22:10"
+        },
+        "teams_1992": {
+          "count": 107,
+          "fetched_at": "2026-05-08T03:22:10"
+        },
+        "games_1993": {
+          "count": 632,
+          "fetched_at": "2026-05-08T03:22:12"
+        },
+        "teams_1993": {
+          "count": 106,
+          "fetched_at": "2026-05-08T03:22:12"
+        },
+        "games_1994": {
+          "count": 636,
+          "fetched_at": "2026-05-08T03:22:14"
+        },
+        "teams_1994": {
+          "count": 107,
+          "fetched_at": "2026-05-08T03:22:14"
+        },
+        "games_1995": {
+          "count": 640,
+          "fetched_at": "2026-05-08T03:22:16"
+        },
+        "teams_1995": {
+          "count": 108,
+          "fetched_at": "2026-05-08T03:22:16"
+        },
+        "games_1996": {
+          "count": 662,
+          "fetched_at": "2026-05-08T03:22:18"
+        },
+        "teams_1996": {
+          "count": 111,
+          "fetched_at": "2026-05-08T03:22:19"
+        },
+        "games_1997": {
+          "count": 666,
+          "fetched_at": "2026-05-08T03:22:20"
+        },
+        "teams_1997": {
+          "count": 112,
+          "fetched_at": "2026-05-08T03:22:21"
+        },
+        "games_1998": {
+          "count": 674,
+          "fetched_at": "2026-05-08T03:22:23"
+        },
+        "teams_1998": {
+          "count": 112,
+          "fetched_at": "2026-05-08T03:22:25"
+        },
+        "games_1999": {
+          "count": 686,
+          "fetched_at": "2026-05-08T03:22:26"
+        },
+        "teams_1999": {
+          "count": 114,
+          "fetched_at": "2026-05-08T03:22:27"
+        },
+        "games_2000": {
+          "count": 702,
+          "fetched_at": "2026-05-08T03:22:29"
+        },
+        "teams_2000": {
+          "count": 116,
+          "fetched_at": "2026-05-08T03:22:29"
+        },
+        "games_2001": {
+          "count": 709,
+          "fetched_at": "2026-05-08T03:22:31"
+        },
+        "teams_2001": {
+          "count": 117,
+          "fetched_at": "2026-05-08T03:22:31"
+        },
+        "games_2002": {
+          "count": 772,
+          "fetched_at": "2026-05-08T03:22:33"
+        },
+        "teams_2002": {
+          "count": 117,
+          "fetched_at": "2026-05-08T03:22:34"
+        },
+        "games_2003": {
+          "count": 771,
+          "fetched_at": "2026-05-08T03:22:35"
+        },
+        "teams_2003": {
+          "count": 117,
+          "fetched_at": "2026-05-08T03:22:36"
+        },
+        "games_2004": {
+          "count": 721,
+          "fetched_at": "2026-05-08T03:22:37"
+        },
+        "teams_2004": {
+          "count": 118,
+          "fetched_at": "2026-05-08T03:22:38"
+        },
+        "games_2005": {
+          "count": 718,
+          "fetched_at": "2026-05-08T03:22:40"
+        },
+        "teams_2005": {
+          "count": 119,
+          "fetched_at": "2026-05-08T03:22:41"
+        },
+        "games_2006": {
+          "count": 792,
+          "fetched_at": "2026-05-08T03:22:43"
+        },
+        "teams_2006": {
+          "count": 119,
+          "fetched_at": "2026-05-08T03:22:43"
+        },
+        "games_2007": {
+          "count": 798,
+          "fetched_at": "2026-05-08T03:22:45"
+        },
+        "teams_2007": {
+          "count": 120,
+          "fetched_at": "2026-05-08T03:22:46"
+        },
+        "games_2008": {
+          "count": 805,
+          "fetched_at": "2026-05-08T03:22:47"
+        },
+        "teams_2008": {
+          "count": 120,
+          "fetched_at": "2026-05-08T03:22:48"
+        },
+        "games_2009": {
+          "count": 808,
+          "fetched_at": "2026-05-08T03:22:50"
+        },
+        "teams_2009": {
+          "count": 120,
+          "fetched_at": "2026-05-08T03:22:50"
+        },
+        "games_2010": {
+          "count": 808,
+          "fetched_at": "2026-05-08T03:22:52"
+        },
+        "teams_2010": {
+          "count": 120,
+          "fetched_at": "2026-05-08T03:22:53"
+        },
+        "games_2011": {
+          "count": 812,
+          "fetched_at": "2026-05-08T03:22:54"
+        },
+        "teams_2011": {
+          "count": 120,
+          "fetched_at": "2026-05-08T03:22:55"
+        },
+        "games_2012": {
+          "count": 840,
+          "fetched_at": "2026-05-08T03:22:57"
+        },
+        "teams_2012": {
+          "count": 124,
+          "fetched_at": "2026-05-08T03:22:57"
+        },
+        "games_2013": {
+          "count": 848,
+          "fetched_at": "2026-05-08T03:22:59"
+        },
+        "teams_2013": {
+          "count": 125,
+          "fetched_at": "2026-05-08T03:23:00"
+        },
+        "games_2014": {
+          "count": 868,
+          "fetched_at": "2026-05-08T03:23:02"
+        },
+        "teams_2014": {
+          "count": 128,
+          "fetched_at": "2026-05-08T03:23:03"
+        },
+        "games_2015": {
+          "count": 870,
+          "fetched_at": "2026-05-08T03:23:04"
+        },
+        "teams_2015": {
+          "count": 128,
+          "fetched_at": "2026-05-08T03:23:05"
+        },
+        "games_2016": {
+          "count": 873,
+          "fetched_at": "2026-05-08T03:23:07"
+        },
+        "teams_2016": {
+          "count": 128,
+          "fetched_at": "2026-05-08T03:23:07"
+        },
+        "games_2017": {
+          "count": 874,
+          "fetched_at": "2026-05-08T03:23:09"
+        },
+        "teams_2017": {
+          "count": 130,
+          "fetched_at": "2026-05-08T03:23:10"
+        },
+        "games_2018": {
+          "count": 884,
+          "fetched_at": "2026-05-08T03:23:11"
+        },
+        "teams_2018": {
+          "count": 130,
+          "fetched_at": "2026-05-08T03:23:12"
+        },
+        "games_2019": {
+          "count": 888,
+          "fetched_at": "2026-05-08T03:23:14"
+        },
+        "teams_2019": {
+          "count": 130,
+          "fetched_at": "2026-05-08T03:23:14"
+        },
+        "games_2020": {
+          "count": 568,
+          "fetched_at": "2026-05-08T03:23:16"
+        },
+        "teams_2020": {
+          "count": 130,
+          "fetched_at": "2026-05-08T03:23:17"
+        },
+        "games_2021": {
+          "count": 887,
+          "fetched_at": "2026-05-08T03:23:18"
+        },
+        "teams_2021": {
+          "count": 130,
+          "fetched_at": "2026-05-08T03:23:19"
+        },
+        "games_2022": {
+          "count": 896,
+          "fetched_at": "2026-05-08T03:23:21"
+        },
+        "teams_2022": {
+          "count": 131,
+          "fetched_at": "2026-05-08T03:23:22"
+        },
+        "games_2023": {
+          "count": 910,
+          "fetched_at": "2026-05-08T03:23:24"
+        },
+        "teams_2023": {
+          "count": 133,
+          "fetched_at": "2026-05-08T03:23:24"
+        },
+        "games_2024": {
+          "count": 920,
+          "fetched_at": "2026-05-08T03:23:26"
+        },
+        "teams_2024": {
+          "count": 134,
+          "fetched_at": "2026-05-08T03:23:27"
+        },
+        "games_2025": {
+          "count": 934,
+          "fetched_at": "2026-05-08T03:23:29"
+        },
+        "teams_2025": {
+          "count": 136,
+          "fetched_at": "2026-05-08T03:23:30"
+        }
+      }
+    }
+  ]
+}

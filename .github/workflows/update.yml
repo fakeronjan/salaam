@@ -1,0 +1,50 @@
+name: Update SALAAM Ratings
+
+on:
+  schedule:
+    - cron: '33 15 * * *'   # 15:33 UTC daily — staggered 14 min after DILLON's 15:19
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+permissions:
+  contents: write           # needed for git push
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install cython numpy
+          pip install --no-build-isolation -r requirements.txt
+
+      - name: Fetch latest CFB data
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+        run: python fetch_data.py
+
+      - name: Run ratings engine
+        run: python salaam.py
+
+      - name: Generate web data
+        run: python generate_data.py
+
+      - name: Commit and push updated data
+        run: |
+          git config user.name  "SALAAM Bot"
+          git config user.email "salaam-bot@users.noreply.github.com"
+          git add data/ all_NCAA_games.csv salaam_react_ratings.csv salaam_hottake_ratings.csv weekly_standings.csv salaam_ratings_with_standings.csv docs/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update ratings $(date -u '+%Y-%m-%d')"
+            git push
+          fi
