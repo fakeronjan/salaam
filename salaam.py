@@ -133,9 +133,14 @@ def prepare_game_data(raw_df):
 
     # Step 1: Conference Championship detection. Catch them across all
     # CFBD classifications (postseason w/o notes, regular w/ neutral site).
+    # CCG window: Nov 28 → Dec 20. The Dec 20 cutoff is intentionally generous
+    # to catch COVID-shifted dates (2020 Big 12 CCG was Dec 19) and any future
+    # year-end-week scheduling. Bowls and CFP First Round happen in this same
+    # window, but they're inter-conference, so the same-conf filter below
+    # excludes them.
     in_ccg_window = (
         ((df['date'].dt.month == 11) & (df['date'].dt.day >= 28))
-        | ((df['date'].dt.month == 12) & (df['date'].dt.day <= 12))
+        | ((df['date'].dt.month == 12) & (df['date'].dt.day <= 20))
     )
     notes_lower      = df['notes'].fillna('').str.lower()
     has_champ_note   = notes_lower.str.contains('championship', regex=False)

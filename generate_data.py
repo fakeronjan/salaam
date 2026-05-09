@@ -232,9 +232,13 @@ def _detect_title_game(year_games, members):
         date_str = (g.get('startDate') or '')[:10]
         if not date_str:
             continue
-        # CCG window: Nov 15 → Dec 14 (inclusive). Anything later is a bowl/CFP/BCS title.
+        # CCG window: Nov 15 → Dec 20 (inclusive). The Dec 20 cutoff catches
+        # COVID-shifted dates (2020 Big 12 CCG was Dec 19) and any future year
+        # where weather or scheduling pushes a CCG late. Bowls + CFP First
+        # Round happen in this window too, but they're inter-conference so
+        # the same-conf members filter excludes them.
         month_day = date_str[5:10]
-        if not ('11-15' <= month_day <= '12-14'):
+        if not ('11-15' <= month_day <= '12-20'):
             continue
         cands.append((date_str, g))
     if cands:
@@ -548,7 +552,23 @@ with open(OUT_DIR / 'current_standings.json', 'w') as f:
 # ── 2. GOAT table ─────────────────────────────────────────────────────────────
 print('Writing goat_teams.json...')
 eos_all = df[df['season_flag'] == 2].copy()
-eos_top = eos_all.sort_values('rating', ascending=False).head(50).reset_index(drop=True)
+
+# Trophy gate: a team must have actually WON something — either their
+# conference championship, or some share of the national championship —
+# to qualify for the all-time list. Mirrors ZIDANE's "League or CL win"
+# eligibility rule. Cleans up the COVID-2020 cluster (Iowa State, Buffalo,
+# Ball State, etc. ranked high but didn't win anything; excluded). Teams
+# that did win something in 2020 (Alabama, Oklahoma) stay — the COVID
+# inline tag still flags them on each row.
+def _qualifies_for_goat(row):
+    if cfp_status(row['name'], row['season']) == 2:   # national champion (CFP/BCS/AP/Coaches)
+        return True
+    if conf_champ(row['name'], row['season']):        # conference champion
+        return True
+    return False
+
+eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
+eos_top = eos_qualified.sort_values('rating', ascending=False).head(50).reset_index(drop=True)
 
 goat_data = []
 for i, (_, r) in enumerate(eos_top.iterrows()):
