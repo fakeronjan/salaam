@@ -464,7 +464,7 @@ async function initStandings() {
     if (meta.generated_at) {
       const refreshed = new Date(meta.generated_at);
       document.getElementById('last-refreshed').textContent =
-        `Last refreshed: ${refreshed.toLocaleString(undefined, {dateStyle:'short', timeStyle:'short', timeZoneName:'short'})}`;
+        `Last refreshed: ${refreshed.toLocaleString(undefined, {year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'2-digit', timeZoneName:'short'})}`;
     }
     const sel = document.getElementById('season-filter');
     meta.seasons.forEach(s => {
