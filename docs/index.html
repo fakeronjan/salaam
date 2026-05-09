@@ -452,7 +452,7 @@ document.querySelectorAll('nav button').forEach(btn => {
 // ── Standings ────────────────────────────────────────────────────────────────
 function fmtDate(ds) {
   const d = new Date(ds + 'T00:00:00');
-  return d.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+  return d.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric'});
 }
 
 async function initStandings() {
