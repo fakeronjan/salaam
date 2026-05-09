@@ -441,18 +441,21 @@ def conf_rank(team, ranking_id):
     return conf_rank_map.get((team, int(ranking_id)))
 
 
-# Per-team forward-filled last game
+# Per-(team, season) forward-filled last game. Keying by season prevents
+# cross-season carry-forward — at the start of a new season, teams that
+# haven't played yet correctly show empty rather than their previous-season
+# bowl/playoff result.
 _last_game_history = {}
-for team, tdf in df[df['is_game_day'] == 1].sort_values('season_week').groupby('name'):
-    _last_game_history[team] = (
+for (team, season), tdf in df[df['is_game_day'] == 1].sort_values('season_week').groupby(['name', 'season']):
+    _last_game_history[(team, int(season))] = (
         list(tdf['season_week']),
         list(tdf['lastgame']),
         list(tdf['date']),
     )
 
 
-def last_game_as_of(team, sw):
-    entry = _last_game_history.get(team)
+def last_game_as_of(team, sw, season):
+    entry = _last_game_history.get((team, int(season)))
     if not entry:
         return ''
     sws, games_list, _ = entry
@@ -460,8 +463,8 @@ def last_game_as_of(team, sw):
     return games_list[idx] if idx >= 0 else ''
 
 
-def last_game_date_as_of(team, sw):
-    entry = _last_game_history.get(team)
+def last_game_date_as_of(team, sw, season):
+    entry = _last_game_history.get((team, int(season)))
     if not entry:
         return ''
     sws, _, dates = entry
@@ -537,7 +540,7 @@ standings_data = {
             'conference_raw':  conf_raw(r['name'], r['season']),
             'rating':          round(float(r['rating']), 3),
             'record':          clean(r['record']),
-            'last_match':      clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(r['name'], r['season_week']),
+            'last_match':      clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(r['name'], r['season_week'], r['season']),
             'cfp_status':       cfp_status(r['name'], r['season']),
             'cfp_appearance':   cfp_appearance(r['name'], r['season']),
             'champ_era':        champ_era(r['season']),
@@ -644,7 +647,7 @@ for team in all_teams:
                 'record':            clean(r['record']),
                 'regular_record':    reg,
                 'playoff_record':    po,
-                'last_match':        clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(team, r['season_week']),
+                'last_match':        clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(team, r['season_week'], season),
                 'is_end_of_season':  int(r['is_end_of_season']),
                 'season_flag':       int(r['season_flag']),
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
@@ -706,8 +709,8 @@ for season in all_seasons:
                 'record':          clean(r['record']),
                 'regular_record':  reg,
                 'playoff_record':  po,
-                'last_match':      clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw),
-                'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw),
+                'last_match':      clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw, season),
+                'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw, season),
                 'cfp_status':       cfp_status(r['name'], season),
                 'cfp_appearance':   cfp_appearance(r['name'], season),
                 'champ_era':        champ_era(season),
