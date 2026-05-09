@@ -414,6 +414,24 @@ df['is_game_day']      = (df['lastgame'] != 'Bye / No Game').astype(int)
 df['is_end_of_season'] = df['season_flag'].isin([1, 2]).astype(int)
 
 
+# Per-(team, ranking_id) conference rank — position within the team's
+# conference at that snapshot, sorted by overall REACT rank. Lets the
+# Standings / Champions tabs show CONF # alongside OVR # (mirrors ZIDANE).
+print('Computing conference ranks...')
+conf_rank_map = {}
+for ranking_id, group in df.groupby('ranking_id'):
+    season = int(group['season'].iloc[0])
+    counter = {}
+    for _, r in group.sort_values('rank').iterrows():
+        c = conf(r['name'], season)
+        counter[c] = counter.get(c, 0) + 1
+        conf_rank_map[(r['name'], int(ranking_id))] = counter[c]
+
+
+def conf_rank(team, ranking_id):
+    return conf_rank_map.get((team, int(ranking_id)))
+
+
 # Per-team forward-filled last game
 _last_game_history = {}
 for team, tdf in df[df['is_game_day'] == 1].sort_values('season_week').groupby('name'):
@@ -504,6 +522,7 @@ standings_data = {
     'teams': [
         {
             'rank':            int(r['rank']),
+            'conf_rank':       conf_rank(r['name'], r['ranking_id']),
             'team':            r['name'],
             'conference':      conf(r['name'], r['season']),
             'conference_raw':  conf_raw(r['name'], r['season']),
@@ -596,6 +615,7 @@ for team in all_teams:
                 'week_label':        week_label(season, r['week']),
                 'rating':            round(float(r['rating']), 3),
                 'rank':              int(r['rank']),
+                'conf_rank':         conf_rank(team, r['ranking_id']),
                 'record':            clean(r['record']),
                 'regular_record':    reg,
                 'playoff_record':    po,
@@ -653,6 +673,7 @@ for season in all_seasons:
             played_today = r['lastgame'] != 'Bye / No Game'
             teams_snap.append({
                 'rank':            int(r['rank']),
+                'conf_rank':       conf_rank(r['name'], r['ranking_id']),
                 'team':            r['name'],
                 'conference':      conf(r['name'], season),
                 'conference_raw':  conf_raw(r['name'], season),
@@ -708,12 +729,13 @@ def _team_block(team_name, season, sdf, selectors):
     }
     if rows.empty:
         # No rating snapshot available (warm-up window). Surface the team without metrics.
-        base.update({'rating': None, 'rank': None, 'record': '', 'playoff_record': ''})
+        base.update({'rating': None, 'rank': None, 'conf_rank': None, 'record': '', 'playoff_record': ''})
         return base
     r = rows.iloc[0]
     base.update({
         'rating':         round(float(r['rating']), 3),
         'rank':           int(r['rank']),
+        'conf_rank':      conf_rank(team_name, r['ranking_id']),
         'record':         clean(r['record']),
         'playoff_record': playoff_record(r['record'], reg),
     })

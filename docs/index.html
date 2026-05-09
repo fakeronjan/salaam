@@ -239,7 +239,7 @@
 <nav>
   <button class="active" data-tab="standings">Standings</button>
   <button data-tab="team-summary">Team Summary</button>
-  <button data-tab="league-history">Champions</button>
+  <button data-tab="league-history">National Champions</button>
   <button data-tab="goat">GOAT Table</button>
 </nav>
 
@@ -506,6 +506,7 @@ function renderStandings() {
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
     <td>${ratingBar(t.rating)}</td>
     <td class="rank-cell">${t.rank}</td>
+    <td class="rank-cell col-hide-mobile" style="color:#aaa">${t.conf_rank != null ? '#' + t.conf_rank : '—'}</td>
     <td class="last-match-cell">
       <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
     </td>
@@ -523,7 +524,8 @@ function renderStandings() {
         <th class="col-hide-mobile">Conf</th>
         <th>W-L</th>
         <th>REACT</th>
-        <th>Rank</th>
+        <th>OVR #</th>
+        <th class="col-hide-mobile">CONF #</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
@@ -729,64 +731,58 @@ function renderChampions() {
     return;
   }
 
-  // Render one team's content (no <td> wrapper). Used both for the primary
-  // champion and for a stacked co-champion in the same cell.
-  function teamContent(t) {
-    if (!t) return '<span style="color:#999">—</span>';
-    const rating  = t.rating != null ? t.rating.toFixed(2) : '—';
-    const rank    = t.rank   != null ? `#${t.rank}` : '—';
-    const conf    = confBadge(t.conference_raw || t.conference, !!t.conference_champ);
-    const sel     = (t.selectors && t.selectors.length) ? t.selectors.join('+') : '';
-    const selTag  = sel ? `<span class="finish-badge finish-champion" style="margin-left:4px">${sel} 👑</span>` : '';
-    const countStr = t.title_count
+  // Build a stacked cell that shows champion's value on top + co_champion below
+  // (for split years). Returns inner HTML of one cell.
+  function stackedLines(primaryHtml, coHtml) {
+    if (!coHtml) return primaryHtml;
+    return `${primaryHtml}<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #d8d8d8">${coHtml}</div>`;
+  }
+
+  // Per-line renderers — each returns a small fragment for one team
+  function teamLine(t) {
+    const sel    = (t.selectors && t.selectors.length) ? t.selectors.join('+') : '';
+    const selTag = sel ? `<span class="finish-badge finish-champion" style="margin-left:4px">${sel} 👑</span>` : '';
+    const conf   = confBadge(t.conference_raw || t.conference, !!t.conference_champ);
+    const cnt    = t.title_count
       ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.title_count} 👑)</span>`
       : t.runner_up_count
       ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.runner_up_count} 🥈)</span>`
       : '';
-    const ratingLine = `<div style="font-size:11px;color:#666;margin-top:2px">REACT ${rating} <span style="color:#999;font-size:0.9em">${rank}</span></div>`;
-    return `<div style="font-weight:600">${t.team}${selTag}${countStr}</div>
-            <div style="margin-top:3px">${conf}</div>${ratingLine}`;
+    return `<div style="font-weight:600">${t.team}${selTag}${cnt}</div>
+            <div style="margin-top:3px">${conf}</div>`;
   }
+  function ovrLine(t)    { return t.rank      != null ? `#${t.rank}`       : '<span style="color:#bbb">—</span>'; }
+  function confLine(t)   { return t.conf_rank != null ? `#${t.conf_rank}`  : '<span style="color:#bbb">—</span>'; }
+  function reactLine(t)  { return t.rating    != null ? t.rating.toFixed(2) : '<span style="color:#bbb">—</span>'; }
+  function wlLine(t)     { return fmtRecordStacked(t.regular_record, t.playoff_record); }
 
-  // For champion column: stack co_champion below if present
-  function championCell(e, bg) {
-    const primary = teamContent(e.champion);
-    const co = e.co_champion
-      ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #d8d8d8">${teamContent(e.co_champion)}</div>`
-      : '';
-    const wlBlock = `<div style="font-size:11px;color:#666;font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordStacked(e.champion.regular_record, e.champion.playoff_record)}</div>`;
-    const wlBlockCo = e.co_champion
-      ? `<div style="font-size:11px;color:#666;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:8px;padding-top:8px;border-top:1px dashed #d8d8d8">${fmtRecordStacked(e.co_champion.regular_record, e.co_champion.playoff_record)}</div>`
-      : '';
+  // Build a 5-cell side (team / OVR # / CONF # / REACT / W-L), stacking
+  // co_champion below primary in each cell when present.
+  function teamSide(primary, co, bg) {
+    if (!primary) {
+      // Runner-up missing (poll era): collapse all 5 cells into one "—"
+      return `<td class="${bg}" style="color:#999;text-align:center" colspan="5">—</td>`;
+    }
+    const teamCellInner   = stackedLines(teamLine(primary),   co ? teamLine(co)   : null);
+    const ovrCellInner    = stackedLines(ovrLine(primary),    co ? ovrLine(co)    : null);
+    const confCellInner   = stackedLines(confLine(primary),   co ? confLine(co)   : null);
+    const reactCellInner  = stackedLines(reactLine(primary),  co ? reactLine(co)  : null);
+    const wlCellInner     = stackedLines(wlLine(primary),     co ? wlLine(co)     : null);
     return `
-      <td class="${bg} team-cell" style="white-space:nowrap">${primary}${co}</td>
-      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:top">${wlBlock}${wlBlockCo}</td>`;
-  }
-
-  function ruCell(t, bg) {
-    if (!t) return `<td class="${bg} col-hide-mobile" style="color:#999;text-align:center" colspan="2">—</td>`;
-    const rating  = t.rating != null ? t.rating.toFixed(2) : '—';
-    const rank    = t.rank   != null ? `#${t.rank}` : '—';
-    const conf    = confBadge(t.conference_raw || t.conference, !!t.conference_champ);
-    const countStr = t.runner_up_count
-      ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.runner_up_count} 🥈)</span>`
-      : '';
-    const ratingLine = `<div style="font-size:11px;color:#666;margin-top:2px">REACT ${rating} <span style="color:#999;font-size:0.9em">${rank}</span></div>`;
-    return `
-      <td class="${bg} team-cell" style="white-space:nowrap">
-        <div style="font-weight:600">${t.team}${countStr}</div>
-        <div style="margin-top:3px">${conf}</div>${ratingLine}
-      </td>
-      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:top">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>`;
+      <td class="${bg} team-cell" style="white-space:nowrap;vertical-align:top">${teamCellInner}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#888;font-size:0.9em;vertical-align:top">${ovrCellInner}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#aaa;font-size:0.9em;vertical-align:top">${confCellInner}</td>
+      <td class="${bg} rating-cell" style="font-variant-numeric:tabular-nums;vertical-align:top">${reactCellInner}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:top">${wlCellInner}</td>`;
   }
 
   const rows = entries.map(e => `<tr>
     <td class="season-cell" style="line-height:1.3;vertical-align:top">${e.season}${e.era ? `<div style="font-size:10px;color:#888;font-weight:400">${e.era}</div>` : ''}</td>
-    ${championCell(e, 'col-champ')}
+    ${teamSide(e.champion, e.co_champion, 'col-champ')}
     <td class="divider-col" style="text-align:center;font-size:11px;font-weight:600;white-space:nowrap;width:64px;padding:2px 4px;line-height:1.3;vertical-align:top">
       ${e.final_score || '<span style="color:#bbb">—</span>'}
     </td>
-    ${ruCell(e.runner_up, 'col-ru')}
+    ${teamSide(e.runner_up, null, 'col-ru')}
   </tr>`).join('');
 
   document.getElementById('history-table-wrap').innerHTML = `
@@ -794,9 +790,15 @@ function renderChampions() {
       <thead><tr>
         <th>Season</th>
         <th class="col-champ">Champion</th>
+        <th class="col-champ col-hide-mobile">OVR #</th>
+        <th class="col-champ col-hide-mobile">CONF #</th>
+        <th class="col-champ">REACT</th>
         <th class="col-champ col-hide-mobile">W-L</th>
         <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
         <th class="col-ru">Runner-Up</th>
+        <th class="col-ru col-hide-mobile">OVR #</th>
+        <th class="col-ru col-hide-mobile">CONF #</th>
+        <th class="col-ru">REACT</th>
         <th class="col-ru col-hide-mobile">W-L</th>
       </tr></thead>
       <tbody>${rows}</tbody>
