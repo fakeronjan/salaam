@@ -158,7 +158,7 @@ def prepare_game_data(raw_df):
     post_mask = (df['seasonType'] == 'postseason') & ~ccg_mask
     if post_mask.any():
         def postseason_tier(notes):
-            n = (notes or '').lower()
+            n = '' if not isinstance(notes, str) else notes.lower()
             if 'national championship' in n or 'bcs championship' in n:
                 return 4
             if 'semifinal' in n:
