@@ -618,8 +618,8 @@ function renderTeamTable() {
       <span class="${resultClass(g.last_match)}">${g.last_match || '—'}</span>
     </td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
-    <td>${ratingBar(g.rating)}</td>
     <td class="rank-cell">${g.rank}</td>
+    <td>${ratingBar(g.rating)}</td>
     <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
     <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance, g.champ_era, g.title_selectors)}</td>
   </tr>`;
@@ -630,8 +630,8 @@ function renderTeamTable() {
       <thead><tr>
         <th>Date</th><th>Season · Week</th><th>Last Game</th>
         <th>W-L</th>
-        <th>REACT</th>
         <th>Rank</th>
+        <th>REACT</th>
         <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
