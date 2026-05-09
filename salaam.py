@@ -365,16 +365,34 @@ def assemble_final(master_df, react_df, standings_df):
                 'season_flag'
             ] = 2
 
-    # Last game info per (season, week, team)
-    lastgamew = master_df[['season', 'week', 'winner', 'winner_last_game', 'loser']].rename(columns={'winner': 'name'})
-    lastgamel = master_df[['season', 'week', 'loser',  'loser_last_game',  'winner']].rename(columns={'loser':  'name'})
+    # Last game info per (season, week, team). Pre-aggregate so a team that
+    # plays multiple games in the same collapsed postseason week (e.g.,
+    # 1996 Florida won SEC Championship + Sugar Bowl, both tier-1 here)
+    # produces ONE row in the merge — joining their game strings with ' · '
+    # — instead of duplicating the whole standings row downstream.
+    _SEP = ' · '
+    lastgamew = (master_df[['season', 'week', 'winner', 'winner_last_game', 'loser']]
+                 .rename(columns={'winner': 'name'})
+                 .groupby(['season', 'week', 'name'], as_index=False)
+                 .agg({'winner_last_game': lambda s: _SEP.join(s),
+                       'loser':            lambda s: _SEP.join(s)}))
+    lastgamel = (master_df[['season', 'week', 'loser', 'loser_last_game', 'winner']]
+                 .rename(columns={'loser': 'name'})
+                 .groupby(['season', 'week', 'name'], as_index=False)
+                 .agg({'loser_last_game': lambda s: _SEP.join(s),
+                       'winner':          lambda s: _SEP.join(s)}))
     final_df = final_df.merge(lastgamew, how='left', on=['season', 'week', 'name'])
     final_df = final_df.merge(lastgamel, how='left', on=['season', 'week', 'name'])
 
     for col in ['winner_last_game', 'loser_last_game', 'winner', 'loser']:
         final_df[col] = final_df[col].fillna('')
 
-    final_df['lastgame'] = (final_df['winner_last_game'] + final_df['loser_last_game']).replace('', 'Bye / No Game')
+    # Combine winner-side + loser-side strings; insert separator between them
+    # only when both exist (otherwise we'd get ' · L 0-3 vs X' or 'W 7-3 vs Y · ').
+    final_df['lastgame'] = final_df.apply(
+        lambda r: _SEP.join(p for p in [r['winner_last_game'], r['loser_last_game']] if p) or 'Bye / No Game',
+        axis=1,
+    )
     final_df['opponent'] = final_df['loser'] + final_df['winner']
 
     final_df = final_df[final_df['record'] != '0-0']
