@@ -2,7 +2,7 @@ name: Update SALAAM Ratings
 
 on:
   schedule:
-    - cron: '33 15 * * *'   # 15:33 UTC daily — staggered 14 min after DILLON's 15:19
+    - cron: '13 16 * * *'   # 16:13 UTC daily — staggered +20 min after DILLON; CFBD API (separate source from sports-reference)
   workflow_dispatch:        # allow manual trigger from GitHub UI
 
 permissions:
