@@ -154,24 +154,100 @@ POSTSEASON_LABELS = {
     104: 'National Championship',
 }
 
+# Conferences we attribute champions for — both modern P5 buckets and their
+# historical predecessors (Big 8 → Big 12, Pac-10 → Pac-12), plus Big East and
+# the dissolved Southwest Conference.
+HISTORICAL_P5 = {'ACC', 'Big Ten', 'Big 12', 'Big 8', 'Pac-10', 'Pac-12',
+                 'SEC', 'Big East', 'Southwest'}
+
+
+def _conf_record_champions(year_games, members):
+    """Compute team(s) with the best regular-season conference record. Returns
+    list (multiple = ties / co-champions). Min 4 conf games to count."""
+    record = {team: {'w': 0, 'l': 0, 't': 0} for team in members}
+    for g in year_games:
+        if not g.get('conferenceGame') or g.get('seasonType') != 'regular' or not g.get('completed'):
+            continue
+        h, a = g['homeTeam'], g['awayTeam']
+        if h not in members or a not in members:
+            continue
+        hp, ap = g.get('homePoints'), g.get('awayPoints')
+        if hp is None or ap is None:
+            continue
+        if hp > ap:   record[h]['w'] += 1; record[a]['l'] += 1
+        elif hp < ap: record[a]['w'] += 1; record[h]['l'] += 1
+        else:         record[h]['t'] += 1; record[a]['t'] += 1
+
+    def wp(r):
+        n = r['w'] + r['l'] + r['t']
+        return -1.0 if n < 4 else (r['w'] + 0.5 * r['t']) / n
+
+    if not record:
+        return []
+    best = max(wp(r) for r in record.values())
+    if best <= 0:
+        return []
+    return sorted([t for t, r in record.items() if wp(r) == best])
+
+
+def _detect_title_game(year_games, members):
+    """Return the title-game winner if a championship game can be identified.
+    Layered detection:
+      1) Game notes contain "championship" (CFBD has these for 2022+).
+      2) Late-season (week >= 13) neutral-site game between two members
+         (catches most 2003-2021 title games).
+    Returns team name (string) or None."""
+    # CFBD notes
+    for g in year_games:
+        if g.get('seasonType') != 'regular' or not g.get('completed'):
+            continue
+        if g.get('homeTeam') not in members or g.get('awayTeam') not in members:
+            continue
+        notes = (g.get('notes') or '').lower()
+        if 'championship' not in notes:
+            continue
+        hp, ap = g.get('homePoints'), g.get('awayPoints')
+        if hp is None or ap is None:
+            continue
+        return g['homeTeam'] if hp >= ap else g['awayTeam']
+
+    # Neutral-site heuristic
+    cands = [g for g in year_games
+             if g.get('seasonType') == 'regular' and g.get('completed')
+             and g.get('neutralSite') and g.get('conferenceGame')
+             and g.get('homeTeam') in members and g.get('awayTeam') in members
+             and g.get('week', 0) >= 13
+             and g.get('homePoints') is not None
+             and g.get('awayPoints') is not None]
+    if cands:
+        cands.sort(key=lambda g: g.get('week', 0))
+        g = cands[-1]
+        return g['homeTeam'] if g['homePoints'] >= g['awayPoints'] else g['awayTeam']
+
+    return None
+
+
 for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
     year = int(f.stem.split('_')[1])
     raw = json.loads(f.read_text())
 
-    # Conference championships from regular-season games tagged "championship".
-    # Each conference has at most one championship game per year — winner = champ.
-    reg = [g for g in raw if g.get('seasonType') == 'regular' and g.get('completed')
-           and g.get('homeClassification') == 'fbs' and g.get('awayClassification') == 'fbs']
-    for g in reg:
-        notes = (g.get('notes') or '').lower()
-        if 'championship' not in notes:
-            continue
-        # Winner of the championship game = conference champion
-        if g['homePoints'] is None or g['awayPoints'] is None:
-            continue
-        winner = g['homeTeam'] if g['homePoints'] >= g['awayPoints'] else g['awayTeam']
-        # Tag with the team's actual conference for this season (resolved later)
-        conf_champs[(winner, year)] = team_conf_raw.get((winner, year), 'Conference')
+    # Build per-conference team rosters for this year
+    teams_year = json.loads((DATA_DIR / 'teams' / f'teams_{year}.json').read_text())
+    by_conf = {}
+    for t in teams_year:
+        c = t.get('conference')
+        if c in HISTORICAL_P5:
+            by_conf.setdefault(c, set()).add(t['school'])
+
+    for conf_name, members in by_conf.items():
+        title_winner = _detect_title_game(raw, members)
+        if title_winner:
+            # Title game determined — single official champion
+            conf_champs[(title_winner, year)] = conf_name
+        else:
+            # No title game (or pre-CCG era) — best conf record, ties = co-champions
+            for team in _conf_record_champions(raw, members):
+                conf_champs[(team, year)] = conf_name
 
     post = [g for g in raw if g.get('seasonType') == 'postseason' and g.get('completed')]
     if not post or year < CFP_FIRST_SEASON:
