@@ -833,7 +833,6 @@ async function loadGoat() {
 function renderGoat() {
   if (!goatData) return;
   const filtered = goatConf === 'all' ? goatData : goatData.filter(t => t.conference === goatConf);
-  let displayRank = 1;
   // Show top-of-tab COVID note iff there's a 2020 entry visible
   const has2020 = filtered.some(t => t.season === 2020);
   document.getElementById('goat-covid-note').style.display = has2020 ? 'block' : 'none';
@@ -841,7 +840,7 @@ function renderGoat() {
   const rows = filtered.map(t => {
     const covidTag = t.season === 2020 ? `<span class="covid-tag">COVID</span>` : '';
     return `<tr>
-      <td class="rank-cell">${displayRank++}</td>
+      <td class="rank-cell">${t.rank}</td>
       <td style="text-align:center;white-space:nowrap">${t.season}${covidTag}</td>
       <td class="team-cell">${t.team}</td>
       <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
