@@ -21,6 +21,28 @@ OUT_DIR  = Path(__file__).parent / 'docs' / 'data'
 
 CFP_FIRST_SEASON = 2014  # Phase 1 championship attribution starts here
 
+# BCS era (1998-2013). Hardcoded because CFBD only tags "BCS championship" in
+# game notes for 2006+; 1998-2005 used a rotating BCS bowl whose notes just say
+# "Fiesta Bowl" / "Sugar Bowl" / etc. without mentioning BCS championship.
+BCS_CHAMPIONS = {
+    1998: {'champion': 'Tennessee',     'runner_up': 'Florida State', 'final_score': '23-16'},
+    1999: {'champion': 'Florida State', 'runner_up': 'Virginia Tech', 'final_score': '46-29'},
+    2000: {'champion': 'Oklahoma',      'runner_up': 'Florida State', 'final_score': '13-2'},
+    2001: {'champion': 'Miami',         'runner_up': 'Nebraska',      'final_score': '37-14'},
+    2002: {'champion': 'Ohio State',    'runner_up': 'Miami',         'final_score': '31-24'},   # 2OT
+    2003: {'champion': 'LSU',           'runner_up': 'Oklahoma',      'final_score': '21-14'},   # AP gave to USC — handled in Track B (poll era)
+    2004: {'champion': 'USC',           'runner_up': 'Oklahoma',      'final_score': '55-19'},   # vacated by NCAA but still BCS-recorded champion
+    2005: {'champion': 'Texas',         'runner_up': 'USC',           'final_score': '41-38'},
+    2006: {'champion': 'Florida',       'runner_up': 'Ohio State',    'final_score': '41-14'},
+    2007: {'champion': 'LSU',           'runner_up': 'Ohio State',    'final_score': '38-24'},
+    2008: {'champion': 'Florida',       'runner_up': 'Oklahoma',      'final_score': '24-14'},
+    2009: {'champion': 'Alabama',       'runner_up': 'Texas',         'final_score': '37-21'},
+    2010: {'champion': 'Auburn',        'runner_up': 'Oregon',        'final_score': '22-19'},
+    2011: {'champion': 'Alabama',       'runner_up': 'LSU',           'final_score': '21-0'},
+    2012: {'champion': 'Alabama',       'runner_up': 'Notre Dame',    'final_score': '42-14'},
+    2013: {'champion': 'Florida State', 'runner_up': 'Auburn',        'final_score': '34-31'},
+}
+
 # Conference bucketing for the site toggle. 'Big 8' is the Big 12 lineage,
 # 'Pac-10' is the Pac-12 lineage, 'Big East' surfaces only while it existed
 # as a football conference (1991-2012).
@@ -151,6 +173,7 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
             cfp_appearances.add(g['awayTeam'])
 
     cfp_outcomes[year] = {
+        'era':          'CFP',
         'champion':     champ,
         'runner_up':    ru,
         'final_score':  score,
@@ -158,8 +181,21 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
     }
 
 
+# Layer in BCS-era champions from the hardcoded table. CFBD's notes-based
+# detection is unreliable pre-2006 because the BCS title rotated through
+# Fiesta/Sugar/Rose/Orange — those games' notes don't mention "BCS championship".
+for year, info in BCS_CHAMPIONS.items():
+    cfp_outcomes[year] = {
+        'era':          'BCS',
+        'champion':     info['champion'],
+        'runner_up':    info['runner_up'],
+        'final_score':  info['final_score'],
+        'appearances':  set(),  # BCS had no playoff bracket — only the title game
+    }
+
+
 def cfp_status(team, season):
-    """0 = none, 1 = runner-up, 2 = champion."""
+    """0 = none, 1 = runner-up, 2 = champion. Era-agnostic — works for CFP + BCS."""
     out = cfp_outcomes.get(int(season))
     if not out:
         return 0
@@ -175,6 +211,12 @@ def cfp_appearance(team, season):
     if not out:
         return 0
     return 1 if team in out['appearances'] else 0
+
+
+def champ_era(season):
+    """Returns 'CFP', 'BCS', or '' (no champion attribution available)."""
+    out = cfp_outcomes.get(int(season))
+    return out['era'] if out else ''
 
 
 def conf_champ(team, season):
@@ -312,6 +354,7 @@ standings_data = {
             'last_match':      clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(r['name'], r['season_week']),
             'cfp_status':       cfp_status(r['name'], r['season']),
             'cfp_appearance':   cfp_appearance(r['name'], r['season']),
+            'champ_era':        champ_era(r['season']),
             'conference_champ': conf_champ(r['name'], r['season']),
         }
         for _, r in latest.iterrows()
@@ -340,6 +383,7 @@ for i, (_, r) in enumerate(eos_top.iterrows()):
         'playoff_record':  playoff_record(r['record'], reg),
         'cfp_status':       cfp_status(r['name'], r['season']),
         'cfp_appearance':   cfp_appearance(r['name'], r['season']),
+        'champ_era':        champ_era(r['season']),
         'conference_champ': conf_champ(r['name'], r['season']),
     })
 with open(OUT_DIR / 'goat_teams.json', 'w') as f:
@@ -401,6 +445,7 @@ for team in all_teams:
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
                 'cfp_status':        cfp_status(team, season),
                 'cfp_appearance':    cfp_appearance(team, season),
+                'champ_era':         champ_era(season),
                 'conference_champ':  conf_champ(team, season),
                 'conference':        conf(team, season),
                 'conference_raw':    conf_raw(team, season),
@@ -458,6 +503,7 @@ for season in all_seasons:
                 'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw),
                 'cfp_status':       cfp_status(r['name'], season),
                 'cfp_appearance':   cfp_appearance(r['name'], season),
+                'champ_era':        champ_era(season),
                 'conference_champ': conf_champ(r['name'], season),
             })
         snapshots.append({
@@ -501,6 +547,7 @@ for season in sorted(cfp_outcomes.keys(), reverse=True):
 
     champions.append({
         'season':       season,
+        'era':          out['era'],
         'final_score':  out['final_score'],
         'champion': {
             'team':           cr['name'],
@@ -542,4 +589,7 @@ with open(OUT_DIR / 'champions.json', 'w') as f:
 
 print(f'\nDone. {len(teams_index)} teams, {len(standings_data["teams"])} in current standings.')
 print(f'Wrote {len(all_seasons)} season files. Standings date: {latest_date}')
-print(f'Champions: {len(champions)} CFP-era entries.')
+_by_era = {}
+for c in champions:
+    _by_era[c['era']] = _by_era.get(c['era'], 0) + 1
+print(f'Champions: {len(champions)} entries — ' + ', '.join(f'{n} {e}' for e, n in sorted(_by_era.items())))
