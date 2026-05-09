@@ -749,8 +749,8 @@ function renderChampions() {
     return `<div style="font-weight:600">${t.team}${selTag}${cnt}</div>
             <div style="margin-top:3px">${conf}</div>`;
   }
-  function ovrLine(t)    { return t.rank      != null ? `#${t.rank}`       : '<span style="color:#bbb">—</span>'; }
-  function confLine(t)   { return t.conf_rank != null ? `#${t.conf_rank}`  : '<span style="color:#bbb">—</span>'; }
+  function ovrLine(t)    { return t.rank      != null ? `${t.rank}`       : '<span style="color:#bbb">—</span>'; }
+  function confLine(t)   { return t.conf_rank != null ? `${t.conf_rank}`  : '<span style="color:#bbb">—</span>'; }
   function reactLine(t)  { return t.rating    != null ? t.rating.toFixed(2) : '<span style="color:#bbb">—</span>'; }
   function wlLine(t)     { return fmtRecordStacked(t.regular_record, t.playoff_record); }
 
