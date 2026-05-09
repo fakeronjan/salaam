@@ -43,6 +43,34 @@ BCS_CHAMPIONS = {
     2013: {'champion': 'Florida State', 'runner_up': 'Auburn',        'final_score': '34-31'},
 }
 
+# AP poll override: years where AP awarded the title to a different team than
+# the BCS title game winner. For 2003, AP went USC; BCS/Coaches went LSU.
+AP_OVERRIDES = {
+    2003: 'USC',
+}
+
+# Poll era (1982-1997). AP and Coaches sometimes agreed, sometimes split.
+# Coaches Poll = UPI through 1990, then USA Today/CNN from 1991 onward.
+# Splits in this window: 1990 (CU/GT), 1991 (Miami/UW), 1997 (Michigan/Nebraska).
+POLL_CHAMPIONS = {
+    1982: {'AP': 'Penn State',     'Coaches': 'Penn State'},
+    1983: {'AP': 'Miami',          'Coaches': 'Miami'},
+    1984: {'AP': 'BYU',            'Coaches': 'BYU'},
+    1985: {'AP': 'Oklahoma',       'Coaches': 'Oklahoma'},
+    1986: {'AP': 'Penn State',     'Coaches': 'Penn State'},
+    1987: {'AP': 'Miami',          'Coaches': 'Miami'},
+    1988: {'AP': 'Notre Dame',     'Coaches': 'Notre Dame'},
+    1989: {'AP': 'Miami',          'Coaches': 'Miami'},
+    1990: {'AP': 'Colorado',       'Coaches': 'Georgia Tech'},   # split
+    1991: {'AP': 'Miami',          'Coaches': 'Washington'},     # split
+    1992: {'AP': 'Alabama',        'Coaches': 'Alabama'},
+    1993: {'AP': 'Florida State',  'Coaches': 'Florida State'},
+    1994: {'AP': 'Nebraska',       'Coaches': 'Nebraska'},
+    1995: {'AP': 'Nebraska',       'Coaches': 'Nebraska'},
+    1996: {'AP': 'Florida',        'Coaches': 'Florida'},
+    1997: {'AP': 'Michigan',       'Coaches': 'Nebraska'},       # split
+}
+
 # Conference bucketing for the site toggle. 'Big 8' is the Big 12 lineage,
 # 'Pac-10' is the Pac-12 lineage, 'Big East' surfaces only while it existed
 # as a football conference (1991-2012).
@@ -184,24 +212,55 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
 # Layer in BCS-era champions from the hardcoded table. CFBD's notes-based
 # detection is unreliable pre-2006 because the BCS title rotated through
 # Fiesta/Sugar/Rose/Orange — those games' notes don't mention "BCS championship".
+# Also include co_champion when AP picked a different team than the BCS title game.
 for year, info in BCS_CHAMPIONS.items():
+    co_champ = AP_OVERRIDES.get(year)  # AP picked a different team
     cfp_outcomes[year] = {
-        'era':          'BCS',
-        'champion':     info['champion'],
-        'runner_up':    info['runner_up'],
-        'final_score':  info['final_score'],
-        'appearances':  set(),  # BCS had no playoff bracket — only the title game
+        'era':            'BCS',
+        'champion':       info['champion'],
+        'co_champion':    co_champ,
+        'runner_up':      info['runner_up'],
+        'final_score':    info['final_score'],
+        'appearances':    set(),
+        'selectors':      {info['champion']: ['BCS', 'Coaches']},  # primary
+    }
+    if co_champ:
+        cfp_outcomes[year]['selectors'][co_champ] = ['AP']
+
+# Add CFP selectors so per-team badges render uniformly
+for year, out in cfp_outcomes.items():
+    if out['era'] == 'CFP' and 'selectors' not in out:
+        out['selectors'] = {out['champion']: ['CFP']}
+
+# Poll era (1982-1997). Each year has AP champion + Coaches champion (often the
+# same team). When they agree, the team gets selectors=['AP','Coaches']. When
+# they split, each team gets only their own selector.
+for year, polls in POLL_CHAMPIONS.items():
+    ap_champ      = polls['AP']
+    coaches_champ = polls['Coaches']
+    selectors = {}
+    selectors.setdefault(ap_champ,      []).append('AP')
+    selectors.setdefault(coaches_champ, []).append('Coaches')
+    is_split = ap_champ != coaches_champ
+    cfp_outcomes[year] = {
+        'era':            'Poll',
+        'champion':       ap_champ,                       # AP gets the primary slot
+        'co_champion':    coaches_champ if is_split else None,
+        'runner_up':      None,                           # no title game in poll era
+        'final_score':    '',
+        'appearances':    set(),
+        'selectors':      selectors,
     }
 
 
 def cfp_status(team, season):
-    """0 = none, 1 = runner-up, 2 = champion. Era-agnostic — works for CFP + BCS."""
+    """0 = none, 1 = runner-up, 2 = champion (or co-champion). Works across CFP/BCS/Poll."""
     out = cfp_outcomes.get(int(season))
     if not out:
         return 0
-    if team == out['champion']:
+    if team == out['champion'] or team == out.get('co_champion'):
         return 2
-    if team == out['runner_up']:
+    if team == out.get('runner_up'):
         return 1
     return 0
 
@@ -214,9 +273,18 @@ def cfp_appearance(team, season):
 
 
 def champ_era(season):
-    """Returns 'CFP', 'BCS', or '' (no champion attribution available)."""
+    """Returns 'CFP', 'BCS', 'Poll', or '' (no champion attribution available)."""
     out = cfp_outcomes.get(int(season))
     return out['era'] if out else ''
+
+
+def title_selectors(team, season):
+    """Returns the list of selector(s) (e.g. ['AP'], ['AP','Coaches'], ['BCS','Coaches'])
+    that named this team national champion in this season. Empty list if not a champion."""
+    out = cfp_outcomes.get(int(season))
+    if not out:
+        return []
+    return out.get('selectors', {}).get(team, [])
 
 
 def conf_champ(team, season):
@@ -355,6 +423,7 @@ standings_data = {
             'cfp_status':       cfp_status(r['name'], r['season']),
             'cfp_appearance':   cfp_appearance(r['name'], r['season']),
             'champ_era':        champ_era(r['season']),
+            'title_selectors':  title_selectors(r['name'], r['season']),
             'conference_champ': conf_champ(r['name'], r['season']),
         }
         for _, r in latest.iterrows()
@@ -384,6 +453,7 @@ for i, (_, r) in enumerate(eos_top.iterrows()):
         'cfp_status':       cfp_status(r['name'], r['season']),
         'cfp_appearance':   cfp_appearance(r['name'], r['season']),
         'champ_era':        champ_era(r['season']),
+        'title_selectors':  title_selectors(r['name'], r['season']),
         'conference_champ': conf_champ(r['name'], r['season']),
     })
 with open(OUT_DIR / 'goat_teams.json', 'w') as f:
@@ -446,6 +516,7 @@ for team in all_teams:
                 'cfp_status':        cfp_status(team, season),
                 'cfp_appearance':    cfp_appearance(team, season),
                 'champ_era':         champ_era(season),
+                'title_selectors':   title_selectors(team, season),
                 'conference_champ':  conf_champ(team, season),
                 'conference':        conf(team, season),
                 'conference_raw':    conf_raw(team, season),
@@ -504,6 +575,7 @@ for season in all_seasons:
                 'cfp_status':       cfp_status(r['name'], season),
                 'cfp_appearance':   cfp_appearance(r['name'], season),
                 'champ_era':        champ_era(season),
+                'title_selectors':  title_selectors(r['name'], season),
                 'conference_champ': conf_champ(r['name'], season),
             })
         snapshots.append({
@@ -526,63 +598,83 @@ seasons_meta = {
 with open(OUT_DIR / 'seasons_index.json', 'w') as f:
     json.dump(seasons_meta, f, separators=(',', ':'))
 
-# ── 5. Champions table (CFP era only — Phase 1) ───────────────────────────────
+# ── 5. Champions table (CFP + BCS + Poll eras) ────────────────────────────────
 print('Writing champions.json...')
+
+
+def _team_block(team_name, season, sdf, selectors):
+    """Build a {team, conference, rating, ...} dict for a champion or RU.
+    Returns None if the team has no flag=2 row in this season's data (e.g.,
+    1982 warm-up, missing data)."""
+    rows = sdf[sdf['name'] == team_name]
+    reg = _reg_record_lookup.get((team_name, season), '')
+    base = {
+        'team':             team_name,
+        'conference':       conf(team_name, season),
+        'conference_raw':   conf_raw(team_name, season),
+        'conference_champ': conf_champ(team_name, season),
+        'selectors':        selectors,           # ['AP'], ['AP','Coaches'], etc.
+        'regular_record':   reg,
+    }
+    if rows.empty:
+        # No rating snapshot available (warm-up window). Surface the team without metrics.
+        base.update({'rating': None, 'rank': None, 'record': '', 'playoff_record': ''})
+        return base
+    r = rows.iloc[0]
+    base.update({
+        'rating':         round(float(r['rating']), 3),
+        'rank':           int(r['rank']),
+        'record':         clean(r['record']),
+        'playoff_record': playoff_record(r['record'], reg),
+    })
+    return base
+
 
 champions = []
 for season in sorted(cfp_outcomes.keys(), reverse=True):
     out = cfp_outcomes[season]
     sdf = df[(df['season'] == season) & (df['season_flag'] == 2)]
-    if sdf.empty:
-        continue
-    champ_row = sdf[sdf['name'] == out['champion']]
-    ru_row    = sdf[sdf['name'] == out['runner_up']]
-    if champ_row.empty or ru_row.empty:
-        continue
+    selectors_map = out.get('selectors', {})
 
-    cr = champ_row.iloc[0]
-    rr = ru_row.iloc[0]
-    champ_reg = _reg_record_lookup.get((cr['name'], season), '')
-    ru_reg    = _reg_record_lookup.get((rr['name'], season), '')
+    champ = _team_block(out['champion'], season, sdf, selectors_map.get(out['champion'], []))
+    co_champ = (
+        _team_block(out['co_champion'], season, sdf, selectors_map.get(out['co_champion'], []))
+        if out.get('co_champion') else None
+    )
+    ru = (
+        _team_block(out['runner_up'], season, sdf, [])
+        if out.get('runner_up') else None
+    )
+
+    # Skip the row only if we can't even name a champion (shouldn't happen)
+    if champ is None:
+        continue
 
     champions.append({
         'season':       season,
         'era':          out['era'],
         'final_score':  out['final_score'],
-        'champion': {
-            'team':           cr['name'],
-            'conference':     conf(cr['name'], season),
-            'conference_raw': conf_raw(cr['name'], season),
-            'conference_champ': conf_champ(cr['name'], season),
-            'rating':         round(float(cr['rating']), 3),
-            'rank':           int(cr['rank']),
-            'record':         clean(cr['record']),
-            'regular_record': champ_reg,
-            'playoff_record': playoff_record(cr['record'], champ_reg),
-        },
-        'runner_up': {
-            'team':           rr['name'],
-            'conference':     conf(rr['name'], season),
-            'conference_raw': conf_raw(rr['name'], season),
-            'conference_champ': conf_champ(rr['name'], season),
-            'rating':         round(float(rr['rating']), 3),
-            'rank':           int(rr['rank']),
-            'record':         clean(rr['record']),
-            'regular_record': ru_reg,
-            'playoff_record': playoff_record(rr['record'], ru_reg),
-        },
+        'champion':     champ,
+        'co_champion':  co_champ,
+        'runner_up':    ru,
     })
 
-# Running title counts (Phase 1 — CFP era only)
+# Running title counts — count BOTH champion and co_champion (split years
+# count both teams). RU counts apply to teams that lost a title game.
 _champ_count = {}
 _ru_count    = {}
 for entry in reversed(champions):
     ct = entry['champion']['team']
-    rt = entry['runner_up']['team']
     _champ_count[ct] = _champ_count.get(ct, 0) + 1
-    _ru_count[rt]    = _ru_count.get(rt, 0) + 1
-    entry['champion']['title_count']      = _champ_count[ct]
-    entry['runner_up']['runner_up_count'] = _ru_count[rt]
+    entry['champion']['title_count'] = _champ_count[ct]
+    if entry.get('co_champion'):
+        cct = entry['co_champion']['team']
+        _champ_count[cct] = _champ_count.get(cct, 0) + 1
+        entry['co_champion']['title_count'] = _champ_count[cct]
+    if entry.get('runner_up'):
+        rt = entry['runner_up']['team']
+        _ru_count[rt] = _ru_count.get(rt, 0) + 1
+        entry['runner_up']['runner_up_count'] = _ru_count[rt]
 
 with open(OUT_DIR / 'champions.json', 'w') as f:
     json.dump({'CFB': champions}, f, separators=(',', ':'))
