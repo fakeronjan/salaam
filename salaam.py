@@ -116,15 +116,41 @@ def prepare_game_data(raw_df):
         cutoff = sub['date'].median() - pd.Timedelta(days=5)
         df.loc[sub[sub['date'] < cutoff].index, 'week'] = 0
 
-    # Postseason week numbering: tier-based, NOT date-based. The bowl schedule
-    # is elongated (mid-Dec through mid-Jan) but bowls aren't sequential rounds —
-    # treating them as separate weeks gave inflated weight to late bowls. Collapse
-    # all bowls + CFP First Round into one week. Tiers (era-agnostic):
-    #   101 = bowls + CFP First Round (anything not tagged as a later round)
-    #   102 = CFP Quarterfinals (CFP12 era only, 2024+)
+    # === Postseason taxonomy (overrides CFBD's date-based week numbering) ===
+    # College football is structurally awkward — CFBD inconsistently flags
+    # Conference Championships (sometimes seasonType=postseason, sometimes
+    # =regular at "neutral" sites whose flag is unreliable for older years).
+    # We enforce ONE explicit taxonomy for all eras:
+    #   100 = Conference Championships (CCGs)
+    #   101 = Bowl Games + CFP First Round
+    #   102 = CFP Quarterfinals
     #   103 = CFP Semifinals
-    #   104 = National Championship (CFP-era CFP final, BCS-era BCS title game)
-    post_mask = df['seasonType'] == 'postseason'
+    #   104 = National Championship
+    # Bowls collapse together (per user spec — elongated bowl calendar would
+    # otherwise inflate weight on late bowls). CCGs get their own slot so
+    # they aren't conflated with bowls (1996 Florida bug: SEC CG + Sugar
+    # Bowl both ended up in the same row).
+
+    # Step 1: Conference Championship detection. Catch them across all
+    # CFBD classifications (postseason w/o notes, regular w/ neutral site).
+    in_ccg_window = (
+        ((df['date'].dt.month == 11) & (df['date'].dt.day >= 28))
+        | ((df['date'].dt.month == 12) & (df['date'].dt.day <= 12))
+    )
+    notes_lower      = df['notes'].fillna('').str.lower()
+    has_champ_note   = notes_lower.str.contains('championship', regex=False)
+    is_post          = df['seasonType'] == 'postseason'
+    is_conf          = df['conferenceGame'].fillna(False).astype(bool)
+    is_neutral       = df['neutralSite'].fillna(False).astype(bool)
+    ccg_mask = in_ccg_window & (
+        has_champ_note
+        | (is_post & is_conf)
+        | (is_neutral & is_conf & (df['week'] >= 13))
+    )
+    df.loc[ccg_mask, 'week'] = POSTSEASON_WEEK_OFFSET  # week 100
+
+    # Step 2: Tier-classify remaining postseason games (101-104).
+    post_mask = (df['seasonType'] == 'postseason') & ~ccg_mask
     if post_mask.any():
         def postseason_tier(notes):
             n = (notes or '').lower()

@@ -146,8 +146,12 @@ print('Building championship attribution...')
 cfp_outcomes = {}        # season → {champion, runner_up, final_score, appearances}
 conf_champs = {}         # (team, season) → conference name (e.g., 'SEC')
 
-# Tier-based postseason week labels (matches salaam.py tier numbering)
+# Tier-based postseason week labels (matches salaam.py tier numbering).
+# Week 100 covers all conference championship games (regardless of whether
+# CFBD classified them as postseason or regular). Bowls + CFP First Round
+# collapse into 101; later CFP rounds get their own slot.
 POSTSEASON_LABELS = {
+    100: 'Conference Championships',
     101: 'Bowls / CFP 1st Round',
     102: 'CFP Quarterfinals',
     103: 'CFP Semifinals',
