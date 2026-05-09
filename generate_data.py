@@ -194,12 +194,16 @@ def _detect_title_game(year_games, members):
     """Return the title-game winner if a championship game can be identified.
     Layered detection:
       1) Game notes contain "championship" (CFBD has these for 2022+).
-      2) Late-season (week >= 13) neutral-site game between two members
-         (catches most 2003-2021 title games).
+      2) Neutral-site conference game between two members in the standard
+         CCG window (mid-Nov through mid-Dec). seasonType varies (regular
+         in modern years, postseason in some older years like 1994 SEC),
+         and CFBD's neutralSite flag is unreliable pre-2003 — so we just
+         take the latest qualifying game in the window. The Dec 15 cutoff
+         keeps BCS/CFP National Championships out (those are Jan 1+).
     Returns team name (string) or None."""
     # CFBD notes
     for g in year_games:
-        if g.get('seasonType') != 'regular' or not g.get('completed'):
+        if not g.get('completed'):
             continue
         if g.get('homeTeam') not in members or g.get('awayTeam') not in members:
             continue
@@ -211,17 +215,27 @@ def _detect_title_game(year_games, members):
             continue
         return g['homeTeam'] if hp >= ap else g['awayTeam']
 
-    # Neutral-site heuristic
-    cands = [g for g in year_games
-             if g.get('seasonType') == 'regular' and g.get('completed')
-             and g.get('neutralSite') and g.get('conferenceGame')
-             and g.get('homeTeam') in members and g.get('awayTeam') in members
-             and g.get('week', 0) >= 13
-             and g.get('homePoints') is not None
-             and g.get('awayPoints') is not None]
+    # Neutral-site heuristic — date-window based (handles year-by-year
+    # inconsistency in seasonType + week numbering).
+    cands = []
+    for g in year_games:
+        if not g.get('completed') or not g.get('conferenceGame') or not g.get('neutralSite'):
+            continue
+        if g.get('homeTeam') not in members or g.get('awayTeam') not in members:
+            continue
+        if g.get('homePoints') is None or g.get('awayPoints') is None:
+            continue
+        date_str = (g.get('startDate') or '')[:10]
+        if not date_str:
+            continue
+        # CCG window: Nov 15 → Dec 14 (inclusive). Anything later is a bowl/CFP/BCS title.
+        month_day = date_str[5:10]
+        if not ('11-15' <= month_day <= '12-14'):
+            continue
+        cands.append((date_str, g))
     if cands:
-        cands.sort(key=lambda g: g.get('week', 0))
-        g = cands[-1]
+        cands.sort(key=lambda x: x[0])
+        _, g = cands[-1]
         return g['homeTeam'] if g['homePoints'] >= g['awayPoints'] else g['awayTeam']
 
     return None
