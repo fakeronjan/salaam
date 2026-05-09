@@ -446,17 +446,25 @@ if __name__ == '__main__':
     # 2. Prepare
     master_df = prepare_game_data(raw_df)
 
-    # 3. REACT ratings
+    # 3. REACT ratings — drop the current season from the cache before
+    # recomputing. cume_week_ids are assigned via groupby().ngroup() over
+    # all (season, season_week) pairs, so adding/reclassifying a game in
+    # the current season can shift its cume_week_ids and leave cached
+    # ranking_ids pointing at stale weeks. Past seasons are stable
+    # (CFBD doesn't backfill historical games), so their cache stays valid.
+    current_season = int(master_df['season'].max())
     try:
         existing_react = pd.read_csv('salaam_react_ratings.csv')
+        existing_react = existing_react[existing_react['season'] != current_season].reset_index(drop=True)
     except FileNotFoundError:
         existing_react = pd.DataFrame()
     react_df = compute_ratings(master_df, existing_react, WEEKS_REACT, 'REACT')
     react_df.to_csv('salaam_react_ratings.csv', index=False)
 
-    # 4. Standings
+    # 4. Standings (same cache-trim rationale)
     try:
         existing_standings = pd.read_csv('weekly_standings.csv')
+        existing_standings = existing_standings[existing_standings['season'] != current_season].reset_index(drop=True)
     except FileNotFoundError:
         existing_standings = pd.DataFrame()
     standings_df = compute_standings(master_df, existing_standings)
