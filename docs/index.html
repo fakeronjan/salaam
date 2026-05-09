@@ -242,6 +242,7 @@
   <p class="subtitle">NCAA Football Power Rankings · Beta</p>
   <p class="model-note">Considers strength of opponent, margin of result, and recency. ~+10 = contender; ~+20 = elite; ~+35+ = generational (2001 Miami = 37.67).</p>
   <p class="updated" id="last-updated">Loading...</p>
+  <p class="updated" id="last-refreshed" style="font-size:11px;color:#999;margin-top:-4px"></p>
 </header>
 
 <nav>
@@ -460,6 +461,11 @@ async function initStandings() {
     const meta = await res.json();
     document.getElementById('last-updated').textContent =
       `Ratings include games from ${fmtDate(meta.first_date)} to ${fmtDate(meta.last_date)}`;
+    if (meta.generated_at) {
+      const refreshed = new Date(meta.generated_at);
+      document.getElementById('last-refreshed').textContent =
+        `Last refreshed: ${refreshed.toLocaleString(undefined, {dateStyle:'short', timeStyle:'short', timeZoneName:'short'})}`;
+    }
     const sel = document.getElementById('season-filter');
     meta.seasons.forEach(s => {
       const opt = document.createElement('option');

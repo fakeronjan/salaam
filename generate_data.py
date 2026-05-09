@@ -15,6 +15,7 @@ import os
 import re
 from pathlib import Path
 from bisect import bisect_right
+from datetime import datetime, timezone
 
 DATA_DIR = Path(__file__).parent / 'data'
 OUT_DIR  = Path(__file__).parent / 'docs' / 'data'
@@ -729,6 +730,7 @@ seasons_meta = {
     'seasons':    [int(s) for s in reversed(all_seasons)],
     'first_date': str(games['date'].min().date()),
     'last_date':  str(games['date'].max().date()),
+    'generated_at': datetime.now(timezone.utc).isoformat(),
 }
 with open(OUT_DIR / 'seasons_index.json', 'w') as f:
     json.dump(seasons_meta, f, separators=(',', ':'))
