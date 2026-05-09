@@ -501,12 +501,12 @@ function renderStandings() {
   if (standingsConf !== 'all') teams = teams.filter(t => t.conference === standingsConf);
 
   const rows = teams.map(t => `<tr>
+    <td class="rank-cell">${t.rank}</td>
+    <td class="rank-cell col-hide-mobile">${t.conf_rank != null ? t.conf_rank : '—'}</td>
     <td class="team-cell">${t.team}</td>
     <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
     <td>${ratingBar(t.rating)}</td>
-    <td class="rank-cell">${t.rank}</td>
-    <td class="rank-cell col-hide-mobile" style="color:#aaa">${t.conf_rank != null ? '#' + t.conf_rank : '—'}</td>
     <td class="last-match-cell">
       <span class="${resultClass(t.last_match)}">${t.last_match || '—'}</span>
     </td>
@@ -520,12 +520,10 @@ function renderStandings() {
   document.getElementById('standings-table-wrap').innerHTML = `
     <table>
       <thead><tr>
-        <th>Team</th>
-        <th class="col-hide-mobile">Conf</th>
+        <th>OVR #</th><th class="col-hide-mobile">CONF #</th>
+        <th>Team</th><th class="col-hide-mobile">Conf</th>
         <th>W-L</th>
         <th>REACT</th>
-        <th>OVR #</th>
-        <th class="col-hide-mobile">CONF #</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
