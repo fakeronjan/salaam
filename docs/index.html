@@ -627,6 +627,7 @@ function renderTeamTable() {
     </td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
+    <td class="rank-cell col-hide-mobile">${g.conf_rank != null ? g.conf_rank : '—'}</td>
     <td>${ratingBar(g.rating)}</td>
     <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
     <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance, g.champ_era, g.title_selectors)}</td>
@@ -638,7 +639,8 @@ function renderTeamTable() {
       <thead><tr>
         <th>Date</th><th>Season · Week</th><th>Last Game</th>
         <th>W-L (Pct)</th>
-        <th>Rank</th>
+        <th>OVR #</th>
+        <th class="col-hide-mobile">Conf #</th>
         <th>Rating</th>
         <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
@@ -657,7 +659,7 @@ function drawChart(rows, seasonFilter) {
   const H = 180;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-  const CHART_MIN = -25, CHART_MAX = 25;
+  const CHART_MIN = -35, CHART_MAX = 35;
   const CTOP = 10, CBOT = 152;
 
   const px = (i) => (i / (rows.length - 1)) * (W - 20) + 10;
