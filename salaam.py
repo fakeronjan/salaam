@@ -421,7 +421,7 @@ def assemble_final(master_df, react_df, standings_df):
     # Combine winner-side + loser-side strings; insert separator between them
     # only when both exist (otherwise we'd get ' · L 0-3 vs X' or 'W 7-3 vs Y · ').
     final_df['lastgame'] = final_df.apply(
-        lambda r: _SEP.join(p for p in [r['winner_last_game'], r['loser_last_game']] if p) or 'Bye / No Game',
+        lambda r: _SEP.join(p for p in [r['winner_last_game'], r['loser_last_game']] if p),
         axis=1,
     )
     final_df['opponent'] = final_df['loser'] + final_df['winner']
