@@ -531,7 +531,7 @@ function renderStandings() {
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
     <td>${ratingBar(t.rating)}</td>
     <td class="last-match-cell">
-      <span class="${resultClass(t.last_match, isStale)}">${t.last_match || '—'}</span>
+      <span class="${resultClass(t.last_match, isStale)}">${t.last_match || '-'}</span>
     </td>
     <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
     <td class="col-hide-mobile" style="text-align:center">${honorsBadge(t.cfp_status, t.cfp_appearance, t.champ_era, t.title_selectors)}</td>
@@ -639,7 +639,7 @@ function renderTeamTable() {
     <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
     <td style="font-size:11px;color:#555">${g.season} · ${wkLabel}</td>
     <td class="last-match-cell">
-      <span class="${resultClass(g.last_match)}">${g.last_match || '—'}</span>
+      <span class="${resultClass(g.last_match)}">${g.last_match || '-'}</span>
     </td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
