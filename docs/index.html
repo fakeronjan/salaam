@@ -282,10 +282,6 @@
       <option value="eor">End of regular season</option>
       <option value="eos">End of playoffs</option>
     </select>
-    <select id="scope-select">
-      <option value="full">Include bowls / CFP</option>
-      <option value="regular">Regular season only</option>
-    </select>
   </div>
   <div id="chart-wrap" style="display:none">
     <svg id="season-chart"></svg>
@@ -621,7 +617,6 @@ function renderTeamTable() {
   const data = teamCache[slug];
   const seasonFilter = document.getElementById('season-select').value;
   const dateType     = document.getElementById('date-type-select').value;
-  const scope        = document.getElementById('scope-select').value;
 
   let rows = [];
   const seasons = Object.keys(data.seasons).sort();
@@ -629,8 +624,6 @@ function renderTeamTable() {
     if (seasonFilter !== 'all' && s !== seasonFilter) return;
     data.seasons[s].forEach(g => rows.push({...g, season: s}));
   });
-
-  if (scope === 'regular') rows = rows.filter(g => !g.is_playoff);
 
   // Date-type filter: explicit selection of regular-season-end vs playoffs-end snapshot
   if (dateType === 'eor')      rows = rows.filter(g => g.season_flag === 1);
@@ -730,7 +723,6 @@ function drawChart(rows, seasonFilter) {
 document.getElementById('team-select').addEventListener('change', e => loadTeam(e.target.value));
 document.getElementById('season-select').addEventListener('change', renderTeamTable);
 document.getElementById('date-type-select').addEventListener('change', renderTeamTable);
-document.getElementById('scope-select').addEventListener('change', renderTeamTable);
 
 // ── CFP Champions ────────────────────────────────────────────────────────────
 let championsData = null;
