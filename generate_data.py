@@ -419,7 +419,18 @@ def slug(name):
     return re.sub(r'[^\w]', '_', name).strip('_')
 
 
-df['is_game_day']      = (df['lastgame'] != 'Bye / No Game').astype(int)
+def _played(result):
+    """True iff this row represents an actual game played. Upstream now
+    writes empty strings for non-game-days (was 'Bye / No Game' previously)
+    — both must be treated as "didn't play" or the forward-fill of
+    last_match breaks for any week a team had a bye."""
+    if result is None or pd.isna(result):
+        return False
+    s = str(result).strip()
+    return s not in ('', 'Bye / No Game')
+
+
+df['is_game_day']      = df['lastgame'].apply(_played).astype(int)
 df['is_end_of_season'] = df['season_flag'].isin([1, 2]).astype(int)
 
 
@@ -540,7 +551,7 @@ standings_data = {
             'conference_raw':  conf_raw(r['name'], r['season']),
             'rating':          round(float(r['rating']), 3),
             'record':          clean(r['record']),
-            'last_match':      clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(r['name'], r['season_week'], r['season']),
+            'last_match':      clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(r['name'], r['season_week'], r['season']),
             'cfp_status':       cfp_status(r['name'], r['season']),
             'cfp_appearance':   cfp_appearance(r['name'], r['season']),
             'champ_era':        champ_era(r['season']),
@@ -647,7 +658,7 @@ for team in all_teams:
                 'record':            clean(r['record']),
                 'regular_record':    reg,
                 'playoff_record':    po,
-                'last_match':        clean(r['lastgame']) if r['lastgame'] != 'Bye / No Game' else last_game_as_of(team, r['season_week'], season),
+                'last_match':        clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(team, r['season_week'], season),
                 'is_end_of_season':  int(r['is_end_of_season']),
                 'season_flag':       int(r['season_flag']),
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
@@ -698,7 +709,7 @@ for season in all_seasons:
             else:
                 reg = clean(r['record'])
                 po  = ''
-            played_today = r['lastgame'] != 'Bye / No Game'
+            played_today = _played(r['lastgame'])
             teams_snap.append({
                 'rank':            int(r['rank']),
                 'conf_rank':       conf_rank(r['name'], r['ranking_id']),
