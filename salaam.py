@@ -8,20 +8,7 @@ import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
-# rankit==0.2 uses deprecated numpy aliases (np.int, np.float, np.bool) removed in numpy 1.24+.
-if not hasattr(np, 'int'):   np.int = int
-if not hasattr(np, 'float'): np.float = float
-if not hasattr(np, 'bool'):  np.bool = bool
 from datetime import datetime
-import warnings
-import rankit  # pip install rankit
-from rankit.Table import Table
-from rankit.Ranker import MasseyRanker
-
-try:
-    warnings.filterwarnings('ignore', category=pd.errors.SettingWithCopyWarning)
-except AttributeError:
-    pass
 
 
 # =========================================================
@@ -34,8 +21,17 @@ TEAMS_DIR = DATA_DIR / 'teams'
 
 MIN_SEASON           = 1982   # NCAA Division I-A formalized
 WEEKS_REACT          = 20     # rolling window for REACT ratings (long-view)
-HOME_FIELD_ADVANTAGE = 0.5
-MARGIN_CAP           = 35
+HOME_FIELD_ADVANTAGE = 3.5    # raw-point home advantage; subtracted from home margin pre-transform
+                              # (modern CFB HCA ~4.2-4.4; long-run ~5.0; 3.5 is the compromise)
+MARGIN_CAP           = 42     # symmetric clip ≈ p95 of CFB margin distribution
+
+# Margin transform: cap clips margins symmetrically at MARGIN_CAP. Ratings
+# read as approximate point-spread vs avg team. CFB margins are wider than
+# NFL (median 14 vs 9), so cap=42 (NCAA p95) clips ~5% of games.
+MARGIN_TRANSFORM = "cap"
+
+# WLS: weights affect observation influence, not margin magnitude.
+WEIGHTING_MODE = "wls"
 
 # Postseason weeks get shifted into the 100-block to keep them sortable
 # after regular-season weeks within the same season.
@@ -95,16 +91,25 @@ def prepare_game_data(raw_df):
     df['winw']    = np.where(df['ptsw'] > df['ptsl'], 1, 0.5)
     df['winl']    = 1 - df['winw']
 
-    # Home-field signal from winner's perspective
-    df['neutralSite'] = df['neutralSite'].fillna(False)
+    # Home/visitor schema for the solver — HCA + cap are applied inside
+    # _solve_massey rather than here. Per-game HCA gates neutral-site
+    # games (kickoffs in Ireland/Dublin, CFP semis/finals, bowls) to 0.
+    df['neutralSite'] = df['neutralSite'].fillna(False).astype(bool)
+    df['home_team_name']    = df['homeTeam']
+    df['visitor_team_name'] = df['awayTeam']
+    df['home_pts']          = df['homePoints']
+    df['visitor_pts']       = df['awayPoints']
+    df['is_neutral']        = df['neutralSite'].astype(int)
+    df['hca']               = np.where(df['neutralSite'], 0.0, HOME_FIELD_ADVANTAGE)
+
+    # Retain a winner-perspective 'home' marker for legacy result-string
+    # rendering. -HCA when winner is home, +HCA when winner is away, 0 neutral.
     df['home'] = np.where(
         df['neutralSite'], 0.0,
         np.where(df['winner'] == df['homeTeam'],
-                 HOME_FIELD_ADVANTAGE,
-                 -HOME_FIELD_ADVANTAGE)
+                 -HOME_FIELD_ADVANTAGE,
+                 HOME_FIELD_ADVANTAGE)
     )
-    df['adjmarginw'] = (df['marginw'] + df['home']).clip(upper=MARGIN_CAP)
-    df['adjmarginl'] = -df['adjmarginw']
 
     df['week'] = pd.to_numeric(df['week']).astype(int)
 
@@ -206,8 +211,84 @@ def prepare_game_data(raw_df):
 
 
 # =========================================================
-# MASSEY RATINGS (REACT / HOTTAKE windows)
+# MASSEY RATINGS — homebrew weighted least squares solver
 # =========================================================
+
+def _apply_margin_transform(margin, transform, cap):
+    """Sign-preserving transform applied to (raw_margin - hca)."""
+    m = np.asarray(margin, dtype=float)
+    if transform == "raw":
+        return m
+    if transform == "sqrt":
+        return np.sign(m) * np.sqrt(np.abs(m))
+    if transform == "cap":
+        return np.clip(m, -cap, cap)
+    if transform == "log":
+        return np.sign(m) * np.log1p(np.abs(m))
+    if transform == "tanh":
+        return cap * np.tanh(m / cap)
+    raise ValueError(f"Unknown MARGIN_TRANSFORM: {transform}")
+
+
+def _solve_massey(window_df, weighting_mode, margin_transform, margin_cap):
+    """
+    Solve for team Massey ratings on a single rolling window.
+
+    Builds X (n_games × n_teams) with +1 for home, -1 for visitor, y from
+    the transformed HCA-adjusted home margin, and W from the recency
+    weights. Solves min sum_i w_i * (X_i r - y_i)^2 with a zero-sum
+    constraint enforced as an extra high-weight row.
+
+    HCA is per-game (column 'hca' in window_df) — supports neutral-site
+    games (CFP semis/finals, bowls, international kickoffs) where HCA
+    should be 0.
+    """
+    teams = sorted(set(window_df["home_team_name"]) | set(window_df["visitor_team_name"]))
+    team_idx = {t: i for i, t in enumerate(teams)}
+    n_teams = len(teams)
+    n_games = len(window_df)
+
+    X = np.zeros((n_games + 1, n_teams))
+    y = np.zeros(n_games + 1)
+    w = np.zeros(n_games + 1)
+
+    home_pts    = window_df["home_pts"].to_numpy(dtype=float)
+    visitor_pts = window_df["visitor_pts"].to_numpy(dtype=float)
+    hca         = window_df["hca"].to_numpy(dtype=float)
+    weights     = window_df["date_weight"].to_numpy(dtype=float)
+    home_names    = window_df["home_team_name"].to_numpy()
+    visitor_names = window_df["visitor_team_name"].to_numpy()
+
+    raw_margin  = home_pts - visitor_pts - hca
+    transformed = _apply_margin_transform(raw_margin, margin_transform, margin_cap)
+
+    for i in range(n_games):
+        X[i, team_idx[home_names[i]]] = 1.0
+        X[i, team_idx[visitor_names[i]]] = -1.0
+
+    if weighting_mode == "wls":
+        y[:n_games] = transformed
+        w[:n_games] = weights
+    elif weighting_mode == "margin_scale":
+        y[:n_games] = transformed * weights
+        w[:n_games] = 1.0
+    else:
+        raise ValueError(f"Unknown WEIGHTING_MODE: {weighting_mode}")
+
+    # Zero-sum constraint via high-weight extra row.
+    X[-1, :] = 1.0
+    y[-1] = 0.0
+    w[-1] = 1.0e8
+
+    sqrt_w = np.sqrt(w)
+    Xw = X * sqrt_w[:, None]
+    yw = y * sqrt_w
+    r, *_ = np.linalg.lstsq(Xw, yw, rcond=None)
+
+    out = pd.DataFrame({"name": teams, "rating": r})
+    out["rank"] = out["rating"].rank(ascending=False, method="min").astype(int)
+    return out
+
 
 def compute_ratings(master_df, existing_ratings_df, window, label):
     """
@@ -237,21 +318,29 @@ def compute_ratings(master_df, existing_ratings_df, window, label):
             (master_df['cume_week_id'] <= i)
         ].copy()
 
-        win['date_weight']     = (win['cume_week_id'] - i + window) / window
-        win['weightedmarginl'] = win['adjmarginl'] * win['date_weight']
-        win['weightedmarginw'] = -win['weightedmarginl']
+        win['date_weight'] = (win['cume_week_id'] - i + window) / window
 
         current_week = win['season_week'].max()
         season       = int(win['season'].max())
 
-        ncaa_table = Table(win, ['loser', 'winner', 'weightedmarginl', 'weightedmarginw'])
-        ranked = MasseyRanker(ncaa_table).rank()
+        ranked = _solve_massey(
+            win,
+            weighting_mode=WEIGHTING_MODE,
+            margin_transform=MARGIN_TRANSFORM,
+            margin_cap=MARGIN_CAP,
+        )
         ranked['season_week'] = current_week
         ranked['ranking_id']  = i
         ranked['season']      = season
         new_frames.append(ranked)
 
     df = pd.concat([existing_ratings_df] + new_frames, axis=0, sort=False).reset_index(drop=True)
+    # Empty-cache reads land columns as object dtype; coerce to numeric so
+    # downstream merges + assemble_final work cleanly (same fix as DILLON).
+    for col in ('season', 'ranking_id', 'season_week'):
+        df[col] = pd.to_numeric(df[col])
+    df['season']     = df['season'].astype(int)
+    df['ranking_id'] = df['ranking_id'].astype(int)
     df['week'] = (df['season_week'] - df['season']) * 1000
     df.sort_values(['ranking_id', 'name'], inplace=True)
     df.drop_duplicates(subset=['ranking_id', 'name'], keep='last', inplace=True)

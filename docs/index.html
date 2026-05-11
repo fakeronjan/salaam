@@ -242,7 +242,7 @@
 <header>
   <h1>SALAAM 🎓🏈</h1>
   <p class="subtitle">NCAA Football Power Rankings · Beta</p>
-  <p class="model-note">Considers strength of opponent, margin of result, and recency. ~+10 = contender; ~+20 = elite; ~+35+ = generational (2001 Miami = 37.67).</p>
+  <p class="model-note">Considers strength of opponent, margin of result, and recency. Reads as approximate point-spread vs avg team. ~+10 = contender; ~+20 = elite; ~+30+ = generational (1995 Nebraska = 41.03).</p>
   <p class="updated" id="last-updated">Loading...</p>
   <p class="updated" id="last-refreshed" style="font-size:11px;color:#999;margin-top:-4px"></p>
 </header>
@@ -424,7 +424,7 @@ function resultClass(match, isStale) {
   return '';
 }
 
-const BAR_MIN = -25, BAR_MAX = 25, BAR_RANGE = 50;
+const BAR_MIN = -30, BAR_MAX = 30, BAR_RANGE = 60;
 function ratingBar(rating) {
   const clipped = Math.max(BAR_MIN, Math.min(BAR_MAX, rating));
   let leftPct, widthPct;
@@ -673,7 +673,7 @@ function drawChart(rows, seasonFilter) {
   const H = 180;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-  const CHART_MIN = -35, CHART_MAX = 35;
+  const CHART_MIN = -42, CHART_MAX = 42;
   const CTOP = 10, CBOT = 152;
 
   const px = (i) => (i / (rows.length - 1)) * (W - 20) + 10;
