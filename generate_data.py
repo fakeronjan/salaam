@@ -105,7 +105,12 @@ df = pd.read_csv('salaam_ratings_with_standings.csv')
 
 # ── Load games (for date lookups + championship attribution) ──────────────────
 print('Reading games...')
-games = pd.read_csv('all_NCAA_games.csv')
+games = pd.read_csv('all_NCAA_games.csv', low_memory=False)
+# Date column has mixed formats: legacy 'YYYY-MM-DD' for early seasons + CFBD-era
+# 'YYYY-MM-DD HH:MM:SS' for recent. pandas 2.x's stricter to_datetime can coerce
+# mixed-format strings to NaT under errors='coerce', causing every downstream
+# date lookup to fail (seen on CI 2026-05-11). Pre-strip time portion.
+games['date'] = games['date'].astype(str).str.split(' ').str[0]
 games['date'] = pd.to_datetime(games['date'], errors='coerce')
 
 _sw_to_date = (
