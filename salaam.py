@@ -453,31 +453,41 @@ def assemble_final(master_df, react_df, standings_df):
 
     seasons = sorted(final_df['season'].unique())
 
+    # Regular-season / postseason boundary for W-L record split.
+    # Per NCAA convention, Conference Championship games (week=100) count
+    # toward the regular-season record, not the postseason record. Bowls
+    # and CFP rounds (weeks 101+) are the postseason. Side benefit: if
+    # CCG detection mis-flags a late-season neutral-site rivalry as a
+    # CCG (Army-Navy, Wrigley-stadium games, etc.), it stays in
+    # regular_record where it belongs — detection accuracy stops mattering
+    # for the record split.
+    REG_RECORD_INCLUDES_THROUGH = POSTSEASON_WEEK_OFFSET  # week 100 = CCG
+
     # Last regular-season week marker (always populated, in-progress seasons too)
     final_df['last_week_of_regular_season'] = 0
     for s in seasons:
         season_rows = final_df[final_df['season'] == s]
-        reg = season_rows[season_rows['week'] < POSTSEASON_WEEK_OFFSET]
+        reg = season_rows[season_rows['week'] <= REG_RECORD_INCLUDES_THROUGH]
         if reg.empty:
             continue
         max_reg_week = reg['season_week'].max()
         final_df.loc[final_df['season_week'] == max_reg_week, 'last_week_of_regular_season'] = 1
 
-    # season_flag: 0=regular, 1=last regular-season week, 2=postseason terminal week
+    # season_flag: 0=regular, 1=last regular-season week (incl CCG), 2=postseason terminal week
     # Only set for fully-complete seasons.
     final_df['season_flag'] = 0
     for s in seasons:
         if not season_is_fully_complete(s):
             continue
         season_rows = final_df[final_df['season'] == s]
-        reg = season_rows[season_rows['week'] < POSTSEASON_WEEK_OFFSET]
+        reg = season_rows[season_rows['week'] <= REG_RECORD_INCLUDES_THROUGH]
         if not reg.empty:
             max_reg_week = reg['season_week'].max()
             final_df.loc[
                 (final_df['season'] == s) & (final_df['season_week'] == max_reg_week),
                 'season_flag'
             ] = 1
-        post = season_rows[season_rows['week'] >= POSTSEASON_WEEK_OFFSET]
+        post = season_rows[season_rows['week'] > REG_RECORD_INCLUDES_THROUGH]
         if not post.empty:
             max_post_week = post['season_week'].max()
             final_df.loc[
