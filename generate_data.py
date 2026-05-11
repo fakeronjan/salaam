@@ -568,19 +568,16 @@ with open(OUT_DIR / 'current_standings.json', 'w') as f:
 print('Writing goat_teams.json...')
 eos_all = df[df['season_flag'] == 2].copy()
 
-# Trophy gate: a team must have actually WON something — either their
-# conference championship, or some share of the national championship —
-# to qualify for the all-time list. Mirrors ZIDANE's "League or CL win"
-# eligibility rule. Cleans up the COVID-2020 cluster (Iowa State, Buffalo,
-# Ball State, etc. ranked high but didn't win anything; excluded). Teams
-# that did win something in 2020 (Alabama, Oklahoma) stay — the COVID
-# inline tag still flags them on each row.
+# Championship-round filter: a team must have either won (any share of)
+# the national championship via any selector (AP, Coaches, BCS, CFP), or
+# played in the title game as runner-up, to qualify for the all-time list.
+# Matches the cross-sport pattern used in LOBO/DUNCAN/DILLON — "best
+# teams that contested for the championship." Cleans up conference-
+# winning seasons that flamed out before the title game (e.g., 2019 Ohio
+# State, 2020 Oklahoma) from showing up in the GOAT list, while keeping
+# them eligible for standings + season-page views.
 def _qualifies_for_goat(row):
-    if cfp_status(row['name'], row['season']) == 2:   # national champion (CFP/BCS/AP/Coaches)
-        return True
-    if conf_champ(row['name'], row['season']):        # conference champion
-        return True
-    return False
+    return cfp_status(row['name'], row['season']) >= 1
 
 eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
 eos_top = eos_qualified.sort_values('rating', ascending=False).head(50).reset_index(drop=True)
