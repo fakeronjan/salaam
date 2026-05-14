@@ -281,7 +281,7 @@
   <div class="conf-pills" id="ts-conf-pills" style="margin-bottom:14px"></div>
   <div class="controls">
     <select id="team-select"><option value="">— Select a team —</option></select>
-    <select id="season-select"><option value="all">All Seasons</option></select>
+    <select id="season-select"><option value="all">All seasons</option></select>
     <select id="date-type-select">
       <option value="all">All dates</option>
       <option value="eor">End of regular season</option>
@@ -677,7 +677,7 @@ async function loadTeam(slug) {
   const data = teamCache[slug];
   const seasons = Object.keys(data.seasons).sort().reverse();
   const seasonSel = document.getElementById('season-select');
-  seasonSel.innerHTML = '<option value="all">All Seasons</option>';
+  seasonSel.innerHTML = '<option value="all">All seasons</option>';
   seasons.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s; opt.textContent = s;
