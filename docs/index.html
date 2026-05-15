@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SALAAM — NCAA Football Power Rankings</title>
+<title>SALAAM - NCAA Football Power Rankings</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -148,7 +148,7 @@
   }
   .team-cell { font-weight: 600; }
 
-  /* Clickable cells — deep-link to Team Summary / Standings */
+  /* Clickable cells - deep-link to Team Summary / Standings */
   .linked { cursor: pointer; }
   .linked:hover { text-decoration: underline; }
   .team-cell.linked, .team-link.linked { color: #1a6b8a; }
@@ -271,7 +271,7 @@
     Note: ratings need a 20-week warm-up window, so 1982 has no ranked snapshots and 1983's first ranked snapshot lands mid-season.
   </p>
   <p class="data-note" id="covid-note" style="display:none;color:#c62828">
-    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak — some ratings will look inflated relative to AP/Coaches polls.
+    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak - some ratings will look inflated relative to AP/Coaches polls.
   </p>
   <div id="standings-table-wrap"><p class="loading">Loading standings...</p></div>
 </div>
@@ -280,7 +280,7 @@
 <div id="team-summary" class="tab">
   <div class="conf-pills" id="ts-conf-pills" style="margin-bottom:14px"></div>
   <div class="controls">
-    <select id="team-select"><option value="">— Select a team —</option></select>
+    <select id="team-select"><option value="">- Select a team -</option></select>
     <select id="season-select"><option value="all">All seasons</option></select>
     <select id="date-type-select">
       <option value="all">All dates</option>
@@ -298,7 +298,7 @@
 <div id="league-history" class="tab">
   <div class="conf-pills" id="champ-conf-pills" style="margin-bottom:14px"></div>
   <p class="data-note">
-    National champion + runner-up per season. CFP era (2014-present) and BCS era (1998-2013) covered. Poll era (1982-1997, with split-championship handling) coming next. Conference shown is the team's affiliation in that season — accounts for realignment.
+    National champion + runner-up per season. CFP era (2014-present) and BCS era (1998-2013) covered. Poll era (1982-1997, with split-championship handling) coming next. Conference shown is the team's affiliation in that season - accounts for realignment.
   </p>
   <div id="history-table-wrap"><p class="loading">Loading champions...</p></div>
 </div>
@@ -307,7 +307,7 @@
 <div id="goat" class="tab">
   <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
   <p class="data-note" id="goat-covid-note" style="display:none;color:#c62828">
-    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak — some 2020 ratings will look inflated relative to AP/Coaches polls.
+    Note: 2020 was COVID-affected. Conferences played mostly within themselves with very few cross-conference games, so cross-cluster calibration is weak - some 2020 ratings will look inflated relative to AP/Coaches polls.
   </p>
   <p class="data-note">Top 50 single-season ratings · Eligibility requires winning a conference championship or some share of the national title. Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
   <div id="goat-table-wrap"><p class="loading">Loading GOAT table...</p></div>
@@ -356,7 +356,7 @@ function displayMatch(s) { return (!s || _PLACEHOLDER_LM.has(s)) ? '' : s; }
 
 function fmtRecord(rec) {
   // CFB records can be "12-1" or "11-2-1" pre-1996 (ties allowed). Show win pct in dimmed parens.
-  if (!rec || rec === '—') return '0-0';
+  if (!rec || rec === '-') return '0-0';
   const m = rec.match(/^(\d+)-(\d+)(?:-(\d+))?$/);
   if (!m) return rec;
   const w = parseInt(m[1]);
@@ -369,7 +369,7 @@ function fmtRecord(rec) {
 }
 
 function fmtRecordStacked(reg, playoff) {
-  if (!reg || reg === '—') return '0-0';
+  if (!reg || reg === '-') return '0-0';
   const top = fmtRecord(reg);
   const pm = playoff ? playoff.match(/^(\d+)-(\d+)$/) : null;
   const hasPlayoffs = pm && (parseInt(pm[1]) + parseInt(pm[2]) > 0);
@@ -396,7 +396,7 @@ const CONF_SHORT = {
 function shortConf(c) { return CONF_SHORT[c] || c; }
 
 // National-title honors (champ / runner-up / playoff appearance). 👑 = national
-// title — label is the selector(s) that named this team (CFP / BCS / AP /
+// title - label is the selector(s) that named this team (CFP / BCS / AP /
 // Coaches / AP+Coaches / BCS+Coaches). Trophy 🏆 stays reserved for conference
 // titles.
 function honorsBadge(cfpStatus, cfpAppearance, era, selectors) {
@@ -409,7 +409,7 @@ function honorsBadge(cfpStatus, cfpAppearance, era, selectors) {
   return '';
 }
 
-// Conference badge — gold (with 🏆) when team won the conference championship that
+// Conference badge - gold (with 🏆) when team won the conference championship that
 // season; plain pill with the conference name otherwise. Use rawConf when you want
 // the full historical name (e.g., "Pac-10" for old USC seasons), bucketConf when
 // you want the modern grouping (e.g., always "Pac-12").
@@ -601,7 +601,7 @@ function renderStandings() {
       : `<td class="team-cell">${t.team}</td>`;
     return `<tr>
     <td class="rank-cell">${t.rank}</td>
-    <td class="rank-cell col-hide-mobile">${t.conf_rank != null ? t.conf_rank : '—'}</td>
+    <td class="rank-cell col-hide-mobile">${t.conf_rank != null ? t.conf_rank : '-'}</td>
     ${teamTd}
     <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
@@ -649,7 +649,7 @@ async function loadTeamsIndex() {
 
 function populateTeamSelect() {
   const sel = document.getElementById('team-select');
-  sel.innerHTML = '<option value="">— Select a team —</option>';
+  sel.innerHTML = '<option value="">- Select a team -</option>';
   if (!teamsIndex) return;
   const filtered = tsConf === 'all'
     ? teamsIndex
@@ -714,7 +714,7 @@ function renderTeamTable() {
     <td class="last-match-cell">${renderLastMatch(g.last_match, g.season, false)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
-    <td class="rank-cell col-hide-mobile">${g.conf_rank != null ? g.conf_rank : '—'}</td>
+    <td class="rank-cell col-hide-mobile">${g.conf_rank != null ? g.conf_rank : '-'}</td>
     <td>${ratingBar(g.rating)}</td>
     <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
     <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance, g.champ_era, g.title_selectors)}</td>
@@ -833,7 +833,7 @@ function renderChampions() {
     return `${primaryHtml}<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #d8d8d8">${coHtml}</div>`;
   }
 
-  // Per-line renderers — each returns a small fragment for one team
+  // Per-line renderers - each returns a small fragment for one team
   function teamLine(t, season) {
     const sel    = (t.selectors && t.selectors.length) ? t.selectors.join('+') : '';
     const selTag = sel ? `<span class="finish-badge finish-champion" style="margin-left:4px">${sel} 👑</span>` : '';
@@ -850,17 +850,17 @@ function renderChampions() {
     return `<div style="font-weight:600">${nameHtml}${selTag}${cnt}</div>
             <div style="margin-top:3px">${conf}</div>`;
   }
-  function ovrLine(t)    { return t.rank      != null ? `${t.rank}`       : '<span style="color:#bbb">—</span>'; }
-  function confLine(t)   { return t.conf_rank != null ? `${t.conf_rank}`  : '<span style="color:#bbb">—</span>'; }
-  function reactLine(t)  { return t.rating    != null ? t.rating.toFixed(2) : '<span style="color:#bbb">—</span>'; }
+  function ovrLine(t)    { return t.rank      != null ? `${t.rank}`       : '<span style="color:#bbb">-</span>'; }
+  function confLine(t)   { return t.conf_rank != null ? `${t.conf_rank}`  : '<span style="color:#bbb">-</span>'; }
+  function reactLine(t)  { return t.rating    != null ? t.rating.toFixed(2) : '<span style="color:#bbb">-</span>'; }
   function wlLine(t)     { return fmtRecordStacked(t.regular_record, t.playoff_record); }
 
   // Build a 5-cell side (team / OVR # / CONF # / REACT / W-L), stacking
   // co_champion below primary in each cell when present.
   function teamSide(primary, co, bg, season) {
     if (!primary) {
-      // Runner-up missing (poll era): collapse all 5 cells into one "—"
-      return `<td class="${bg}" style="color:#999;text-align:center" colspan="5">—</td>`;
+      // Runner-up missing (poll era): collapse all 5 cells into one "-"
+      return `<td class="${bg}" style="color:#999;text-align:center" colspan="5">-</td>`;
     }
     const teamCellInner   = stackedLines(teamLine(primary, season),   co ? teamLine(co, season)   : null);
     const ovrCellInner    = stackedLines(ovrLine(primary),    co ? ovrLine(co)    : null);
@@ -879,7 +879,7 @@ function renderChampions() {
     <td class="season-cell linked" data-season-link="${e.season}" style="line-height:1.3;vertical-align:top">${e.season}${e.era ? `<div style="font-size:10px;color:#888;font-weight:400">${e.era}</div>` : ''}</td>
     ${teamSide(e.champion, e.co_champion, 'col-champ', e.season)}
     <td class="divider-col" style="text-align:center;font-size:11px;font-weight:600;white-space:nowrap;width:64px;padding:2px 4px;line-height:1.3;vertical-align:top">
-      ${e.final_score || '<span style="color:#bbb">—</span>'}
+      ${e.final_score || '<span style="color:#bbb">-</span>'}
     </td>
     ${teamSide(e.runner_up, null, 'col-ru', e.season)}
   </tr>`).join('');
@@ -962,7 +962,7 @@ buildConfPills('ts-conf-pills',    tsConf,        v => { tsConf = v; populateTea
 buildConfPills('champ-conf-pills', champConf,     v => { champConf = v; renderChampions(); });
 buildConfPills('goat-conf-pills',  goatConf,      v => { goatConf = v; renderGoat(); });
 // Load teams_index first so opponent/slug lookups are populated before any
-// table renders — avoids a double-render flash on initial page load.
+// table renders - avoids a double-render flash on initial page load.
 (async () => {
   await loadTeamsIndex();
   initStandings();

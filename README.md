@@ -1,4 +1,4 @@
-# SALAAM — NCAA Football Power Rankings
+# SALAAM - NCAA Football Power Rankings
 
 Massey-style power ratings for FBS college football, 1982–present.
 
@@ -10,8 +10,8 @@ Named for Rashaan Salaam (Colorado, 1994 Heisman).
 
 - **Data**: cached from [CollegeFootballData.com](https://collegefootballdata.com) (one JSON file per season, FBS games only)
 - **Ratings**: Massey method via [rankit](https://github.com/wattlebird/ranking), two windows
-  - **REACT** — 20-week rolling window (long view)
-  - **HOTTAKE** — 10-week rolling window (recent form)
+  - **REACT** - 20-week rolling window (long view)
+  - **HOTTAKE** - 10-week rolling window (recent form)
 - **Scope**: 1982 onward (NCAA Division I-A formalized; 24 programs reclassified down that year)
 - **Coverage**: 44 seasons, ~30,000 FBS-vs-FBS games, 136+ teams
 
@@ -43,8 +43,8 @@ python generate_data.py
 
 ## Sibling rating sites
 
-- [ZIDANE](https://github.com/fakeronjan/zidane) — European club soccer
-- [MESSI](https://github.com/fakeronjan/messi) — international soccer
-- [DUNCAN](https://github.com/fakeronjan/duncan) — NBA
-- [LOBO](https://github.com/fakeronjan/lobo) — WNBA
-- [DILLON](https://github.com/fakeronjan/dillon) — NFL
+- [ZIDANE](https://github.com/fakeronjan/zidane) - European club soccer
+- [MESSI](https://github.com/fakeronjan/messi) - international soccer
+- [DUNCAN](https://github.com/fakeronjan/duncan) - NBA
+- [LOBO](https://github.com/fakeronjan/lobo) - WNBA
+- [DILLON](https://github.com/fakeronjan/dillon) - NFL
