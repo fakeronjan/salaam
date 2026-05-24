@@ -321,13 +321,13 @@
 <!-- ── TEAM SUMMARY ─────────────────────────────────────────────────────── -->
 <div id="team-summary" class="tab">
   <div class="conf-pills" id="ts-conf-pills" style="margin-bottom:14px"></div>
+  <div class="conf-pills" id="ts-view-pills"></div>
   <div class="controls">
     <select id="team-select"><option value="">- Select a team -</option></select>
-    <select id="season-select"><option value="all">All seasons</option></select>
+    <select id="season-select" style="display:none"></select>
     <select id="date-type-select">
-      <option value="all">All dates</option>
-      <option value="eor">End of regular season</option>
       <option value="eos">End of playoffs</option>
+      <option value="eor">End of regular season</option>
     </select>
   </div>
   <div id="chart-wrap" style="display:none">
@@ -370,12 +370,13 @@ let standingsConf = 'all';
 let tsConf        = 'all';
 let champConf     = 'all';
 let goatConf      = 'all';
+let tsView        = 'cross';  // 'cross' (all-season summary) or 'single' (one season, all game-days)
 
 // Reusable pill builder. `current` is the active value; `onSelect(value)` fires on click.
-function buildConfPills(containerId, current, onSelect) {
+function buildConfPills(containerId, current, onSelect, options) {
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = '';
-  const opts = [{ value: 'all', label: 'All' }, ...CONFERENCES.map(c => ({ value: c, label: c }))];
+  const opts = options || [{ value: 'all', label: 'All' }, ...CONFERENCES.map(c => ({ value: c, label: c }))];
   opts.forEach(o => {
     const b = document.createElement('button');
     b.textContent = o.label;
@@ -500,11 +501,25 @@ async function teamLinkClick(slug, season) {
   buildConfPills('ts-conf-pills', tsConf, v => { tsConf = v; populateTeamSelect(); });
   populateTeamSelect();
   document.getElementById('team-select').value = slug;
+  const wantSingle = season != null && season !== '';
+  tsView = wantSingle ? 'single' : 'cross';
+  buildConfPills('ts-view-pills', tsView, v => {
+    tsView = v;
+    document.getElementById('season-select').style.display   = (v === 'single') ? '' : 'none';
+    document.getElementById('date-type-select').style.display = (v === 'cross')  ? '' : 'none';
+    renderTeamTable();
+  }, [
+    { value: 'cross',  label: 'All season summary' },
+    { value: 'single', label: 'All games within one season' },
+  ]);
+  document.getElementById('season-select').style.display    = wantSingle ? '' : 'none';
+  document.getElementById('date-type-select').style.display = wantSingle ? 'none' : '';
   await loadTeam(slug);
-  if (season != null && season !== '') {
-    const seasonSel = document.getElementById('season-select');
-    if ([...seasonSel.options].some(o => o.value === String(season))) {
-      seasonSel.value = String(season);
+  if (wantSingle) {
+    const sel = document.getElementById('season-select');
+    const targetVal = String(season);
+    if ([...sel.options].some(o => o.value === targetVal)) {
+      sel.value = targetVal;
     }
   }
   renderTeamTable();
@@ -719,12 +734,15 @@ async function loadTeam(slug) {
   const data = teamCache[slug];
   const seasons = Object.keys(data.seasons).sort().reverse();
   const seasonSel = document.getElementById('season-select');
-  seasonSel.innerHTML = '<option value="all">All seasons</option>';
+  const prevValue = seasonSel.value;
+  seasonSel.innerHTML = '';
   seasons.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s; opt.textContent = s;
     seasonSel.appendChild(opt);
   });
+  // Preserve a deep-linked selection if still valid; otherwise default to most recent.
+  seasonSel.value = (prevValue && seasons.includes(prevValue)) ? prevValue : (seasons[0] || '');
   renderTeamTable();
 }
 
@@ -732,19 +750,35 @@ function renderTeamTable() {
   const slug = document.getElementById('team-select').value;
   if (!slug || !teamCache[slug]) return;
   const data = teamCache[slug];
-  const seasonFilter = document.getElementById('season-select').value;
-  const dateType     = document.getElementById('date-type-select').value;
 
   let rows = [];
   const seasons = Object.keys(data.seasons).sort();
-  seasons.forEach(s => {
-    if (seasonFilter !== 'all' && s !== seasonFilter) return;
-    data.seasons[s].forEach(g => rows.push({...g, season: s}));
-  });
-
-  // Date-type filter: explicit selection of regular-season-end vs playoffs-end snapshot
-  if (dateType === 'eor')      rows = rows.filter(g => g.season_flag === 1);
-  else if (dateType === 'eos') rows = rows.filter(g => g.season_flag === 2);
+  let seasonFilter;
+  if (tsView === 'single') {
+    // One-season view: every snapshot in the selected season. Mark rows where the
+    // team's last_match hasn't changed since the previous snapshot as stale (synthetic
+    // EOS-day row for teams eliminated earlier).
+    seasonFilter = document.getElementById('season-select').value;
+    seasons.forEach(s => {
+      if (s !== seasonFilter) return;
+      let prevLastMatch = null;
+      data.seasons[s].forEach(g => {
+        const stale = prevLastMatch != null && g.last_match === prevLastMatch;
+        rows.push({...g, season: s, _isStale: stale});
+        prevLastMatch = g.last_match;
+      });
+    });
+  } else {
+    // Cross-season summary view: one snapshot per season (end of regular season OR end of playoffs).
+    seasonFilter = 'all';
+    const dateType = document.getElementById('date-type-select').value;
+    const flag     = (dateType === 'eor') ? 1 : 2;
+    seasons.forEach(s => {
+      data.seasons[s].forEach(g => {
+        if (g.season_flag === flag) rows.push({...g, season: s});
+      });
+    });
+  }
 
   drawChart(rows, seasonFilter);
 
@@ -753,7 +787,7 @@ function renderTeamTable() {
     return `<tr>
     <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
     <td class="linked" data-season-link="${g.season}" style="font-size:11px;color:#555">${g.season} · ${wkLabel}</td>
-    <td class="last-match-cell">${renderLastMatch(g.last_match, g.season, false)}</td>
+    <td class="last-match-cell">${renderLastMatch(g.last_match, g.season, !!g._isStale)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
     <td class="rank-cell col-hide-mobile">${g.conf_rank != null ? g.conf_rank : '-'}</td>
@@ -1003,6 +1037,18 @@ buildConfPills('conf-pills',       standingsConf, v => { standingsConf = v; rend
 buildConfPills('ts-conf-pills',    tsConf,        v => { tsConf = v; populateTeamSelect(); });
 buildConfPills('champ-conf-pills', champConf,     v => { champConf = v; renderChampions(); });
 buildConfPills('goat-conf-pills',  goatConf,      v => { goatConf = v; renderGoat(); });
+buildConfPills('ts-view-pills', tsView, v => {
+  tsView = v;
+  document.getElementById('season-select').style.display   = (v === 'single') ? '' : 'none';
+  document.getElementById('date-type-select').style.display = (v === 'cross')  ? '' : 'none';
+  renderTeamTable();
+}, [
+  { value: 'cross',  label: 'All season summary' },
+  { value: 'single', label: 'All games within one season' },
+]);
+// Initial dropdown visibility for default view ('cross')
+document.getElementById('date-type-select').style.display = '';
+document.getElementById('season-select').style.display    = 'none';
 // Load teams_index first so opponent/slug lookups are populated before any
 // table renders - avoids a double-render flash on initial page load.
 (async () => {
