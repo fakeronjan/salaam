@@ -9,7 +9,7 @@ Named for Rashaan Salaam (Colorado, 1994 Heisman).
 ## How it works
 
 - **Data**: cached from [CollegeFootballData.com](https://collegefootballdata.com) (one JSON file per season, FBS games only)
-- **Ratings**: fakeronjan WLS method via [rankit](https://github.com/wattlebird/ranking), two windows
+- **Ratings**: homebrew fakeronjan WLS solver (custom weighted-least-squares regression with per-game date weights, margin cap, zero-sum anchor), two windows
   - **REACT** - 20-week rolling window (long view)
   - **HOTTAKE** - 10-week rolling window (recent form)
 - **Scope**: 1982 onward (NCAA Division I-A formalized; 24 programs reclassified down that year)
