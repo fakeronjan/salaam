@@ -1,6 +1,6 @@
 # SALAAM - NCAA Football Power Rankings
 
-Massey-style power ratings for FBS college football, 1982–present.
+fakeronjan WLS power ratings for FBS college football, 1982–present.
 
 **Live site:** https://fakeronjan.github.io/salaam
 
@@ -9,7 +9,7 @@ Named for Rashaan Salaam (Colorado, 1994 Heisman).
 ## How it works
 
 - **Data**: cached from [CollegeFootballData.com](https://collegefootballdata.com) (one JSON file per season, FBS games only)
-- **Ratings**: Massey method via [rankit](https://github.com/wattlebird/ranking), two windows
+- **Ratings**: fakeronjan WLS method via [rankit](https://github.com/wattlebird/ranking), two windows
   - **REACT** - 20-week rolling window (long view)
   - **HOTTAKE** - 10-week rolling window (recent form)
 - **Scope**: 1982 onward (NCAA Division I-A formalized; 24 programs reclassified down that year)
@@ -20,7 +20,7 @@ Named for Rashaan Salaam (Colorado, 1994 Heisman).
 | File | Purpose |
 |---|---|
 | `fetch_data.py` | Pulls game/team JSON from CFBD into `data/` (idempotent) |
-| `salaam.py` | Builds REACT + HOTTAKE Massey ratings + standings |
+| `salaam.py` | Builds REACT + HOTTAKE fakeronjan WLS ratings + standings |
 | `generate_data.py` | Turns ratings into per-team / per-season JSON for the website |
 | `data/` | Cached source data from CFBD |
 | `docs/` | Static site (deployed to GitHub Pages) |
