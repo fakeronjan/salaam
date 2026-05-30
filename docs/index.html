@@ -779,7 +779,6 @@ function renderStandings() {
   const prevDate = idx > 0 ? snaps[idx - 1].date : null;
 
   const season = currentSeasonData && currentSeasonData.season;
-  updateDisruptedNote('goat-disrupted-note', teams.map(t => t.season));
   const rows = teams.map(t => {
     const isStale = !!(prevDate && t.last_match_date && t.last_match_date <= prevDate);
     const slug = nameToSlug[t.team];
@@ -930,7 +929,7 @@ function renderTeamTable() {
     const wkLabel = g.week_label || '';
     return `<tr>
     <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
-    <td class="linked" data-season-link="${g.season}" style="font-size:11px;color:#555">${g.season} · ${wkLabel}</td>
+    <td class="linked" data-season-link="${g.season}" style="font-size:11px;color:#555">${g.season}${tsView !== 'single' ? seasonTag(g.season) : ''} · ${wkLabel}</td>
     <td class="last-match-cell">${renderLastMatch(g.last_match, g.season, !!g._isStale)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
@@ -1141,8 +1140,7 @@ async function loadGoat() {
 function renderGoat() {
   if (!goatData) return;
   const filtered = goatConf === 'all' ? goatData : goatData.filter(t => t.conference === goatConf);
-  // Show top-of-tab COVID note iff there's a 2020 entry visible
-  const has2020 = filtered.some(t => t.season === 2020);
+  updateDisruptedNote('goat-disrupted-note', filtered.map(t => t.season));
 
   const rows = filtered.map(t => {
     const covidTag = seasonTag(t.season);
