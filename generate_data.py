@@ -585,17 +585,32 @@ def _qualifies_for_goat(row):
     return cfp_status(row['name'], row['season']) >= 1
 
 eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
+# Short / disrupted seasons — flagged on GOAT/Champions/Standings/TeamSummary
+# rows so the UI can tag them inline + footnote.
+SHORT_SEASONS = {
+    2020: {
+        'tag': 'COVID varied',
+        'category': 'covid',
+        'note': "Conferences ran independent schedules in 2020 with very few cross-conference games. Game counts ranged from 4 to 13 per team. Cross-cluster calibration is weak — some ratings will look inflated relative to AP/Coaches polls.",
+    },
+}
+
 eos_top = eos_qualified.sort_values('rating', ascending=False).head(50).reset_index(drop=True)
 
 goat_data = []
 for i, (_, r) in enumerate(eos_top.iterrows()):
     reg = _reg_record_lookup.get((r['name'], int(r['season'])), '')
+    s = int(r['season'])
     goat_data.append({
         'rank':            i + 1,
         'team':            r['name'],
         'conference':      conf(r['name'], r['season']),
         'conference_raw':  conf_raw(r['name'], r['season']),
-        'season':          int(r['season']),
+        'season':          s,
+        'short_season':          s in SHORT_SEASONS,
+        'short_season_tag':      SHORT_SEASONS.get(s, {}).get('tag', '')      if s in SHORT_SEASONS else '',
+        'short_season_category': SHORT_SEASONS.get(s, {}).get('category', '') if s in SHORT_SEASONS else '',
+        'short_season_note':     SHORT_SEASONS.get(s, {}).get('note', '')     if s in SHORT_SEASONS else '',
         'rating':          round(float(r['rating']), 3),
         'record':          clean(r['record']),
         'regular_record':  reg,
@@ -747,6 +762,10 @@ seasons_meta = {
     'first_date': str(games['date'].min().date()),
     'last_date':  str(games['date'].max().date()),
     'generated_at': datetime.now(timezone.utc).isoformat(),
+    'disrupted_seasons': {
+        str(year): {'tag': info['tag'], 'category': info['category'], 'note': info['note']}
+        for year, info in SHORT_SEASONS.items()
+    },
 }
 with open(OUT_DIR / 'seasons_index.json', 'w') as f:
     json.dump(seasons_meta, f, separators=(',', ':'))
