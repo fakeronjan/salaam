@@ -250,7 +250,7 @@
   /* Champions table */
   .col-champ  { background: #fffdf3; }
   .col-ru     { background: #fafafa; }
-  .season-cell { font-weight: 700; color: #1a6b8a; white-space: nowrap; }
+  .season-cell { font-weight: 700; color: #1a6b8a; white-space: nowrap; text-align: center; }
   .divider-col { width: 4px; background: #e8e8e8; padding: 0; }
   #history-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   #standings-table-wrap, #team-table-wrap, #goat-table-wrap {
@@ -929,7 +929,7 @@ function renderTeamTable() {
     const wkLabel = g.week_label || '';
     return `<tr>
     <td style="white-space:nowrap;color:#888;font-size:12px">${g.date}</td>
-    <td class="linked" data-season-link="${g.season}" style="font-size:11px;color:#555">${g.season}${tsView !== 'single' ? seasonTag(g.season) : ''} · ${wkLabel}</td>
+    <td class="linked" data-season-link="${g.season}" style="font-size:11px;color:#555;text-align:center">${g.season}${tsView !== 'single' ? seasonTag(g.season) : ''} · ${wkLabel}</td>
     <td class="last-match-cell">${renderLastMatch(g.last_match, g.season, !!g._isStale)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(g.regular_record, g.playoff_record, g.record)}</td>
     <td class="rank-cell">${g.rank}</td>
