@@ -589,7 +589,7 @@ eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
 # rows so the UI can tag them inline + footnote.
 SHORT_SEASONS = {
     2020: {
-        'tag': 'COVID varied',
+        'tag': 'COVID',
         'category': 'covid',
         'note': "Conferences ran independent schedules in 2020 with very few cross-conference games. Game counts ranged from 4 to 13 per team. Cross-cluster calibration is weak — some ratings will look inflated relative to AP/Coaches polls.",
     },
