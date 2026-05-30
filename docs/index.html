@@ -1150,7 +1150,7 @@ function renderGoat() {
       : `<td class="team-cell">${t.team}</td>`;
     return `<tr>
       <td class="rank-cell">${t.rank}</td>
-      <td class="season-cell linked" data-season-link="${t.season}" style="text-align:center;white-space:nowrap">${t.season}${covidTag}</td>
+      <td class="season-cell linked" data-season-link="${t.season}" style="white-space:nowrap">${t.season}${covidTag}</td>
       ${teamTd}
       <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
       <td>${ratingBar(t.rating)}</td>
