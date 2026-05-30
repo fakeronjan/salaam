@@ -43,8 +43,31 @@ python generate_data.py
 
 ## Sibling rating sites
 
-- [ZIDANE](https://github.com/fakeronjan/zidane) - European club soccer
-- [MESSI](https://github.com/fakeronjan/messi) - international soccer
+Portal: [fakeronjan.com/sports](https://fakeronjan.com/sports) ([repo](https://github.com/fakeronjan/sports-ratings))
+
+**Basketball**
 - [DUNCAN](https://github.com/fakeronjan/duncan) - NBA
 - [LOBO](https://github.com/fakeronjan/lobo) - WNBA
+- [CARMELO](https://github.com/fakeronjan/carmelo) - Men's international basketball
+
+**Football**
 - [DILLON](https://github.com/fakeronjan/dillon) - NFL
+
+**Soccer**
+- [ZIDANE](https://github.com/fakeronjan/zidane) - European club soccer
+- [COBI](https://github.com/fakeronjan/cobi) - MLS
+- [MESSI](https://github.com/fakeronjan/messi) - Men's international soccer
+
+**Baseball**
+- [GRIFFEY](https://github.com/fakeronjan/griffey) - MLB
+- [ICHIRO](https://github.com/fakeronjan/ichiro) - Men's international baseball
+
+**Hockey**
+- [SAKIC](https://github.com/fakeronjan/sakic) - NHL
+- [FORSBERG](https://github.com/fakeronjan/forsberg) - Men's international hockey
+
+**Tennis**
+- [Tennis](https://github.com/fakeronjan/tennis) - Open-era Grand Slams (data-viz, no rating model)
+
+**Reality TV**
+- [LAVIN](https://github.com/fakeronjan/lavin) - The Challenge
