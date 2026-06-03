@@ -445,11 +445,14 @@ def assemble_final(master_df, react_df, standings_df):
     final_df['most_recent_week'] = (final_df['ranking_id'] == latest_week_id).astype(int)
 
     # season_flag: only populated for fully-complete seasons.
-    # CFB season YYYY ends with the CFP/title game in mid-Jan of YYYY+1; safe
-    # to consider "fully complete" once today is past Feb 1 of YYYY+1.
-    today = datetime.now().date()
+    # A season is "fully complete" the moment the National Championship game
+    # (week 104 in our taxonomy) lands in the games data — event-based,
+    # mirrors GRIFFEY's WS-walker and new ZIDANE's CL-Final-date gate. No
+    # date cushion means badges show the day after the title game instead
+    # of waiting until February.
     def season_is_fully_complete(season):
-        return today > datetime(int(season) + 1, 2, 1).date()
+        title = master_df[(master_df['season'] == season) & (master_df['week'] == 104)]
+        return not title.empty
 
     seasons = sorted(final_df['season'].unique())
 
