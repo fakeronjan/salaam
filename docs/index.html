@@ -1005,6 +1005,29 @@ function drawChart(rows, seasonFilter) {
     }
   });
 
+  // National Championship markers: 👑 / 🥈 at the title-game snapshot.
+  // cfp_status is the sole-champion flag (1 = title-game runner-up,
+  // 2 = champion). Filter to season_flag === 2 to mark only the
+  // title-game snapshot. Captures CFP era (2014+), BCS era (1998-2013),
+  // and pre-BCS sole-champion-by-poll seasons.
+  const trophies = [];
+  rows.forEach((r, i) => {
+    if (!r.cfp_status || r.season_flag !== 2) return;
+    const emoji = r.cfp_status === 2 ? '👑' : '🥈';
+    const titleText = r.cfp_status === 2
+      ? `National Champion (${r.season})`
+      : `National Runner-Up (${r.season})`;
+    const x = px(i);
+    const y = Math.max(14, py(r.rating) - 12);
+    trophies.push(
+      `<g style="cursor:help">
+        <title>${titleText}</title>
+        <rect x="${(x - 9).toFixed(1)}" y="${(y - 12).toFixed(1)}" width="18" height="18" fill="transparent"/>
+        <text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="14" text-anchor="middle" pointer-events="none">${emoji}</text>
+      </g>`
+    );
+  });
+
   svg.innerHTML = `
     <defs>
       <linearGradient id="lineGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${H}">
@@ -1018,7 +1041,8 @@ function drawChart(rows, seasonFilter) {
           stroke="#ddd" stroke-width="1"/>
     ${ticks.join('')}
     ${xlabels.join('')}
-    <polyline points="${points}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linejoin="round"/>`;
+    <polyline points="${points}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+    ${trophies.join('')}`;
 }
 
 document.getElementById('team-select').addEventListener('change', e => loadTeam(e.target.value));
