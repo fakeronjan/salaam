@@ -450,7 +450,17 @@ def assemble_final(master_df, react_df, standings_df):
     # mirrors GRIFFEY's WS-walker and new ZIDANE's CL-Final-date gate. No
     # date cushion means badges show the day after the title game instead
     # of waiting until February.
+    # Historical seasons (anything except the latest in data) are always
+    # complete — the title game itself sat in different "weeks" across eras
+    # (pre-2006 BCS title was bundled into a normal bowl = week 101; 2007's
+    # title game lost its notes label and never got promoted to week 104;
+    # week=104 was only consistently used 2008+). Without this carve-out,
+    # the whole pre-2006 + 2007 history drops out of the Team Summary
+    # "all seasons" view.
+    _latest_season = int(master_df['season'].max())
     def season_is_fully_complete(season):
+        if int(season) < _latest_season:
+            return True
         title = master_df[(master_df['season'] == season) & (master_df['week'] == 104)]
         return not title.empty
 
