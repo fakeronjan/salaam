@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-fetch_data.py — pull NCAA FBS football data from CollegeFootballData.com
+fetch_data.py - pull NCAA FBS football data from CollegeFootballData.com
 and cache as JSON files in data/.
 
 Reads API key from $CFBD_API_KEY (env) or ~/.cfbd_api_key (file).
@@ -25,7 +25,7 @@ TEAMS_DIR = DATA_DIR / 'teams'
 CONFERENCES_FILE = DATA_DIR / 'conferences.json'
 META_FILE = DATA_DIR / '_meta.json'
 
-START_SEASON = 1982  # NCAA Division I-A formalized — 24 programs (Ivy + old SoCon) reclassified down
+START_SEASON = 1982  # NCAA Division I-A formalized - 24 programs (Ivy + old SoCon) reclassified down
 API_BASE = 'https://api.collegefootballdata.com'
 API_KEY_FILE = Path.home() / '.cfbd_api_key'
 RATE_LIMIT_SLEEP = 0.4

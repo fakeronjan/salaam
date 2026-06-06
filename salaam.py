@@ -66,7 +66,7 @@ def prepare_game_data(raw_df):
     """
     df = raw_df.copy()
 
-    # FBS-vs-FBS only (per ZIDANE-style filter — exclude FCS opponents entirely)
+    # FBS-vs-FBS only (per ZIDANE-style filter - exclude FCS opponents entirely)
     df = df[(df['homeClassification'] == 'fbs') & (df['awayClassification'] == 'fbs')].copy()
 
     # Completed games with valid scores only
@@ -91,7 +91,7 @@ def prepare_game_data(raw_df):
     df['winw']    = np.where(df['ptsw'] > df['ptsl'], 1, 0.5)
     df['winl']    = 1 - df['winw']
 
-    # Home/visitor schema for the solver — HCA + cap are applied inside
+    # Home/visitor schema for the solver - HCA + cap are applied inside
     # _solve_wls rather than here. Per-game HCA gates neutral-site
     # games (kickoffs in Ireland/Dublin, CFP semis/finals, bowls) to 0.
     df['neutralSite'] = df['neutralSite'].fillna(False).astype(bool)
@@ -122,7 +122,7 @@ def prepare_game_data(raw_df):
         df.loc[sub[sub['date'] < cutoff].index, 'week'] = 0
 
     # === Postseason taxonomy (overrides CFBD's date-based week numbering) ===
-    # College football is structurally awkward — CFBD inconsistently flags
+    # College football is structurally awkward - CFBD inconsistently flags
     # Conference Championships (sometimes seasonType=postseason, sometimes
     # =regular at "neutral" sites whose flag is unreliable for older years).
     # We enforce ONE explicit taxonomy for all eras:
@@ -131,7 +131,7 @@ def prepare_game_data(raw_df):
     #   102 = CFP Quarterfinals
     #   103 = CFP Semifinals
     #   104 = National Championship
-    # Bowls collapse together (per user spec — elongated bowl calendar would
+    # Bowls collapse together (per user spec - elongated bowl calendar would
     # otherwise inflate weight on late bowls). CCGs get their own slot so
     # they aren't conflated with bowls (1996 Florida bug: SEC CG + Sugar
     # Bowl both ended up in the same row).
@@ -211,7 +211,7 @@ def prepare_game_data(raw_df):
 
 
 # =========================================================
-# FAKERONJAN WLS RATINGS — homebrew weighted least squares solver
+# FAKERONJAN WLS RATINGS - homebrew weighted least squares solver
 # =========================================================
 
 def _apply_margin_transform(margin, transform, cap):
@@ -239,7 +239,7 @@ def _solve_wls(window_df, weighting_mode, margin_transform, margin_cap):
     weights. Solves min sum_i w_i * (X_i r - y_i)^2 with a zero-sum
     constraint enforced as an extra high-weight row.
 
-    HCA is per-game (column 'hca' in window_df) — supports neutral-site
+    HCA is per-game (column 'hca' in window_df) - supports neutral-site
     games (CFP semis/finals, bowls, international kickoffs) where HCA
     should be 0.
     """
@@ -431,7 +431,7 @@ def compute_standings(master_df, existing_standings_df):
 
 def assemble_final(master_df, react_df, standings_df):
     """Merge REACT ratings + standings, add week/season flags."""
-    print('Final step — merging SALAAM ratings and standings...')
+    print('Final step - merging SALAAM ratings and standings...')
 
     final_df = pd.merge(react_df, standings_df, how='left', on=['ranking_id', 'name'])
     final_df.rename(columns={'season_week_x': 'season_week', 'season_x': 'season'}, inplace=True)
@@ -446,12 +446,12 @@ def assemble_final(master_df, react_df, standings_df):
 
     # season_flag: only populated for fully-complete seasons.
     # A season is "fully complete" the moment the National Championship game
-    # (week 104 in our taxonomy) lands in the games data — event-based,
+    # (week 104 in our taxonomy) lands in the games data - event-based,
     # mirrors GRIFFEY's WS-walker and new ZIDANE's CL-Final-date gate. No
     # date cushion means badges show the day after the title game instead
     # of waiting until February.
     # Historical seasons (anything except the latest in data) are always
-    # complete — the title game itself sat in different "weeks" across eras
+    # complete - the title game itself sat in different "weeks" across eras
     # (pre-2006 BCS title was bundled into a normal bowl = week 101; 2007's
     # title game lost its notes label and never got promoted to week 104;
     # week=104 was only consistently used 2008+). Without this carve-out,
@@ -472,7 +472,7 @@ def assemble_final(master_df, react_df, standings_df):
     # and CFP rounds (weeks 101+) are the postseason. Side benefit: if
     # CCG detection mis-flags a late-season neutral-site rivalry as a
     # CCG (Army-Navy, Wrigley-stadium games, etc.), it stays in
-    # regular_record where it belongs — detection accuracy stops mattering
+    # regular_record where it belongs - detection accuracy stops mattering
     # for the record split.
     REG_RECORD_INCLUDES_THROUGH = POSTSEASON_WEEK_OFFSET  # week 100 = CCG
 
@@ -511,8 +511,8 @@ def assemble_final(master_df, react_df, standings_df):
     # Last game info per (season, week, team). Pre-aggregate so a team that
     # plays multiple games in the same collapsed postseason week (e.g.,
     # 1996 Florida won SEC Championship + Sugar Bowl, both tier-1 here)
-    # produces ONE row in the merge — joining their game strings with ' · '
-    # — instead of duplicating the whole standings row downstream.
+    # produces ONE row in the merge - joining their game strings with ' · '
+    # - instead of duplicating the whole standings row downstream.
     _SEP = ' · '
     lastgamew = (master_df[['season', 'week', 'winner', 'winner_last_game', 'loser']]
                  .rename(columns={'winner': 'name'})
@@ -563,7 +563,7 @@ if __name__ == '__main__':
     # 2. Prepare
     master_df = prepare_game_data(raw_df)
 
-    # 3. REACT ratings — drop the current season from the cache before
+    # 3. REACT ratings - drop the current season from the cache before
     # recomputing. cume_week_ids are assigned via groupby().ngroup() over
     # all (season, season_week) pairs, so adding/reclassifying a game in
     # the current season can shift its cume_week_ids and leave cached

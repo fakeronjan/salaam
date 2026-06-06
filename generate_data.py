@@ -1,5 +1,5 @@
 """
-generate_data.py — turns SALAAM ratings + standings + cached games into the
+generate_data.py - turns SALAAM ratings + standings + cached games into the
 JSON the SALAAM web frontend reads. Run after salaam.py. Outputs to docs/data/.
 
 CFB-specific tweaks vs DILLON:
@@ -31,7 +31,7 @@ BCS_CHAMPIONS = {
     2000: {'champion': 'Oklahoma',      'runner_up': 'Florida State', 'final_score': '13-2'},
     2001: {'champion': 'Miami',         'runner_up': 'Nebraska',      'final_score': '37-14'},
     2002: {'champion': 'Ohio State',    'runner_up': 'Miami',         'final_score': '31-24'},   # 2OT
-    2003: {'champion': 'LSU',           'runner_up': 'Oklahoma',      'final_score': '21-14'},   # AP gave to USC — handled in Track B (poll era)
+    2003: {'champion': 'LSU',           'runner_up': 'Oklahoma',      'final_score': '21-14'},   # AP gave to USC - handled in Track B (poll era)
     2004: {'champion': 'USC',           'runner_up': 'Oklahoma',      'final_score': '55-19'},   # vacated by NCAA but still BCS-recorded champion
     2005: {'champion': 'Texas',         'runner_up': 'USC',           'final_score': '41-38'},
     2006: {'champion': 'Florida',       'runner_up': 'Ohio State',    'final_score': '41-14'},
@@ -164,7 +164,7 @@ POSTSEASON_LABELS = {
     104: 'National Championship',
 }
 
-# Conferences we attribute champions for — both modern P5 buckets and their
+# Conferences we attribute champions for - both modern P5 buckets and their
 # historical predecessors (Big 8 → Big 12, Pac-10 → Pac-12), plus Big East and
 # the dissolved Southwest Conference.
 HISTORICAL_P5 = {'ACC', 'Big Ten', 'Big 12', 'Big 8', 'Pac-10', 'Pac-12',
@@ -207,7 +207,7 @@ def _detect_title_game(year_games, members):
       2) Neutral-site conference game between two members in the standard
          CCG window (mid-Nov through mid-Dec). seasonType varies (regular
          in modern years, postseason in some older years like 1994 SEC),
-         and CFBD's neutralSite flag is unreliable pre-2003 — so we just
+         and CFBD's neutralSite flag is unreliable pre-2003 - so we just
          take the latest qualifying game in the window. The Dec 15 cutoff
          keeps BCS/CFP National Championships out (those are Jan 1+).
     Returns team name (string) or None."""
@@ -225,7 +225,7 @@ def _detect_title_game(year_games, members):
             continue
         return g['homeTeam'] if hp >= ap else g['awayTeam']
 
-    # Neutral-site heuristic — date-window based (handles year-by-year
+    # Neutral-site heuristic - date-window based (handles year-by-year
     # inconsistency in seasonType + week numbering).
     cands = []
     for g in year_games:
@@ -270,10 +270,10 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
     for conf_name, members in by_conf.items():
         title_winner = _detect_title_game(raw, members)
         if title_winner:
-            # Title game determined — single official champion
+            # Title game determined - single official champion
             conf_champs[(title_winner, year)] = conf_name
         else:
-            # No title game (or pre-CCG era) — best conf record, ties = co-champions
+            # No title game (or pre-CCG era) - best conf record, ties = co-champions
             for team in _conf_record_champions(raw, members):
                 conf_champs[(team, year)] = conf_name
 
@@ -315,7 +315,7 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
 
 # Layer in BCS-era champions from the hardcoded table. CFBD's notes-based
 # detection is unreliable pre-2006 because the BCS title rotated through
-# Fiesta/Sugar/Rose/Orange — those games' notes don't mention "BCS championship".
+# Fiesta/Sugar/Rose/Orange - those games' notes don't mention "BCS championship".
 # Also include co_champion when AP picked a different team than the BCS title game.
 for year, info in BCS_CHAMPIONS.items():
     co_champ = AP_OVERRIDES.get(year)  # AP picked a different team
@@ -427,7 +427,7 @@ def slug(name):
 def _played(result):
     """True iff this row represents an actual game played. Upstream now
     writes empty strings for non-game-days (was 'Bye / No Game' previously)
-    — both must be treated as "didn't play" or the forward-fill of
+    - both must be treated as "didn't play" or the forward-fill of
     last_match breaks for any week a team had a bye."""
     if result is None or pd.isna(result):
         return False
@@ -439,7 +439,7 @@ df['is_game_day']      = df['lastgame'].apply(_played).astype(int)
 df['is_end_of_season'] = df['season_flag'].isin([1, 2]).astype(int)
 
 
-# Per-(team, ranking_id) conference rank — position within the team's
+# Per-(team, ranking_id) conference rank - position within the team's
 # conference at that snapshot, sorted by overall REACT rank. Lets the
 # Standings / Champions tabs show CONF # alongside OVR # (mirrors ZIDANE).
 print('Computing conference ranks...')
@@ -458,7 +458,7 @@ def conf_rank(team, ranking_id):
 
 
 # Per-(team, season) forward-filled last game. Keying by season prevents
-# cross-season carry-forward — at the start of a new season, teams that
+# cross-season carry-forward - at the start of a new season, teams that
 # haven't played yet correctly show empty rather than their previous-season
 # bowl/playoff result.
 _last_game_history = {}
@@ -576,7 +576,7 @@ eos_all = df[df['season_flag'] == 2].copy()
 # Championship-round filter: a team must have either won (any share of)
 # the national championship via any selector (AP, Coaches, BCS, CFP), or
 # played in the title game as runner-up, to qualify for the all-time list.
-# Matches the cross-sport pattern used in LOBO/DUNCAN/DILLON — "best
+# Matches the cross-sport pattern used in LOBO/DUNCAN/DILLON - "best
 # teams that contested for the championship." Cleans up conference-
 # winning seasons that flamed out before the title game (e.g., 2019 Ohio
 # State, 2020 Oklahoma) from showing up in the GOAT list, while keeping
@@ -585,13 +585,13 @@ def _qualifies_for_goat(row):
     return cfp_status(row['name'], row['season']) >= 1
 
 eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
-# Short / disrupted seasons — flagged on GOAT/Champions/Standings/TeamSummary
+# Short / disrupted seasons - flagged on GOAT/Champions/Standings/TeamSummary
 # rows so the UI can tag them inline + footnote.
 SHORT_SEASONS = {
     2020: {
         'tag': 'COVID',
         'category': 'covid',
-        'note': "Conferences ran independent schedules in 2020 with very few cross-conference games. Game counts ranged from 4 to 13 per team. Cross-cluster calibration is weak — some ratings will look inflated relative to AP/Coaches polls.",
+        'note': "Conferences ran independent schedules in 2020 with very few cross-conference games. Game counts ranged from 4 to 13 per team. Cross-cluster calibration is weak - some ratings will look inflated relative to AP/Coaches polls.",
     },
 }
 
@@ -641,7 +641,7 @@ for team in all_teams:
     most_recent_season = int(tdf['season'].max())
     # Every conference bucket the team has been in across all seasons
     # (lets the conference pill filter on Team Summary catch teams that
-    # have switched leagues — USC pre-2024 Pac-12 vs USC 2024+ Big Ten).
+    # have switched leagues - USC pre-2024 Pac-12 vs USC 2024+ Big Ten).
     team_seasons_played = sorted(tdf['season'].unique())
     all_confs = sorted(set(conf(team, s) for s in team_seasons_played))
     teams_index.append({
@@ -832,7 +832,7 @@ for season in sorted(cfp_outcomes.keys(), reverse=True):
         'runner_up':    ru,
     })
 
-# Running title counts — count BOTH champion and co_champion (split years
+# Running title counts - count BOTH champion and co_champion (split years
 # count both teams). RU counts apply to teams that lost a title game.
 _champ_count = {}
 _ru_count    = {}
@@ -857,4 +857,4 @@ print(f'Wrote {len(all_seasons)} season files. Standings date: {latest_date}')
 _by_era = {}
 for c in champions:
     _by_era[c['era']] = _by_era.get(c['era'], 0) + 1
-print(f'Champions: {len(champions)} entries — ' + ', '.join(f'{n} {e}' for e, n in sorted(_by_era.items())))
+print(f'Champions: {len(champions)} entries - ' + ', '.join(f'{n} {e}' for e, n in sorted(_by_era.items())))
