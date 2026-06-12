@@ -855,8 +855,8 @@ function renderStandings() {
         <th>Team</th><th class="col-hide-mobile">Conf</th>
         <th>W-L (Pct)</th>
         <th>Rating</th>
-        <th class="col-hide-mobile col-od">Offense</th>
-        <th class="col-hide-mobile col-od">Defense</th>
+        <th class="col-hide-mobile col-od">OFF</th>
+        <th class="col-hide-mobile col-od">DEF</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
@@ -999,8 +999,8 @@ function renderTeamTable() {
         <th>OVR #</th>
         <th class="col-hide-mobile">Conf #</th>
         <th>Rating</th>
-        <th class="col-hide-mobile col-od">Offense</th>
-        <th class="col-hide-mobile col-od">Defense</th>
+        <th class="col-hide-mobile col-od">OFF</th>
+        <th class="col-hide-mobile col-od">DEF</th>
         <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
@@ -1196,16 +1196,16 @@ function renderChampions() {
         <th class="col-champ col-hide-mobile">OVR #</th>
         <th class="col-champ col-hide-mobile">Conf #</th>
         <th class="col-champ">Rating</th>
-        <th class="col-champ col-hide-mobile">Offense</th>
-        <th class="col-champ col-hide-mobile">Defense</th>
+        <th class="col-champ col-hide-mobile">OFF</th>
+        <th class="col-champ col-hide-mobile">DEF</th>
         <th class="col-champ col-hide-mobile">W-L</th>
         <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
         <th class="col-ru">Runner-Up</th>
         <th class="col-ru col-hide-mobile">OVR #</th>
         <th class="col-ru col-hide-mobile">Conf #</th>
         <th class="col-ru">Rating</th>
-        <th class="col-ru col-hide-mobile">Offense</th>
-        <th class="col-ru col-hide-mobile">Defense</th>
+        <th class="col-ru col-hide-mobile">OFF</th>
+        <th class="col-ru col-hide-mobile">DEF</th>
         <th class="col-ru col-hide-mobile">W-L</th>
       </tr></thead>
       <tbody>${rows}</tbody>
@@ -1282,9 +1282,9 @@ buildConfPills('ts-conf-pills',    tsConf,        v => { tsConf = v; populateTea
 buildConfPills('champ-conf-pills', champConf,     v => { champConf = v; renderChampions(); });
 buildConfPills('goat-conf-pills',  goatConf,      v => { goatConf = v; renderGoat(); });
 buildConfPills('goat-metric-pills', goatMetric,   v => { goatMetric = v; renderGoat(); }, [
-  { value: 'react', label: 'Overall' },
-  { value: 'o',     label: 'Offense' },
-  { value: 'd',     label: 'Defense' },
+  { value: 'react', label: 'Rating (overall)' },
+  { value: 'o',     label: 'Offense only' },
+  { value: 'd',     label: 'Defense only' },
 ]);
 buildConfPills('ts-view-pills', tsView, v => {
   tsView = v;
