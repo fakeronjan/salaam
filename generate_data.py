@@ -537,7 +537,7 @@ def playoff_record(full_record, regular_record):
     return f'{pw}-{pl}'
 
 
-# ── Home-field advantage (per-snapshot, 3-year rolling-day window) ────────────
+# ── Home-field advantage (per-snapshot, 5-year rolling-day window) ────────────
 # HFA_T = how much team T's home-game margins beat what its Rating predicts, net
 # of how it travels. Per non-neutral game: home_resid = actual home margin minus
 # (home prior-Rating - away prior-Rating). A team's home games show how much it
@@ -545,8 +545,13 @@ def playoff_record(full_record, regular_record):
 # underperforms travelling. HFA = (home_mean - away_mean) / 2. Prior ratings
 # (shifted one snapshot) keep a game from predicting itself. Mirrors DILLON; CFB
 # home edge is larger + more varied than the NFL (altitude, environment).
-print('Computing per-snapshot home field advantage (3-year rolling-day window)...')
-_HFA_DAYS = 3 * 365          # 1095-day rolling window
+# Window is 5yr (not DILLON's 3yr): FBS teams play only ~6-7 home games/year vs
+# the NFL's ~8-9, so 5yr banks ~27 home games - the same effective sample DILLON
+# gets in 3yr. College home-field traits (altitude, crowd, venue) are stable, so
+# the longer window is better-powered without going stale. Min 10 still holds out
+# brand-new FBS programs (e.g. Delaware, FCS->FBS in 2025) that lack the data.
+print('Computing per-snapshot home field advantage (5-year rolling-day window)...')
+_HFA_DAYS = 5 * 365          # 1825-day rolling window (see note above)
 _MIN_HOME_GAMES = 10         # below this the home-mean is too noisy; suppress
 
 _rsorted = df.sort_values(['name', 'ranking_id']).copy()
