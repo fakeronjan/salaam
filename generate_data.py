@@ -555,6 +555,10 @@ standings_data = {
             'conference':      conf(r['name'], r['season']),
             'conference_raw':  conf_raw(r['name'], r['season']),
             'rating':          round(float(r['rating']), 3),
+            'rating_o':        round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
+            'rating_d':        round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
+            'rank_o':          int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
+            'rank_d':          int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
             'record':          clean(r['record']),
             'last_match':      clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(r['name'], r['season_week'], r['season']),
             'cfp_status':       cfp_status(r['name'], r['season']),
@@ -595,34 +599,47 @@ SHORT_SEASONS = {
     },
 }
 
-eos_top = eos_qualified.sort_values('rating', ascending=False).head(50).reset_index(drop=True)
+def _build_goat(sort_field):
+    """Top-50 single-season list for the eligible pool, ranked by sort_field
+    (rating / rating_o / rating_d). The all-time 'rank' is the position in
+    THIS sort, so the Offense list ranks by offense, etc. Mirrors DILLON's
+    separate goat_o / goat_d files (best offenses != best overall teams)."""
+    top = eos_qualified.sort_values(sort_field, ascending=False).head(50).reset_index(drop=True)
+    rows = []
+    for i, (_, r) in enumerate(top.iterrows()):
+        reg = _reg_record_lookup.get((r['name'], int(r['season'])), '')
+        s = int(r['season'])
+        rows.append({
+            'rank':            i + 1,
+            'team':            r['name'],
+            'conference':      conf(r['name'], r['season']),
+            'conference_raw':  conf_raw(r['name'], r['season']),
+            'season':          s,
+            'short_season':          s in SHORT_SEASONS,
+            'short_season_tag':      SHORT_SEASONS.get(s, {}).get('tag', '')      if s in SHORT_SEASONS else '',
+            'short_season_category': SHORT_SEASONS.get(s, {}).get('category', '') if s in SHORT_SEASONS else '',
+            'short_season_note':     SHORT_SEASONS.get(s, {}).get('note', '')     if s in SHORT_SEASONS else '',
+            'rating':          round(float(r['rating']), 3),
+            'rating_o':        round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
+            'rating_d':        round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
+            'rank_o':          int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
+            'rank_d':          int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
+            'record':          clean(r['record']),
+            'regular_record':  reg,
+            'playoff_record':  playoff_record(r['record'], reg),
+            'cfp_status':       cfp_status(r['name'], r['season']),
+            'cfp_appearance':   cfp_appearance(r['name'], r['season']),
+            'champ_era':        champ_era(r['season']),
+            'title_selectors':  title_selectors(r['name'], r['season']),
+            'conference_champ': conf_champ(r['name'], r['season']),
+        })
+    return rows
 
-goat_data = []
-for i, (_, r) in enumerate(eos_top.iterrows()):
-    reg = _reg_record_lookup.get((r['name'], int(r['season'])), '')
-    s = int(r['season'])
-    goat_data.append({
-        'rank':            i + 1,
-        'team':            r['name'],
-        'conference':      conf(r['name'], r['season']),
-        'conference_raw':  conf_raw(r['name'], r['season']),
-        'season':          s,
-        'short_season':          s in SHORT_SEASONS,
-        'short_season_tag':      SHORT_SEASONS.get(s, {}).get('tag', '')      if s in SHORT_SEASONS else '',
-        'short_season_category': SHORT_SEASONS.get(s, {}).get('category', '') if s in SHORT_SEASONS else '',
-        'short_season_note':     SHORT_SEASONS.get(s, {}).get('note', '')     if s in SHORT_SEASONS else '',
-        'rating':          round(float(r['rating']), 3),
-        'record':          clean(r['record']),
-        'regular_record':  reg,
-        'playoff_record':  playoff_record(r['record'], reg),
-        'cfp_status':       cfp_status(r['name'], r['season']),
-        'cfp_appearance':   cfp_appearance(r['name'], r['season']),
-        'champ_era':        champ_era(r['season']),
-        'title_selectors':  title_selectors(r['name'], r['season']),
-        'conference_champ': conf_champ(r['name'], r['season']),
-    })
-with open(OUT_DIR / 'goat_teams.json', 'w') as f:
-    json.dump(goat_data, f, separators=(',', ':'))
+for _fname, _field in [('goat_teams.json', 'rating'),
+                       ('goat_o.json',     'rating_o'),
+                       ('goat_d.json',     'rating_d')]:
+    with open(OUT_DIR / _fname, 'w') as f:
+        json.dump(_build_goat(_field), f, separators=(',', ':'))
 
 # ── 3. Per-team JSON files ────────────────────────────────────────────────────
 print('Writing per-team JSON files...')
@@ -670,6 +687,10 @@ for team in all_teams:
                 'week':              int(r['week']),
                 'week_label':        week_label(season, r['week']),
                 'rating':            round(float(r['rating']), 3),
+                'rating_o':          round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
+                'rating_d':          round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
+                'rank_o':            int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
+                'rank_d':            int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
                 'rank':              int(r['rank']),
                 'conf_rank':         conf_rank(team, r['ranking_id']),
                 'record':            clean(r['record']),
@@ -734,6 +755,10 @@ for season in all_seasons:
                 'conference':      conf(r['name'], season),
                 'conference_raw':  conf_raw(r['name'], season),
                 'rating':          round(float(r['rating']), 3),
+                'rating_o':        round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
+                'rating_d':        round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
+                'rank_o':          int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
+                'rank_d':          int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
                 'record':          clean(r['record']),
                 'regular_record':  reg,
                 'playoff_record':  po,
@@ -790,12 +815,18 @@ def _team_block(team_name, season, sdf, selectors):
     }
     if rows.empty:
         # No rating snapshot available (warm-up window). Surface the team without metrics.
-        base.update({'rating': None, 'rank': None, 'conf_rank': None, 'record': '', 'playoff_record': ''})
+        base.update({'rating': None, 'rating_o': None, 'rating_d': None,
+                     'rank': None, 'rank_o': None, 'rank_d': None,
+                     'conf_rank': None, 'record': '', 'playoff_record': ''})
         return base
     r = rows.iloc[0]
     base.update({
         'rating':         round(float(r['rating']), 3),
+        'rating_o':       round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
+        'rating_d':       round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
         'rank':           int(r['rank']),
+        'rank_o':         int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
+        'rank_d':         int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
         'conf_rank':      conf_rank(team_name, r['ranking_id']),
         'record':         clean(r['record']),
         'playoff_record': playoff_record(r['record'], reg),

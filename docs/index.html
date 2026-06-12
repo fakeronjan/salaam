@@ -207,6 +207,27 @@
   .bar-pos { background: #1a6b8a; }
   .bar-neg { background: #ff6eb4; }
 
+  /* Compact Offense/Defense cells: value over rank (mirrors DILLON) */
+  .od-val {
+    font-weight: 700;
+    color: #1a6b8a;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+  }
+  .od-rank {
+    line-height: 1.15;
+    color: #888;
+    font-weight: 500;
+    font-size: 0.78em;
+    font-variant-numeric: tabular-nums;
+    margin-top: 1px;
+  }
+  td.od-cell, th.col-od {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
   /* Honors badges (mirrors ZIDANE pattern: name + trophy/medal emoji) */
   .finish-badge {
     display: inline-block;
@@ -447,7 +468,8 @@
 <!-- ── GOAT TABLE ───────────────────────────────────────────────────────── -->
 <div id="goat" class="tab">
   <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
-  <p class="data-note">Top 50 single-season ratings · Eligibility requires winning a conference championship or some share of the national title. Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
+  <div class="conf-pills" id="goat-metric-pills" style="margin-bottom:14px"></div>
+  <p class="data-note">Top 50 single-season ratings · Switch between overall, offense, and defense · Eligibility requires winning a conference championship or some share of the national title. Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
   <div id="goat-table-wrap"><p class="loading">Loading GOAT table...</p></div>
   <div class="disrupted-note disrupted-note-bottom" id="goat-disrupted-note" style="display:none"></div>
 </div>
@@ -461,7 +483,9 @@ const BASE = './data';
 const CONFERENCES = ['ACC', 'Big Ten', 'Big 12', 'Pac-12', 'SEC', 'Big East', 'Other'];
 let currentSeasonData = null;
 let currentSnapshot   = null;
-let goatData          = null;
+let goatData          = null;  // overall (REACT)
+let goatDataO         = null;  // offense leaderboard
+let goatDataD         = null;  // defense leaderboard
 let teamsIndex        = null;
 let teamCache         = {};
 let nameToSlug        = {};  // team display name → slug, built from teamsIndex
@@ -471,6 +495,7 @@ let standingsConf = 'all';
 let tsConf        = 'all';
 let champConf     = 'all';
 let goatConf      = 'all';
+let goatMetric    = 'react';  // 'react' | 'o' | 'd'
 let tsView        = 'cross';  // 'cross' (all-season summary) or 'single' (one season, all game-days)
 
 // Reusable pill builder. `current` is the active value; `onSelect(value)` fires on click.
@@ -679,6 +704,14 @@ function ratingBar(rating) {
   </div>`;
 }
 
+// Compact offense/defense cell: rating value over its league rank (mirrors DILLON).
+function fmtOD(rating, rank) {
+  if (rating == null) return '<span style="color:#bbb">-</span>';
+  const r = rating.toFixed(2);
+  if (rank == null) return `<div class="od-val">${r}</div>`;
+  return `<div class="od-val">${r}</div><div class="od-rank">${rank}</div>`;
+}
+
 // ── Tab switching ────────────────────────────────────────────────────────────
 document.querySelectorAll('nav button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -804,6 +837,8 @@ function renderStandings() {
     <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
     <td style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtRecordSmart(t.regular_record, t.playoff_record, t.record)}</td>
     <td>${ratingBar(t.rating)}</td>
+    <td class="od-cell col-hide-mobile">${fmtOD(t.rating_o, t.rank_o)}</td>
+    <td class="od-cell col-hide-mobile">${fmtOD(t.rating_d, t.rank_d)}</td>
     <td class="last-match-cell">${renderLastMatch(t.last_match, season, isStale)}</td>
     <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
     <td class="col-hide-mobile" style="text-align:center">${honorsBadge(t.cfp_status, t.cfp_appearance, t.champ_era, t.title_selectors)}</td>
@@ -820,6 +855,8 @@ function renderStandings() {
         <th>Team</th><th class="col-hide-mobile">Conf</th>
         <th>W-L (Pct)</th>
         <th>Rating</th>
+        <th class="col-hide-mobile col-od">Offense</th>
+        <th class="col-hide-mobile col-od">Defense</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
@@ -947,6 +984,8 @@ function renderTeamTable() {
     <td class="rank-cell">${g.rank}</td>
     <td class="rank-cell col-hide-mobile">${g.conf_rank != null ? g.conf_rank : '-'}</td>
     <td>${ratingBar(g.rating)}</td>
+    <td class="od-cell col-hide-mobile">${fmtOD(g.rating_o, g.rank_o)}</td>
+    <td class="od-cell col-hide-mobile">${fmtOD(g.rating_d, g.rank_d)}</td>
     <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
     <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance, g.champ_era, g.title_selectors)}</td>
   </tr>`;
@@ -960,6 +999,8 @@ function renderTeamTable() {
         <th>OVR #</th>
         <th class="col-hide-mobile">Conf #</th>
         <th>Rating</th>
+        <th class="col-hide-mobile col-od">Offense</th>
+        <th class="col-hide-mobile col-od">Defense</th>
         <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
@@ -1108,25 +1149,31 @@ function renderChampions() {
   function ovrLine(t)    { return t.rank      != null ? `${t.rank}`       : '<span style="color:#bbb">-</span>'; }
   function confLine(t)   { return t.conf_rank != null ? `${t.conf_rank}`  : '<span style="color:#bbb">-</span>'; }
   function reactLine(t)  { return t.rating    != null ? t.rating.toFixed(2) : '<span style="color:#bbb">-</span>'; }
+  function offLine(t)    { return t.rating_o  != null ? t.rating_o.toFixed(2) : '<span style="color:#bbb">-</span>'; }
+  function defLine(t)    { return t.rating_d  != null ? t.rating_d.toFixed(2) : '<span style="color:#bbb">-</span>'; }
   function wlLine(t)     { return fmtRecordStacked(t.regular_record, t.playoff_record); }
 
-  // Build a 5-cell side (team / OVR # / CONF # / REACT / W-L), stacking
-  // co_champion below primary in each cell when present.
+  // Build a 7-cell side (team / OVR # / CONF # / REACT / OFF / DEF / W-L),
+  // stacking co_champion below primary in each cell when present.
   function teamSide(primary, co, bg, season) {
     if (!primary) {
-      // Runner-up missing (poll era): collapse all 5 cells into one "-"
-      return `<td class="${bg}" style="color:#999;text-align:center" colspan="5">-</td>`;
+      // Runner-up missing (poll era): collapse all 7 cells into one "-"
+      return `<td class="${bg}" style="color:#999;text-align:center" colspan="7">-</td>`;
     }
     const teamCellInner   = stackedLines(teamLine(primary, season),   co ? teamLine(co, season)   : null);
     const ovrCellInner    = stackedLines(ovrLine(primary),    co ? ovrLine(co)    : null);
     const confCellInner   = stackedLines(confLine(primary),   co ? confLine(co)   : null);
     const reactCellInner  = stackedLines(reactLine(primary),  co ? reactLine(co)  : null);
+    const offCellInner    = stackedLines(offLine(primary),    co ? offLine(co)    : null);
+    const defCellInner    = stackedLines(defLine(primary),    co ? defLine(co)    : null);
     const wlCellInner     = stackedLines(wlLine(primary),     co ? wlLine(co)     : null);
     return `
       <td class="${bg} team-cell" style="white-space:nowrap;vertical-align:top">${teamCellInner}</td>
       <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#888;font-size:0.9em;vertical-align:top">${ovrCellInner}</td>
       <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#aaa;font-size:0.9em;vertical-align:top">${confCellInner}</td>
       <td class="${bg} rating-cell" style="font-variant-numeric:tabular-nums;vertical-align:top">${reactCellInner}</td>
+      <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;vertical-align:top">${offCellInner}</td>
+      <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;vertical-align:top">${defCellInner}</td>
       <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:top">${wlCellInner}</td>`;
   }
 
@@ -1149,12 +1196,16 @@ function renderChampions() {
         <th class="col-champ col-hide-mobile">OVR #</th>
         <th class="col-champ col-hide-mobile">Conf #</th>
         <th class="col-champ">Rating</th>
+        <th class="col-champ col-hide-mobile">Offense</th>
+        <th class="col-champ col-hide-mobile">Defense</th>
         <th class="col-champ col-hide-mobile">W-L</th>
         <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
         <th class="col-ru">Runner-Up</th>
         <th class="col-ru col-hide-mobile">OVR #</th>
         <th class="col-ru col-hide-mobile">Conf #</th>
         <th class="col-ru">Rating</th>
+        <th class="col-ru col-hide-mobile">Offense</th>
+        <th class="col-ru col-hide-mobile">Defense</th>
         <th class="col-ru col-hide-mobile">W-L</th>
       </tr></thead>
       <tbody>${rows}</tbody>
@@ -1165,17 +1216,31 @@ function renderChampions() {
 // ── GOAT Table ────────────────────────────────────────────────────────────────
 async function loadGoat() {
   try {
-    const res = await fetch(`${BASE}/goat_teams.json`);
-    goatData = await res.json();
+    const [r1, r2, r3] = await Promise.all([
+      fetch(`${BASE}/goat_teams.json`),
+      fetch(`${BASE}/goat_o.json`),
+      fetch(`${BASE}/goat_d.json`),
+    ]);
+    goatData  = await r1.json();
+    goatDataO = await r2.json();
+    goatDataD = await r3.json();
     renderGoat();
   } catch(e) {
     document.getElementById('goat-table-wrap').innerHTML = `<p class="error">Could not load GOAT table.</p>`;
   }
 }
 
+// Pick the leaderboard + rating field + column header for the active metric.
+function goatPick() {
+  if (goatMetric === 'o') return { data: goatDataO, field: 'rating_o', header: 'Offense' };
+  if (goatMetric === 'd') return { data: goatDataD, field: 'rating_d', header: 'Defense' };
+  return { data: goatData, field: 'rating', header: 'Rating' };
+}
+
 function renderGoat() {
-  if (!goatData) return;
-  const filtered = goatConf === 'all' ? goatData : goatData.filter(t => t.conference === goatConf);
+  const pick = goatPick();
+  if (!pick.data) return;
+  const filtered = goatConf === 'all' ? pick.data : pick.data.filter(t => t.conference === goatConf);
   updateDisruptedNote('goat-disrupted-note', filtered.map(t => t.season));
 
   const rows = filtered.map(t => {
@@ -1189,7 +1254,7 @@ function renderGoat() {
       <td class="season-cell linked" data-season-link="${t.season}" style="white-space:nowrap">${t.season}${covidTag}</td>
       ${teamTd}
       <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
-      <td>${ratingBar(t.rating)}</td>
+      <td>${ratingBar(t[pick.field])}</td>
       <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
       <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(t.cfp_status, t.cfp_appearance, t.champ_era, t.title_selectors)}</td>
     </tr>`;
@@ -1202,7 +1267,7 @@ function renderGoat() {
         <th style="text-align:center">Season</th>
         <th>Team</th>
         <th class="col-hide-mobile">Conf</th>
-        <th>Rating</th>
+        <th>${pick.header}</th>
         <th class="col-hide-mobile">W-L</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
@@ -1216,6 +1281,11 @@ buildConfPills('conf-pills',       standingsConf, v => { standingsConf = v; rend
 buildConfPills('ts-conf-pills',    tsConf,        v => { tsConf = v; populateTeamSelect(); });
 buildConfPills('champ-conf-pills', champConf,     v => { champConf = v; renderChampions(); });
 buildConfPills('goat-conf-pills',  goatConf,      v => { goatConf = v; renderGoat(); });
+buildConfPills('goat-metric-pills', goatMetric,   v => { goatMetric = v; renderGoat(); }, [
+  { value: 'react', label: 'Overall' },
+  { value: 'o',     label: 'Offense' },
+  { value: 'd',     label: 'Defense' },
+]);
 buildConfPills('ts-view-pills', tsView, v => {
   tsView = v;
   document.getElementById('season-select').style.display   = (v === 'single') ? '' : 'none';
