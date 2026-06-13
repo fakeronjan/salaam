@@ -1278,11 +1278,16 @@ function goatPick() {
 
 function renderGoat() {
   const pick = goatPick();
+  const GOAT_METRICS = [
+    { field: 'rating',   label: 'Rating' },
+    { field: 'rating_o', label: 'OFF' },
+    { field: 'rating_d', label: 'DEF' },
+  ];
   if (!pick.data) return;
   const filtered = goatConf === 'all' ? pick.data : pick.data.filter(t => t.conference === goatConf);
   updateDisruptedNote('goat-disrupted-note', filtered.map(t => t.season));
 
-  const _bs2 = barScale(filtered.map(t => t.rating));
+  const _bs2 = barScale(filtered.map(t => t[pick.field]));
   const rows = filtered.map(t => {
     const covidTag = seasonTag(t.season);
     const slug = nameToSlug[t.team];
@@ -1294,8 +1299,10 @@ function renderGoat() {
       <td class="season-cell linked" data-season-link="${t.season}" style="white-space:nowrap">${t.season}${covidTag}</td>
       ${teamTd}
       <td class="col-hide-mobile">${confBadge(t.conference_raw || t.conference, !!t.conference_champ)}</td>
-      <td>${ratingBar(t[pick.field], _bs2)}</td>
       <td style="font-variant-numeric:tabular-nums;white-space:nowrap" class="col-hide-mobile">${fmtRecordStacked(t.regular_record, t.playoff_record)}</td>
+      ${GOAT_METRICS.map(m => m.field === pick.field
+        ? `<td class="od-cell">${ratingBar(t[m.field], _bs2)}</td>`
+        : `<td class="rating-cell od-cell col-hide-mobile">${fmtOD(t[m.field], null)}</td>`).join('')}
       <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(t.cfp_status, t.cfp_appearance, t.champ_era, t.title_selectors)}</td>
     </tr>`;
   }).join('');
@@ -1307,8 +1314,8 @@ function renderGoat() {
         <th style="text-align:center">Season</th>
         <th>Team</th>
         <th class="col-hide-mobile">Conf</th>
-        <th>${pick.header}</th>
         <th class="col-hide-mobile">W-L</th>
+        ${GOAT_METRICS.map(m => `<th class="col-od${m.field === pick.field ? '' : ' col-hide-mobile'}">${m.label}</th>`).join('')}
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
       <tbody>${rows}</tbody>
