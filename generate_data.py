@@ -675,21 +675,8 @@ with open(OUT_DIR / 'current_standings.json', 'w') as f:
     json.dump(standings_data, f, separators=(',', ':'))
 
 # ── 2. GOAT table ─────────────────────────────────────────────────────────────
-print('Writing goat_teams.json...')
-eos_all = df[df['season_flag'] == 2].copy()
+print('Writing GOAT files...')
 
-# Championship-round filter: a team must have either won (any share of)
-# the national championship via any selector (AP, Coaches, BCS, CFP), or
-# played in the title game as runner-up, to qualify for the all-time list.
-# Matches the cross-sport pattern used in LOBO/DUNCAN/DILLON - "best
-# teams that contested for the championship." Cleans up conference-
-# winning seasons that flamed out before the title game (e.g., 2019 Ohio
-# State, 2020 Oklahoma) from showing up in the GOAT list, while keeping
-# them eligible for standings + season-page views.
-def _qualifies_for_goat(row):
-    return cfp_status(row['name'], row['season']) >= 1
-
-eos_qualified = eos_all[eos_all.apply(_qualifies_for_goat, axis=1)].copy()
 # Short / disrupted seasons - flagged on GOAT/Champions/Standings/TeamSummary
 # rows so the UI can tag them inline + footnote.
 SHORT_SEASONS = {
@@ -700,17 +687,17 @@ SHORT_SEASONS = {
     },
 }
 
-def _build_goat(sort_field):
-    """Top-50 single-season list for the eligible pool, ranked by sort_field
-    (rating / rating_o / rating_d). The all-time 'rank' is the position in
-    THIS sort, so the Offense list ranks by offense, etc. Mirrors DILLON's
-    separate goat_o / goat_d files (best offenses != best overall teams)."""
-    top = eos_qualified.sort_values(sort_field, ascending=False).head(50).reset_index(drop=True)
-    rows = []
+
+def _build_goat(rows, sort_field='rating'):
+    """Top-50 single-season list ranked by sort_field (rating / rating_o /
+    rating_d). The all-time 'rank' is the position in THIS sort, so the
+    Offense list ranks by offense, etc. Mirrors DILLON's six goat files."""
+    top = rows.sort_values(sort_field, ascending=False).head(50).reset_index(drop=True)
+    out = []
     for i, (_, r) in enumerate(top.iterrows()):
         reg = _reg_record_lookup.get((r['name'], int(r['season'])), '')
         s = int(r['season'])
-        rows.append({
+        out.append({
             'rank':            i + 1,
             'team':            r['name'],
             'conference':      conf(r['name'], r['season']),
@@ -734,13 +721,29 @@ def _build_goat(sort_field):
             'title_selectors':  title_selectors(r['name'], r['season']),
             'conference_champ': conf_champ(r['name'], r['season']),
         })
-    return rows
+    return out
 
-for _fname, _field in [('goat_teams.json', 'rating'),
-                       ('goat_o.json',     'rating_o'),
-                       ('goat_d.json',     'rating_d')]:
+
+# Six GOAT files: {Rating, Offense, Defense} x {RS-end, PS-end}. PS-end is
+# restricted to national-title contenders (champ via any selector OR title-game
+# runner-up) so the list shows actual championship contenders; RS-end is ALL
+# teams (best regular seasons regardless of the postseason - e.g. high-octane
+# offenses that never reached the title game). Mirrors DILLON's split exactly.
+rs_rows = df[df['season_flag'] == 1].copy()
+ps_rows = df[df['season_flag'] == 2].copy()
+ps_rows = ps_rows[ps_rows.apply(lambda r: cfp_status(r['name'], r['season']) >= 1, axis=1)].copy()
+
+goat_files = [
+    ('goat_rs.json',   rs_rows, 'rating'),
+    ('goat_ps.json',   ps_rows, 'rating'),
+    ('goat_rs_o.json', rs_rows, 'rating_o'),
+    ('goat_rs_d.json', rs_rows, 'rating_d'),
+    ('goat_ps_o.json', ps_rows, 'rating_o'),
+    ('goat_ps_d.json', ps_rows, 'rating_d'),
+]
+for _fname, _src, _field in goat_files:
     with open(OUT_DIR / _fname, 'w') as f:
-        json.dump(_build_goat(_field), f, separators=(',', ':'))
+        json.dump(_build_goat(_src, _field), f, separators=(',', ':'))
 
 # ── 3. Per-team JSON files ────────────────────────────────────────────────────
 print('Writing per-team JSON files...')

@@ -473,9 +473,10 @@
 
 <!-- ── GOAT TABLE ───────────────────────────────────────────────────────── -->
 <div id="goat" class="tab">
-  <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
+  <p class="data-note">Top 50 single-season ratings · Pick the timeframe (end of regular season vs. end of playoffs), then the metric (overall Rating, offense only, or defense only).</p>
+  <div class="conf-pills" id="goat-mode-pills" style="margin-bottom:14px"></div>
   <div class="conf-pills" id="goat-metric-pills" style="margin-bottom:14px"></div>
-  <p class="data-note">Top 50 single-season ratings · Switch between overall, offense, and defense · Eligibility requires winning a conference championship or some share of the national title. Data covers 1983 through the current season (1982 lost to the warm-up window).</p>
+  <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
   <div id="goat-table-wrap"><p class="loading">Loading GOAT table...</p></div>
   <div class="disrupted-note disrupted-note-bottom" id="goat-disrupted-note" style="display:none"></div>
 </div>
@@ -489,9 +490,12 @@ const BASE = './data';
 const CONFERENCES = ['ACC', 'Big Ten', 'Big 12', 'Pac-12', 'SEC', 'Big East', 'Other'];
 let currentSeasonData = null;
 let currentSnapshot   = null;
-let goatData          = null;  // overall (REACT)
-let goatDataO         = null;  // offense leaderboard
-let goatDataD         = null;  // defense leaderboard
+let goatDataRS        = null;  // Rating, RS-end
+let goatDataPS        = null;  // Rating, PS-end
+let goatDataRSO       = null;  // Offense, RS-end
+let goatDataRSD       = null;  // Defense, RS-end
+let goatDataPSO       = null;  // Offense, PS-end
+let goatDataPSD       = null;  // Defense, PS-end
 let teamsIndex        = null;
 let teamCache         = {};
 let nameToSlug        = {};  // team display name → slug, built from teamsIndex
@@ -501,7 +505,8 @@ let standingsConf = 'all';
 let tsConf        = 'all';
 let champConf     = 'all';
 let goatConf      = 'all';
-let goatMetric    = 'react';  // 'react' | 'o' | 'd'
+let goatMode      = 'ps';     // 'ps' (end of playoffs - championship contenders) or 'rs' (end of regular season)
+let goatMetric    = 'react';  // 'react' (overall) | 'o' (offense only) | 'd' (defense only)
 let tsView        = 'cross';  // 'cross' (all-season summary) or 'single' (one season, all game-days)
 
 // Reusable pill builder. `current` is the active value; `onSelect(value)` fires on click.
@@ -1255,14 +1260,20 @@ function renderChampions() {
 // ── GOAT Table ────────────────────────────────────────────────────────────────
 async function loadGoat() {
   try {
-    const [r1, r2, r3] = await Promise.all([
-      fetch(`${BASE}/goat_teams.json`),
-      fetch(`${BASE}/goat_o.json`),
-      fetch(`${BASE}/goat_d.json`),
+    const [r1, r2, r3, r4, r5, r6] = await Promise.all([
+      fetch(`${BASE}/goat_rs.json`),
+      fetch(`${BASE}/goat_ps.json`),
+      fetch(`${BASE}/goat_rs_o.json`),
+      fetch(`${BASE}/goat_rs_d.json`),
+      fetch(`${BASE}/goat_ps_o.json`),
+      fetch(`${BASE}/goat_ps_d.json`),
     ]);
-    goatData  = await r1.json();
-    goatDataO = await r2.json();
-    goatDataD = await r3.json();
+    goatDataRS  = await r1.json();
+    goatDataPS  = await r2.json();
+    goatDataRSO = await r3.json();
+    goatDataRSD = await r4.json();
+    goatDataPSO = await r5.json();
+    goatDataPSD = await r6.json();
     renderGoat();
   } catch(e) {
     document.getElementById('goat-table-wrap').innerHTML = `<p class="error">Could not load GOAT table.</p>`;
@@ -1271,9 +1282,13 @@ async function loadGoat() {
 
 // Pick the leaderboard + rating field + column header for the active metric.
 function goatPick() {
-  if (goatMetric === 'o') return { data: goatDataO, field: 'rating_o', header: 'Offense' };
-  if (goatMetric === 'd') return { data: goatDataD, field: 'rating_d', header: 'Defense' };
-  return { data: goatData, field: 'rating', header: 'Rating' };
+  if (goatMetric === 'o') {
+    return { data: goatMode === 'rs' ? goatDataRSO : goatDataPSO, field: 'rating_o', header: 'Offense' };
+  }
+  if (goatMetric === 'd') {
+    return { data: goatMode === 'rs' ? goatDataRSD : goatDataPSD, field: 'rating_d', header: 'Defense' };
+  }
+  return { data: goatMode === 'rs' ? goatDataRS : goatDataPS, field: 'rating', header: 'Rating' };
 }
 
 function renderGoat() {
@@ -1332,6 +1347,10 @@ buildConfPills('goat-metric-pills', goatMetric,   v => { goatMetric = v; renderG
   { value: 'react', label: 'Rating (overall)' },
   { value: 'o',     label: 'Offense only' },
   { value: 'd',     label: 'Defense only' },
+]);
+buildConfPills('goat-mode-pills',   goatMode,     v => { goatMode = v; renderGoat(); }, [
+  { value: 'rs', label: 'End of regular season' },
+  { value: 'ps', label: 'End of playoffs' },
 ]);
 buildConfPills('ts-view-pills', tsView, v => {
   tsView = v;
