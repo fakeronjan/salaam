@@ -10,6 +10,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+from postseason_overrides import CCG_OVERRIDE_IDS, TITLE_OVERRIDE_IDS
+
 
 # =========================================================
 # CONFIGURATION
@@ -152,11 +154,13 @@ def prepare_game_data(raw_df):
     is_post          = df['seasonType'] == 'postseason'
     is_conf          = df['conferenceGame'].fillna(False).astype(bool)
     is_neutral       = df['neutralSite'].fillna(False).astype(bool)
-    ccg_mask = in_ccg_window & (
-        has_champ_note
-        | (is_post & is_conf)
-        | (is_neutral & is_conf & (df['week'] >= 13))
-    )
+    ccg_mask = (
+        in_ccg_window & (
+            has_champ_note
+            | (is_post & is_conf)
+            | (is_neutral & is_conf & (df['week'] >= 13))
+        )
+    ) | df['id'].isin(CCG_OVERRIDE_IDS)  # 2001-2007 CCGs CFBD misclassifies (see postseason_overrides)
     df.loc[ccg_mask, 'week'] = POSTSEASON_WEEK_OFFSET  # week 100
 
     # Step 2: Tier-classify remaining postseason games (101-104).
@@ -174,6 +178,9 @@ def prepare_game_data(raw_df):
         df.loc[post_mask, 'week'] = (
             POSTSEASON_WEEK_OFFSET + df.loc[post_mask, 'notes'].apply(postseason_tier)
         )
+
+    # Force title games whose CFBD notes are empty (2007 BCS NCG) to tier 104.
+    df.loc[df['id'].isin(TITLE_OVERRIDE_IDS), 'week'] = POSTSEASON_WEEK_OFFSET + 4
 
     # Result strings for last-game display
     df['winner_marker'] = np.where(

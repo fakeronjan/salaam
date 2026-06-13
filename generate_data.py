@@ -17,6 +17,8 @@ from pathlib import Path
 from bisect import bisect_right
 from datetime import datetime, timezone
 
+from postseason_overrides import CCG_OVERRIDE_IDS
+
 DATA_DIR = Path(__file__).parent / 'data'
 OUT_DIR  = Path(__file__).parent / 'docs' / 'data'
 
@@ -211,6 +213,16 @@ def _detect_title_game(year_games, members):
          take the latest qualifying game in the window. The Dec 15 cutoff
          keeps BCS/CFP National Championships out (those are Jan 1+).
     Returns team name (string) or None."""
+    # Hardcoded CCG overrides (2001-2007 games CFBD misclassifies as regular).
+    for g in year_games:
+        if g.get('id') in CCG_OVERRIDE_IDS:
+            if g.get('homeTeam') not in members or g.get('awayTeam') not in members:
+                continue
+            hp, ap = g.get('homePoints'), g.get('awayPoints')
+            if hp is None or ap is None:
+                continue
+            return g['homeTeam'] if hp >= ap else g['awayTeam']
+
     # CFBD notes
     for g in year_games:
         if not g.get('completed'):
