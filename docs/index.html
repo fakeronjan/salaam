@@ -473,7 +473,7 @@
 
 <!-- ── GOAT TABLE ───────────────────────────────────────────────────────── -->
 <div id="goat" class="tab">
-  <p class="data-note">Top 50 single-season ratings · Pick the timeframe (end of regular season vs. end of playoffs), then the metric (overall Rating, offense only, or defense only).</p>
+  <p class="data-note" id="goat-note">Top 40 single-season ratings · end of playoffs, champions only</p>
   <div class="conf-pills" id="goat-mode-pills" style="margin-bottom:14px"></div>
   <div class="conf-pills" id="goat-metric-pills" style="margin-bottom:14px"></div>
   <div class="conf-pills" id="goat-conf-pills" style="margin-bottom:14px"></div>
@@ -1302,6 +1302,8 @@ function renderGoat() {
     { field: 'rating_d', label: 'DEF' },
   ];
   if (!pick.data) return;
+  const _gn = document.getElementById('goat-note');
+  if (_gn) _gn.textContent = `Top ${pick.data.length} single-season ratings · ` + (goatMode === 'rs' ? 'end of regular season, all teams' : 'end of playoffs, champions only');
   const filtered = goatConf === 'all' ? pick.data : pick.data.filter(t => t.conference === goatConf);
   updateDisruptedNote('goat-disrupted-note', filtered.map(t => t.season));
 

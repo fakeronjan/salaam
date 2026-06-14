@@ -704,7 +704,11 @@ def _build_goat(rows, sort_field='rating'):
     """Top-50 single-season list ranked by sort_field (rating / rating_o /
     rating_d). The all-time 'rank' is the position in THIS sort, so the
     Offense list ranks by offense, etc. Mirrors DILLON's six goat files."""
-    top = rows.sort_values(sort_field, ascending=False).head(50).reset_index(drop=True)
+    # Length rounds down to the nearest 10, capped at 50. The RS pool (all
+    # teams) is huge so it always hits 50; the champions-only PS pool rounds
+    # down (e.g. 43 champion seasons -> top 40).
+    _n = min(50, (len(rows) // 10) * 10)
+    top = rows.sort_values(sort_field, ascending=False).head(_n).reset_index(drop=True)
     out = []
     for i, (_, r) in enumerate(top.iterrows()):
         reg = _reg_record_lookup.get((r['name'], int(r['season'])), '')
@@ -743,7 +747,7 @@ def _build_goat(rows, sort_field='rating'):
 # offenses that never reached the title game). Mirrors DILLON's split exactly.
 rs_rows = df[df['season_flag'] == 1].copy()
 ps_rows = df[df['season_flag'] == 2].copy()
-ps_rows = ps_rows[ps_rows.apply(lambda r: cfp_status(r['name'], r['season']) >= 1, axis=1)].copy()
+ps_rows = ps_rows[ps_rows.apply(lambda r: cfp_status(r['name'], r['season']) == 2, axis=1)].copy()  # champions only
 
 goat_files = [
     ('goat_rs.json',   rs_rows, 'rating'),
