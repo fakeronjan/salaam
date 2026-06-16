@@ -6,3 +6,6 @@ __pycache__/
 Backup*/
 *.bak
 *.bak2
+
+# Engine-migration backup snapshots (never commit)
+*-bak
