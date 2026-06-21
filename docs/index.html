@@ -199,7 +199,9 @@
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: #1a6b8a;
+    text-align: center;
   }
+  thead th.col-num { text-align: center; }
   .rating-bar-wrap {
     display: flex;
     flex-direction: column;
@@ -875,10 +877,10 @@ function renderStandings() {
   document.getElementById('standings-table-wrap').innerHTML = `
     <table>
       <thead><tr>
-        <th>OVR #</th><th class="col-hide-mobile">Conf #</th>
+        <th class="col-num">OVR #</th><th class="col-hide-mobile col-num">Conf #</th>
         <th>Team</th><th class="col-hide-mobile">Conf</th>
         <th>W-L (Pct)</th>
-        <th>Rating</th>
+        <th class="col-num">Rating</th>
         <th class="col-hide-mobile col-od">OFF</th>
         <th class="col-hide-mobile col-od">DEF</th>
         <th class="col-hide-mobile col-od" title="Home field advantage: home-game margin premium beyond what Rating predicts, 5-year rolling window ending at this point in the season">HFA</th>
@@ -1026,9 +1028,9 @@ function renderTeamTable() {
       <thead><tr>
         <th style="text-align:center">Season</th><th>Week</th><th>Last Game</th>
         <th>W-L (Pct)</th>
-        <th>OVR #</th>
-        <th class="col-hide-mobile">Conf #</th>
-        <th>Rating</th>
+        <th class="col-num">OVR #</th>
+        <th class="col-hide-mobile col-num">Conf #</th>
+        <th class="col-num">Rating</th>
         <th class="col-hide-mobile col-od">OFF</th>
         <th class="col-hide-mobile col-od">DEF</th>
         <th class="col-hide-mobile col-od" title="Home field advantage: home-game margin premium beyond what Rating predicts, 5-year rolling window ending at this point in the season">HFA</th>
@@ -1228,8 +1230,8 @@ function renderChampions() {
     const wlCellInner     = stackedLines(wlLine(primary),     co ? wlLine(co)     : null);
     return `
       <td class="${bg} team-cell" style="white-space:nowrap;vertical-align:top">${teamCellInner}</td>
-      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#888;font-size:0.9em;vertical-align:top">${ovrCellInner}</td>
-      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#aaa;font-size:0.9em;vertical-align:top">${confCellInner}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#888;font-size:0.9em;vertical-align:top;text-align:center">${ovrCellInner}</td>
+      <td class="${bg} col-hide-mobile" style="font-variant-numeric:tabular-nums;color:#aaa;font-size:0.9em;vertical-align:top;text-align:center">${confCellInner}</td>
       <td class="${bg} rating-cell" style="font-variant-numeric:tabular-nums;vertical-align:top">${reactCellInner}</td>
       <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;vertical-align:top">${offCellInner}</td>
       <td class="${bg} rating-cell col-hide-mobile" style="font-variant-numeric:tabular-nums;vertical-align:top">${defCellInner}</td>
@@ -1252,17 +1254,17 @@ function renderChampions() {
       <thead><tr>
         <th style="text-align:center">Season</th>
         <th class="col-champ">Champion</th>
-        <th class="col-champ col-hide-mobile">OVR #</th>
-        <th class="col-champ col-hide-mobile">Conf #</th>
-        <th class="col-champ">Rating</th>
+        <th class="col-champ col-hide-mobile col-num">OVR #</th>
+        <th class="col-champ col-hide-mobile col-num">Conf #</th>
+        <th class="col-champ col-num">Rating</th>
         <th class="col-champ col-hide-mobile">OFF</th>
         <th class="col-champ col-hide-mobile">DEF</th>
         <th class="col-champ col-hide-mobile">W-L</th>
         <th class="divider-col" style="text-align:center;font-size:10px;width:64px">Score</th>
         <th class="col-ru">Runner-Up</th>
-        <th class="col-ru col-hide-mobile">OVR #</th>
-        <th class="col-ru col-hide-mobile">Conf #</th>
-        <th class="col-ru">Rating</th>
+        <th class="col-ru col-hide-mobile col-num">OVR #</th>
+        <th class="col-ru col-hide-mobile col-num">Conf #</th>
+        <th class="col-ru col-num">Rating</th>
         <th class="col-ru col-hide-mobile">OFF</th>
         <th class="col-ru col-hide-mobile">DEF</th>
         <th class="col-ru col-hide-mobile">W-L</th>
