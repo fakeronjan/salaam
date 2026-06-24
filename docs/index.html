@@ -471,7 +471,7 @@
   <div id="chart-wrap" style="display:none">
     <svg id="season-chart"></svg>
   </div>
-  <div id="team-table-wrap"><p class="loading">Select a team above.</p></div>
+  <div id="team-table-wrap"><p class="loading">Select a team above</p></div>
   <div class="disrupted-note disrupted-note-bottom" id="team-summary-disrupted-note-bottom" style="display:none"></div>
 </div>
 
@@ -805,7 +805,7 @@ async function initStandings() {
     await loadSeason(meta.seasons[0]);
   } catch(e) {
     document.getElementById('standings-table-wrap').innerHTML =
-      `<p class="error">Could not load standings.</p>`;
+      `<p class="error">Could not load standings</p>`;
   }
 }
 
@@ -828,7 +828,7 @@ async function loadSeason(season) {
     updateDisruptedNote('standings-disrupted-note', [season]);
   } catch(e) {
     document.getElementById('standings-table-wrap').innerHTML =
-      `<p class="error">Could not load season data.</p>`;
+      `<p class="error">Could not load season data</p>`;
   }
 }
 
@@ -932,7 +932,7 @@ async function loadTeam(slug) {
       const res = await fetch(`${BASE}/teams/${slug}.json`);
       teamCache[slug] = await res.json();
     } catch(e) {
-      document.getElementById('team-table-wrap').innerHTML = '<p class="error">Could not load team data.</p>';
+      document.getElementById('team-table-wrap').innerHTML = '<p class="error">Could not load team data</p>';
       return;
     }
   }
@@ -1164,7 +1164,7 @@ async function loadChampions() {
     championsData = await res.json();
     renderChampions();
   } catch(e) {
-    document.getElementById('history-table-wrap').innerHTML = `<p class="error">Could not load champions.</p>`;
+    document.getElementById('history-table-wrap').innerHTML = `<p class="error">Could not load champions</p>`;
   }
 }
 
@@ -1179,7 +1179,7 @@ function renderChampions() {
     });
   }
   if (!entries.length) {
-    document.getElementById('history-table-wrap').innerHTML = `<p class="loading">No champions for this filter.</p>`;
+    document.getElementById('history-table-wrap').innerHTML = `<p class="loading">No champions for this filter</p>`;
     return;
   }
 
@@ -1293,7 +1293,7 @@ async function loadGoat() {
     goatDataPSD = await r6.json();
     renderGoat();
   } catch(e) {
-    document.getElementById('goat-table-wrap').innerHTML = `<p class="error">Could not load GOAT table.</p>`;
+    document.getElementById('goat-table-wrap').innerHTML = `<p class="error">Could not load GOAT table</p>`;
   }
 }
 
