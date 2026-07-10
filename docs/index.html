@@ -864,7 +864,6 @@ function renderStandings() {
     <td>${ratingBar(t.rating, _bs0)}</td>
     <td class="od-cell col-hide-mobile">${fmtOD(t.rating_o, t.rank_o)}</td>
     <td class="od-cell col-hide-mobile">${fmtOD(t.rating_d, t.rank_d)}</td>
-    <td class="od-cell col-hide-mobile">${fmtOD(t.hfa, t.hfa_rank)}</td>
     <td class="last-match-cell">${renderLastMatch(t.last_match, season, isStale)}</td>
     <td class="col-hide-mobile" style="font-size:11px;color:#888;white-space:nowrap">${t.last_match_date || ''}</td>
     <td class="col-hide-mobile" style="text-align:center">${honorsBadge(t.cfp_status, t.cfp_appearance, t.champ_era, t.title_selectors)}</td>
@@ -883,7 +882,6 @@ function renderStandings() {
         <th class="col-num">Rating</th>
         <th class="col-hide-mobile col-od">OFF</th>
         <th class="col-hide-mobile col-od">DEF</th>
-        <th class="col-hide-mobile col-od" title="Home field advantage: home-game margin premium beyond what Rating predicts, 5-year rolling window ending at this point in the season">HFA</th>
         <th>Last Game</th>
         <th class="col-hide-mobile">Date</th>
         <th class="col-hide-mobile">Honors</th>
@@ -1017,7 +1015,6 @@ function renderTeamTable() {
     <td>${ratingBar(g.rating, _bs1)}</td>
     <td class="od-cell col-hide-mobile">${fmtOD(g.rating_o, g.rank_o)}</td>
     <td class="od-cell col-hide-mobile">${fmtOD(g.rating_d, g.rank_d)}</td>
-    <td class="od-cell col-hide-mobile">${fmtOD(g.hfa, g.hfa_rank)}</td>
     <td class="col-hide-mobile">${confBadge(g.conference_raw || g.conference, !!g.conference_champ)}</td>
     <td class="col-hide-mobile" style="font-size:11px">${honorsBadge(g.cfp_status, g.cfp_appearance, g.champ_era, g.title_selectors)}</td>
   </tr>`;
@@ -1033,7 +1030,6 @@ function renderTeamTable() {
         <th class="col-num">Rating</th>
         <th class="col-hide-mobile col-od">OFF</th>
         <th class="col-hide-mobile col-od">DEF</th>
-        <th class="col-hide-mobile col-od" title="Home field advantage: home-game margin premium beyond what Rating predicts, 5-year rolling window ending at this point in the season">HFA</th>
         <th class="col-hide-mobile">Conf</th>
         <th class="col-hide-mobile">Honors</th>
       </tr></thead>
