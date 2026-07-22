@@ -7,10 +7,80 @@
     "classification": "ii"
   },
   {
+    "id": 175,
+    "name": "AWC",
+    "shortName": "ASUN-WAC Challenge",
+    "abbreviation": "AWC",
+    "classification": "fcs"
+  },
+  {
+    "id": 20,
+    "name": "Big Sky",
+    "shortName": "Big Sky Conference",
+    "abbreviation": "BSKY",
+    "classification": "fcs"
+  },
+  {
+    "id": 40,
+    "name": "Big South",
+    "shortName": "Big South Conference",
+    "abbreviation": "BSOUTH",
+    "classification": "fcs"
+  },
+  {
+    "id": 48,
+    "name": "CAA",
+    "shortName": "Colonial Athletic Association",
+    "abbreviation": "CAA",
+    "classification": "fcs"
+  },
+  {
     "id": 22,
     "name": "Ivy",
     "shortName": "Ivy League",
-    "abbreviation": null,
+    "abbreviation": "IVY",
+    "classification": "fcs"
+  },
+  {
+    "id": 24,
+    "name": "MEAC",
+    "shortName": "Mid-Eastern Athletic Conference",
+    "abbreviation": "MEAC",
+    "classification": "fcs"
+  },
+  {
+    "id": 21,
+    "name": "MVFC",
+    "shortName": "Missouri Valley Football Conference",
+    "abbreviation": "MVFC",
+    "classification": "fcs"
+  },
+  {
+    "id": 25,
+    "name": "NEC",
+    "shortName": "Northeast Conference",
+    "abbreviation": "NEC",
+    "classification": "fcs"
+  },
+  {
+    "id": 26,
+    "name": "OVC",
+    "shortName": "Ohio Valley Conference",
+    "abbreviation": "OVC",
+    "classification": "fcs"
+  },
+  {
+    "id": 27,
+    "name": "Patriot",
+    "shortName": "Patriot League",
+    "abbreviation": "PAT",
+    "classification": "fcs"
+  },
+  {
+    "id": 28,
+    "name": "Pioneer",
+    "shortName": "Pioneer Football League",
+    "abbreviation": "PFL",
     "classification": "fcs"
   },
   {
@@ -47,76 +117,6 @@
     "shortName": "Pacific 10",
     "abbreviation": "Pac-10",
     "classification": "fbs"
-  },
-  {
-    "id": 175,
-    "name": "AWC",
-    "shortName": "ASUN-WAC Challenge",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 20,
-    "name": "Big Sky",
-    "shortName": "Big Sky Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 40,
-    "name": "Big South",
-    "shortName": "Big South Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 48,
-    "name": "CAA",
-    "shortName": "Colonial Athletic Association",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 24,
-    "name": "MEAC",
-    "shortName": "Mid-Eastern Athletic Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 21,
-    "name": "MVFC",
-    "shortName": "Missouri Valley Football Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 25,
-    "name": "NEC",
-    "shortName": "Northeast Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 26,
-    "name": "OVC",
-    "shortName": "Ohio Valley Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 27,
-    "name": "Patriot",
-    "shortName": "Patriot League",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 28,
-    "name": "Pioneer",
-    "shortName": "Pioneer Football League",
-    "abbreviation": null,
-    "classification": "fcs"
   },
   {
     "id": 114,
@@ -560,53 +560,11 @@
     "classification": "fcs"
   },
   {
-    "id": 19,
-    "name": "Atlantic 10",
-    "shortName": "Atlantic 10 Conference",
-    "abbreviation": "ATL10",
-    "classification": "fcs"
-  },
-  {
-    "id": 179,
-    "name": "Big South-OVC",
-    "shortName": "Big South-OVC Association",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 177,
-    "name": "UAC",
-    "shortName": "United Athletic Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
     "id": 178,
     "name": "Landmark Conference",
     "shortName": "Landmark Conference",
     "abbreviation": null,
     "classification": "iii"
-  },
-  {
-    "id": 31,
-    "name": "SWAC",
-    "shortName": "Southwestern Athletic Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 29,
-    "name": "Southern",
-    "shortName": "Southern Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 30,
-    "name": "Southland",
-    "shortName": "Southland Conference",
-    "abbreviation": null,
-    "classification": "fcs"
   },
   {
     "id": 203,
@@ -728,6 +686,48 @@
     "classification": "fbs"
   },
   {
+    "id": 222,
+    "name": "Big East",
+    "shortName": "Big East Conference",
+    "abbreviation": "BE",
+    "classification": "fbs"
+  },
+  {
+    "id": 179,
+    "name": "Big South-OVC",
+    "shortName": "Big South-OVC Association",
+    "abbreviation": "BSOVC",
+    "classification": "fcs"
+  },
+  {
+    "id": 29,
+    "name": "Southern",
+    "shortName": "Southern Conference",
+    "abbreviation": "SOCON",
+    "classification": "fcs"
+  },
+  {
+    "id": 30,
+    "name": "Southland",
+    "shortName": "Southland Conference",
+    "abbreviation": "SLC",
+    "classification": "fcs"
+  },
+  {
+    "id": 31,
+    "name": "SWAC",
+    "shortName": "Southwestern Athletic Conference",
+    "abbreviation": "SWAC",
+    "classification": "fcs"
+  },
+  {
+    "id": 177,
+    "name": "UAC",
+    "shortName": "United Athletic Conference",
+    "abbreviation": "UAC",
+    "classification": "fcs"
+  },
+  {
     "id": 16,
     "name": "Western Athletic",
     "shortName": "Western Athletic Conference",
@@ -735,10 +735,10 @@
     "classification": "fcs"
   },
   {
-    "id": 222,
-    "name": "Big East",
-    "shortName": "Big East Conference",
-    "abbreviation": "BE",
-    "classification": "fbs"
+    "id": 19,
+    "name": "Atlantic 10",
+    "shortName": "Atlantic 10 Conference",
+    "abbreviation": "A10",
+    "classification": "fcs"
   }
 ]
