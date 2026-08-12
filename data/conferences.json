@@ -1,1794 +1,2050 @@
 [
   {
-    "id": 187,
-    "name": "Carolinas",
-    "shortName": "Conference Carolinas",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 175,
-    "name": "AWC",
-    "shortName": "ASUN-WAC Challenge",
-    "abbreviation": "AWC",
-    "classification": "fcs"
-  },
-  {
-    "id": 20,
-    "name": "Big Sky",
-    "shortName": "Big Sky Conference",
-    "abbreviation": "BSKY",
-    "classification": "fcs"
-  },
-  {
-    "id": 40,
-    "name": "Big South",
-    "shortName": "Big South Conference",
-    "abbreviation": "BSOUTH",
-    "classification": "fcs"
-  },
-  {
-    "id": 48,
-    "name": "CAA",
-    "shortName": "Colonial Athletic Association",
-    "abbreviation": "CAA",
-    "classification": "fcs"
-  },
-  {
-    "id": 22,
-    "name": "Ivy",
-    "shortName": "Ivy League",
-    "abbreviation": "IVY",
-    "classification": "fcs"
-  },
-  {
-    "id": 24,
-    "name": "MEAC",
-    "shortName": "Mid-Eastern Athletic Conference",
-    "abbreviation": "MEAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 21,
-    "name": "MVFC",
-    "shortName": "Missouri Valley Football Conference",
-    "abbreviation": "MVFC",
-    "classification": "fcs"
-  },
-  {
-    "id": 25,
-    "name": "NEC",
-    "shortName": "Northeast Conference",
-    "abbreviation": "NEC",
-    "classification": "fcs"
-  },
-  {
-    "id": 26,
-    "name": "OVC",
-    "shortName": "Ohio Valley Conference",
-    "abbreviation": "OVC",
-    "classification": "fcs"
-  },
-  {
-    "id": 27,
-    "name": "Patriot",
-    "shortName": "Patriot League",
-    "abbreviation": "PAT",
-    "classification": "fcs"
-  },
-  {
-    "id": 28,
-    "name": "Pioneer",
-    "shortName": "Pioneer Football League",
-    "abbreviation": "PFL",
-    "classification": "fcs"
-  },
-  {
-    "id": 224,
-    "name": "American West",
-    "shortName": "American West Conference",
-    "abbreviation": "AWC",
-    "classification": "fcs"
-  },
-  {
-    "id": 225,
-    "name": "Arkansas Intercollegiate",
-    "shortName": "Arkansas Intercollegiate Conference",
-    "abbreviation": "AIC",
-    "classification": "ii"
-  },
-  {
-    "id": 226,
-    "name": "Athletic League of New England State Colleges",
-    "shortName": "Athletic League of New England State Colleges",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 227,
-    "name": "Big Four",
-    "shortName": "Big Four Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 228,
-    "name": "Buckeye",
-    "shortName": "Buckeye Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 229,
-    "name": "Buckeye Athletic",
-    "shortName": "Buckeye Athletic Association",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 230,
-    "name": "California Coast",
-    "shortName": "California Coast Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 284,
-    "name": "Big Sky",
-    "shortName": "Big Sky Conference",
-    "abbreviation": "BSKY",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 15,
-    "name": "Mid-American",
-    "shortName": "Mid-American Conference",
-    "abbreviation": "MAC",
-    "classification": "fbs"
-  },
-  {
-    "id": 17,
-    "name": "Mountain West",
-    "shortName": "Mountain West Conference",
-    "abbreviation": "MWC",
-    "classification": "fbs"
-  },
-  {
-    "id": 9,
-    "name": "Pac-12",
-    "shortName": "Pac-12 Conference",
-    "abbreviation": "PAC",
-    "classification": "fbs"
-  },
-  {
-    "id": 231,
-    "name": "California Collegiate Athletic",
-    "shortName": "California Collegiate Athletic Association",
-    "abbreviation": "CCAA",
-    "classification": "ii"
-  },
-  {
-    "id": 232,
-    "name": "Colorado Football",
-    "shortName": "Colorado Football Association",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 233,
-    "name": "Dixie",
-    "shortName": "Dixie Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 234,
-    "name": "Eastern Virginia Intercollegiate Athletic",
-    "shortName": "Eastern Virginia Intercollegiate Athletic Association",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 8,
-    "name": "SEC",
-    "shortName": "Southeastern Conference",
-    "abbreviation": "SEC",
-    "classification": "fbs"
-  },
-  {
-    "id": 235,
-    "name": "Far Western",
-    "shortName": "Far Western Conference",
-    "abbreviation": "FWC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 220,
-    "name": "Pac-10",
-    "shortName": "Pacific 10",
-    "abbreviation": "Pac-10",
-    "classification": "fbs"
-  },
-  {
-    "id": 236,
-    "name": "Gulf Coast",
-    "shortName": "Gulf Coast Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 237,
-    "name": "Gulf Star",
-    "shortName": "Gulf Star Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 238,
-    "name": "Gulf Star",
-    "shortName": "Gulf Star Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 239,
-    "name": "Gulf States",
-    "shortName": "Gulf States Conference",
-    "abbreviation": "GSC",
-    "classification": "ii"
-  },
-  {
-    "id": 114,
-    "name": "American Rivers",
-    "shortName": "American Rivers Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 100,
-    "name": "American Southwest",
-    "shortName": "American Southwest",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 102,
-    "name": "CCIW",
-    "shortName": "CCIW",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 103,
-    "name": "Centennial",
-    "shortName": "Centennial",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 123,
-    "name": "Commonwealth Coast",
-    "shortName": "Commonwealth Coast Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 105,
-    "name": "ECFC",
-    "shortName": "ECFC",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 106,
-    "name": "Empire 8",
-    "shortName": "Empire 8",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 111,
-    "name": "Heartland",
-    "shortName": "Heartland",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 214,
-    "name": "Big 8",
-    "shortName": "Big 8 Conference",
-    "abbreviation": "Big 8",
-    "classification": "fbs"
-  },
-  {
-    "id": 216,
-    "name": "Pac-8",
-    "shortName": "Pacific 8 Conference",
-    "abbreviation": "Pac-8",
-    "classification": "fbs"
-  },
-  {
-    "id": 202,
-    "name": "Missouri Valley",
-    "shortName": "Missouri Valley Intercollegiate Athletic Association",
-    "abbreviation": "MVIAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 240,
-    "name": "Illinois Intercollegiate Athletic",
-    "shortName": "Illinois Intercollegiate Athletic Conference",
-    "abbreviation": "IIAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 241,
-    "name": "Indiana Collegiate",
-    "shortName": "Indiana Collegiate Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 205,
-    "name": "Pacific",
-    "shortName": "Pacific Coast Conference",
-    "abbreviation": "PCC",
-    "classification": "fbs"
-  },
-  {
-    "id": 242,
-    "name": "Indiana Intercollegiate",
-    "shortName": "Indiana Intercollegiate Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 207,
-    "name": "Big 6",
-    "shortName": "Big 6 Conference",
-    "abbreviation": "Big 6",
-    "classification": "fbs"
-  },
-  {
-    "id": 285,
-    "name": "Big Sky",
-    "shortName": "Big Sky Conference",
-    "abbreviation": "BSKY",
-    "classification": "ii"
-  },
-  {
-    "id": 286,
-    "name": "Big Sky",
-    "shortName": "Big Sky Conference",
-    "abbreviation": "BSKY",
-    "classification": "fbs"
-  },
-  {
-    "id": 209,
-    "name": "Mountain State",
-    "shortName": "Mountain State Athletic Conference",
-    "abbreviation": "MSAC",
-    "classification": "fbs"
-  },
-  {
-    "id": 287,
-    "name": "OVC",
-    "shortName": "Ohio Valley Conference",
-    "abbreviation": "OVC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 288,
-    "name": "OVC",
-    "shortName": "Ohio Valley Conference",
-    "abbreviation": "OVC",
-    "classification": "ii"
-  },
-  {
-    "id": 210,
-    "name": "Big 7",
-    "shortName": "Big 7 Conference",
-    "abbreviation": "Big 7",
-    "classification": "fbs"
-  },
-  {
-    "id": 289,
-    "name": "Southland",
-    "shortName": "Southland Conference",
-    "abbreviation": "SLC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 290,
-    "name": "Southland",
-    "shortName": "Southland Conference",
-    "abbreviation": "SLC",
-    "classification": "ii"
-  },
-  {
-    "id": 291,
-    "name": "SWAC",
-    "shortName": "Southwestern Athletic Conference",
-    "abbreviation": "SWAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 292,
-    "name": "SWAC",
-    "shortName": "Southwestern Athletic Conference",
-    "abbreviation": "SWAC",
-    "classification": "ii"
-  },
-  {
-    "id": 293,
-    "name": "MEAC",
-    "shortName": "Mid-Eastern Athletic Conference",
-    "abbreviation": "MEAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 294,
-    "name": "MEAC",
-    "shortName": "Mid-Eastern Athletic Conference",
-    "abbreviation": "MEAC",
-    "classification": "ii"
-  },
-  {
-    "id": 295,
-    "name": "Yankee",
-    "shortName": "Yankee Conference",
-    "abbreviation": "YANKEE",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 296,
-    "name": "Yankee",
-    "shortName": "Yankee Conference",
-    "abbreviation": "YANKEE",
-    "classification": "ii"
-  },
-  {
-    "id": 113,
-    "name": "Independent DIII",
-    "shortName": "Independent DIII",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 115,
-    "name": "Liberty League",
-    "shortName": "Liberty League",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 160,
-    "name": "MSCAC",
-    "shortName": "Massachusetts State Collegiate Athletic Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 117,
-    "name": "Michigan",
-    "shortName": "Michigan",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 119,
-    "name": "Mid Atlantic",
-    "shortName": "Middle Atlantic Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 120,
-    "name": "Midwest",
-    "shortName": "Midwest",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 121,
-    "name": "Minnesota",
-    "shortName": "Minnesota",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 128,
-    "name": "NACC",
-    "shortName": "Northern Athletics Collegiate Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 122,
-    "name": "NESCAC",
-    "shortName": "NESCAC",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 166,
-    "name": "NEWMAC",
-    "shortName": "New England Women's and Men's Athletic Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 124,
-    "name": "New Jersey",
-    "shortName": "New Jersey",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 126,
-    "name": "North Coast",
-    "shortName": "North Coast",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 130,
-    "name": "Northwest",
-    "shortName": "Northwest",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 131,
-    "name": "Ohio",
-    "shortName": "Ohio",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 132,
-    "name": "Old Dominion",
-    "shortName": "Old Dominion",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 134,
-    "name": "Presidents'",
-    "shortName": "Presidents'",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 138,
-    "name": "So. Cal.",
-    "shortName": "So. Cal.",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 147,
-    "name": "Southern Athletic",
-    "shortName": "Southern Athletic Association",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 143,
-    "name": "USA South",
-    "shortName": "USA South",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 142,
-    "name": "Upper Midwest",
-    "shortName": "Upper Midwest",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 145,
-    "name": "Wisconsin",
-    "shortName": "Wisconsin",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 104,
-    "name": "CIAA",
-    "shortName": "CIAA",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 107,
-    "name": "GLIAC",
-    "shortName": "GLIAC",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 146,
-    "name": "Great American",
-    "shortName": "Great American Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 108,
-    "name": "Great Lakes",
-    "shortName": "Great Lakes",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 165,
-    "name": "Great Midwest Athletic",
-    "shortName": "Great Midwest Athletic Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 109,
-    "name": "Great Northwest",
-    "shortName": "Great Northwest",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 110,
-    "name": "Gulf South",
-    "shortName": "Gulf South",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 112,
-    "name": "Independent DII",
-    "shortName": "Independent DII",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 116,
-    "name": "Lone Star",
-    "shortName": "Lone Star",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 118,
-    "name": "Mid America",
-    "shortName": "Mid America",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 144,
-    "name": "Mountain East",
-    "shortName": "Mountain East Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 127,
-    "name": "Northeast 10",
-    "shortName": "Northeast 10",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 129,
-    "name": "Northern Sun",
-    "shortName": "Northern Sun",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 133,
-    "name": "Pennsylvania State Athletic",
-    "shortName": "Pennsylvania State Athletic Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 135,
-    "name": "Rocky Mountain",
-    "shortName": "Rocky Mountain",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 136,
-    "name": "SIAC",
-    "shortName": "SIAC",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 139,
-    "name": "South Atlantic",
-    "shortName": "South Atlantic",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
     "id": 213,
     "name": "AAWU",
     "shortName": "Athletic Association of Western Universities",
     "abbreviation": "AAWU",
-    "classification": "fbs"
-  },
-  {
-    "id": 217,
-    "name": "PCAA",
-    "shortName": "Pacific Coast Athletic Association",
-    "abbreviation": "PCAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 219,
-    "name": "SWAC",
-    "shortName": "Southwest Athletic Conference",
-    "abbreviation": "SWAC",
-    "classification": "fbs"
-  },
-  {
-    "id": 201,
-    "name": "Western",
-    "shortName": "Western Conference",
-    "abbreviation": "Western",
-    "classification": "fbs"
-  },
-  {
-    "id": 176,
-    "name": "Atlantic Sun",
-    "shortName": "Atlantic Sun Conference",
-    "abbreviation": "ASUN",
-    "classification": "fcs"
-  },
-  {
-    "id": 32,
-    "name": "FCS Independents",
-    "shortName": "FCS Independents",
-    "abbreviation": "INDAA",
-    "classification": "fcs"
-  },
-  {
-    "id": 148,
-    "name": "Southern Collegiate Athletic",
-    "shortName": "Southern Collegiate Athletic Conference",
-    "abbreviation": "SCAC",
-    "classification": "iii"
-  },
-  {
-    "id": 141,
-    "name": "University",
-    "shortName": "University",
-    "abbreviation": "UNI",
-    "classification": "iii"
-  },
-  {
-    "id": 43,
-    "name": "Great West",
-    "shortName": "Great West Conference",
-    "abbreviation": "GWEST",
-    "classification": "fcs"
-  },
-  {
-    "id": 23,
-    "name": "Metro Atlantic Athletic",
-    "shortName": "Metro Atlantic Athletic Conference",
-    "abbreviation": "MAAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 178,
-    "name": "Landmark Conference",
-    "shortName": "Landmark Conference",
-    "abbreviation": null,
-    "classification": "iii"
-  },
-  {
-    "id": 203,
-    "name": "Rocky Mountain",
-    "shortName": "Rocky Mountain Conference",
-    "abbreviation": "RMC",
-    "classification": "fbs"
-  },
-  {
-    "id": 204,
-    "name": "Southwest",
-    "shortName": "Southwest Conference",
-    "abbreviation": "SWC",
-    "classification": "fbs"
-  },
-  {
-    "id": 206,
-    "name": "Southern",
-    "shortName": "Southern Conference",
-    "abbreviation": "Southern",
-    "classification": "fbs"
-  },
-  {
-    "id": 208,
-    "name": "Missouri Valley",
-    "shortName": "Missouri Valley Conference",
-    "abbreviation": "MVC",
-    "classification": "fbs"
-  },
-  {
-    "id": 223,
-    "name": "Border",
-    "shortName": "Border Intercollegiate Athletic Association",
-    "abbreviation": "BIAA",
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 1,
     "name": "ACC",
     "shortName": "Atlantic Coast Conference",
     "abbreviation": "ACC",
-    "classification": "fbs"
-  },
-  {
-    "id": 4,
-    "name": "Big 12",
-    "shortName": "Big 12 Conference",
-    "abbreviation": "B12",
-    "classification": "fbs"
-  },
-  {
-    "id": 211,
-    "name": "Skyline",
-    "shortName": "Skyline Conference",
-    "abbreviation": "Skyline",
-    "classification": "fbs"
-  },
-  {
-    "id": 5,
-    "name": "Big Ten",
-    "shortName": "Big Ten Conference",
-    "abbreviation": "B1G",
-    "classification": "fbs"
-  },
-  {
-    "id": 12,
-    "name": "Conference USA",
-    "shortName": "Conference USA",
-    "abbreviation": "CUSA",
-    "classification": "fbs"
-  },
-  {
-    "id": 18,
-    "name": "FBS Independents",
-    "shortName": "FBS Independents",
-    "abbreviation": "Ind",
-    "classification": "fbs"
-  },
-  {
-    "id": 37,
-    "name": "Sun Belt",
-    "shortName": "Sun Belt Conference",
-    "abbreviation": "SBC",
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 17
   },
   {
     "id": 151,
     "name": "American Athletic",
     "shortName": "American Athletic Conference",
     "abbreviation": "AAC",
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 14
   },
   {
-    "id": 212,
-    "name": "Ivy",
-    "shortName": "The Ivy League",
-    "abbreviation": "Ivy",
-    "classification": "fbs"
-  },
-  {
-    "id": 215,
-    "name": "Western Athletic",
-    "shortName": "Western Athletic Conference",
-    "abbreviation": "WAC",
-    "classification": "fbs"
-  },
-  {
-    "id": 218,
-    "name": "Southland",
-    "shortName": "Southland Conference",
-    "abbreviation": "Southland",
-    "classification": "fbs"
-  },
-  {
-    "id": 221,
-    "name": "Big West",
-    "shortName": "Big West Conference",
-    "abbreviation": "BW",
-    "classification": "fbs"
-  },
-  {
-    "id": 179,
-    "name": "Big South-OVC",
-    "shortName": "Big South-Ohio Valley Conference Football Association",
-    "abbreviation": "BSOVC",
-    "classification": "fcs"
-  },
-  {
-    "id": 222,
-    "name": "Big East",
-    "shortName": "Big East Conference",
-    "abbreviation": "BE",
-    "classification": "fbs"
-  },
-  {
-    "id": 29,
-    "name": "Southern",
-    "shortName": "Southern Conference",
-    "abbreviation": "SOCON",
-    "classification": "fcs"
-  },
-  {
-    "id": 30,
-    "name": "Southland",
-    "shortName": "Southland Conference",
-    "abbreviation": "SLC",
-    "classification": "fcs"
-  },
-  {
-    "id": 31,
-    "name": "SWAC",
-    "shortName": "Southwestern Athletic Conference",
-    "abbreviation": "SWAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 177,
-    "name": "UAC",
-    "shortName": "United Athletic Conference",
-    "abbreviation": "UAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 16,
-    "name": "Western Athletic",
-    "shortName": "Western Athletic Conference",
-    "abbreviation": "WAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 19,
-    "name": "Atlantic 10",
-    "shortName": "Atlantic 10 Conference",
-    "abbreviation": "A10",
-    "classification": "fcs"
-  },
-  {
-    "id": 243,
-    "name": "Indiana Intercollegiate Athletic",
-    "shortName": "Indiana Intercollegiate Athletic Association",
+    "id": 114,
+    "name": "American Rivers",
+    "shortName": "American Rivers Conference",
     "abbreviation": null,
-    "classification": "fbs"
+    "classification": "iii",
+    "memberCount": 8
   },
   {
-    "id": 244,
-    "name": "Intercollegiate Athletic Association of the Northwest",
-    "shortName": "Intercollegiate Athletic Association of the Northwest",
-    "abbreviation": "IAANW",
-    "classification": "fbs"
-  },
-  {
-    "id": 245,
-    "name": "Interstate Intercollegiate Athletic",
-    "shortName": "Interstate Intercollegiate Athletic Conference",
-    "abbreviation": "IIAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 246,
-    "name": "Kansas Intercollegiate Athletic",
-    "shortName": "Kansas Intercollegiate Athletic Association",
-    "abbreviation": "KIAA",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 247,
-    "name": "Kentucky Intercollegiate Athletic",
-    "shortName": "Kentucky Intercollegiate Athletic Conference",
-    "abbreviation": "KIAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 248,
-    "name": "Louisiana Intercollegiate",
-    "shortName": "Louisiana Intercollegiate Conference",
-    "abbreviation": "LIC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 249,
-    "name": "Louisiana Intercollegiate Athletic",
-    "shortName": "Louisiana Intercollegiate Athletic Association",
-    "abbreviation": "LIAA",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 250,
-    "name": "Maryland Intercollegiate Football",
-    "shortName": "Maryland Intercollegiate Football Association",
-    "abbreviation": "MIFA",
-    "classification": "fbs"
-  },
-  {
-    "id": 251,
-    "name": "Mason-Dixon",
-    "shortName": "Mason-Dixon Conference",
+    "id": 100,
+    "name": "American Southwest",
+    "shortName": "American Southwest",
     "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 252,
-    "name": "Michigan Collegiate",
-    "shortName": "Michigan Collegiate Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 253,
-    "name": "Mid-Continent",
-    "shortName": "Mid-Continent Conference",
-    "abbreviation": null,
-    "classification": "fcs"
-  },
-  {
-    "id": 254,
-    "name": "Mid-Continent",
-    "shortName": "Mid-Continent Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 255,
-    "name": "Middle Atlantic University",
-    "shortName": "Middle Atlantic Conference (University Division)",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 256,
-    "name": "Middle Atlantic University",
-    "shortName": "Middle Atlantic Conference (University Division)",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 257,
-    "name": "Middle States Intercollegiate Football",
-    "shortName": "Middle States Intercollegiate Football League",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 258,
-    "name": "Middle Three",
-    "shortName": "Middle Three Conference",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 259,
-    "name": "Midwestern Universities",
-    "shortName": "Conference of Midwestern Universities",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 260,
-    "name": "Mississippi Valley",
-    "shortName": "Mississippi Valley Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 261,
-    "name": "New England",
-    "shortName": "New England Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 262,
-    "name": "New York State",
-    "shortName": "New York State Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 263,
-    "name": "North Central",
-    "shortName": "North Central Conference",
-    "abbreviation": "NCC",
-    "classification": "ii"
-  },
-  {
-    "id": 264,
-    "name": "North State",
-    "shortName": "North State Conference",
-    "abbreviation": null,
-    "classification": "ii"
-  },
-  {
-    "id": 265,
-    "name": "Northern California Athletic",
-    "shortName": "Northern California Athletic Conference",
-    "abbreviation": "NCAC",
-    "classification": "ii"
-  },
-  {
-    "id": 266,
-    "name": "Northwest (historical)",
-    "shortName": "Northwest Conference",
-    "abbreviation": null,
-    "classification": "fbs"
-  },
-  {
-    "id": 267,
-    "name": "Northwest Intercollegiate Athletic",
-    "shortName": "Northwest Intercollegiate Athletic Association",
-    "abbreviation": "NIAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 268,
-    "name": "Northwest Ohio",
-    "shortName": "Northwest Ohio League",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 269,
-    "name": "Oklahoma Intercollegiate",
-    "shortName": "Oklahoma Intercollegiate Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 270,
-    "name": "Oregon Intercollegiate Football",
-    "shortName": "Oregon Intercollegiate Football Association",
-    "abbreviation": "OIFA",
-    "classification": "fbs"
-  },
-  {
-    "id": 271,
-    "name": "Pennsylvania Intercollegiate Football",
-    "shortName": "Pennsylvania Intercollegiate Football Association",
-    "abbreviation": "PIFA",
-    "classification": "fbs"
-  },
-  {
-    "id": 272,
-    "name": "Pre-classification Independents",
-    "shortName": "Pre-classification Independents",
-    "abbreviation": "IND-PC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 273,
-    "name": "SIAA",
-    "shortName": "Southern Intercollegiate Athletic Association",
-    "abbreviation": "SIAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 274,
-    "name": "SIAA",
-    "shortName": "Southern Intercollegiate Athletic Association",
-    "abbreviation": "SIAA",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 275,
-    "name": "South Atlantic Intercollegiate Athletic",
-    "shortName": "South Atlantic Intercollegiate Athletic Association",
-    "abbreviation": "SAIAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 276,
-    "name": "Southern California Intercollegiate Athletic",
-    "shortName": "Southern California Intercollegiate Athletic Conference",
-    "abbreviation": "SCIAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 277,
-    "name": "Texas Intercollegiate Athletic",
-    "shortName": "Texas Intercollegiate Athletic Association",
-    "abbreviation": "TIAA",
-    "classification": "fbs"
-  },
-  {
-    "id": 278,
-    "name": "Virginia Collegiate Athletic",
-    "shortName": "Virginia Collegiate Athletic Association",
-    "abbreviation": "VCAA",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 279,
-    "name": "West Virginia Athletic",
-    "shortName": "West Virginia Athletic Conference",
-    "abbreviation": "WVAC",
-    "classification": "ii/iii"
-  },
-  {
-    "id": 280,
-    "name": "West Virginia Intercollegiate Athletic",
-    "shortName": "West Virginia Intercollegiate Athletic Conference",
-    "abbreviation": "WVIAC",
-    "classification": "ii"
-  },
-  {
-    "id": 281,
-    "name": "Western Football",
-    "shortName": "Western Football Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 282,
-    "name": "Western Interstate University Football",
-    "shortName": "Western Interstate University Football Association",
-    "abbreviation": "WIUFA",
-    "classification": "fbs"
-  },
-  {
-    "id": 283,
-    "name": "Yankee",
-    "shortName": "Yankee Conference",
-    "abbreviation": "YANKEE",
-    "classification": "fcs"
-  },
-  {
-    "id": 297,
-    "name": "Missouri Valley",
-    "shortName": "Missouri Valley Conference",
-    "abbreviation": "MVC",
-    "classification": "fcs"
-  },
-  {
-    "id": 298,
-    "name": "Gateway Collegiate Athletic",
-    "shortName": "Gateway Collegiate Athletic Conference",
-    "abbreviation": "GCAC",
-    "classification": "fcs"
-  },
-  {
-    "id": 299,
-    "name": "Gateway Football",
-    "shortName": "Gateway Football Conference",
-    "abbreviation": "GFC",
-    "classification": "fcs"
-  },
-  {
-    "id": 300,
-    "name": "Colonial",
-    "shortName": "Colonial League",
-    "abbreviation": "CL",
-    "classification": "fcs"
-  },
-  {
-    "id": 301,
-    "name": "Coastal Athletic",
-    "shortName": "Coastal Athletic Association Football Conference",
-    "abbreviation": "CAA",
-    "classification": "fcs"
+    "classification": "iii",
+    "memberCount": 6
   },
   {
     "id": 302,
     "name": "American West",
     "shortName": "American West Conference",
     "abbreviation": "AWC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 224,
+    "name": "American West",
+    "shortName": "American West Conference",
+    "abbreviation": "AWC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 225,
+    "name": "Arkansas Intercollegiate",
+    "shortName": "Arkansas Intercollegiate Conference",
+    "abbreviation": "AIC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 226,
+    "name": "Athletic League of New England State Colleges",
+    "shortName": "Athletic League of New England State Colleges",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 19,
+    "name": "Atlantic 10",
+    "shortName": "Atlantic 10 Conference",
+    "abbreviation": "A10",
+    "classification": "fcs",
+    "memberCount": 0
   },
   {
     "id": 303,
     "name": "Atlantic Collegiate Football",
     "shortName": "Atlantic Collegiate Football Conference",
     "abbreviation": "ACFC",
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 176,
+    "name": "Atlantic Sun",
+    "shortName": "Atlantic Sun Conference",
+    "abbreviation": "ASUN",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 175,
+    "name": "AWC",
+    "shortName": "ASUN-WAC Challenge",
+    "abbreviation": "AWC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 4,
+    "name": "Big 12",
+    "shortName": "Big 12 Conference",
+    "abbreviation": "B12",
+    "classification": "fbs",
+    "memberCount": 16
+  },
+  {
+    "id": 207,
+    "name": "Big 6",
+    "shortName": "Big 6 Conference",
+    "abbreviation": "Big 6",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 210,
+    "name": "Big 7",
+    "shortName": "Big 7 Conference",
+    "abbreviation": "Big 7",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 214,
+    "name": "Big 8",
+    "shortName": "Big 8 Conference",
+    "abbreviation": "Big 8",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 222,
+    "name": "Big East",
+    "shortName": "Big East Conference",
+    "abbreviation": "BE",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 304,
     "name": "Big Five",
     "shortName": "Big Five Conference",
     "abbreviation": null,
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 227,
+    "name": "Big Four",
+    "shortName": "Big Four Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 20,
+    "name": "Big Sky",
+    "shortName": "Big Sky Conference",
+    "abbreviation": "BSKY",
+    "classification": "fcs",
+    "memberCount": 13
+  },
+  {
+    "id": 284,
+    "name": "Big Sky",
+    "shortName": "Big Sky Conference",
+    "abbreviation": "BSKY",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 285,
+    "name": "Big Sky",
+    "shortName": "Big Sky Conference",
+    "abbreviation": "BSKY",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 286,
+    "name": "Big Sky",
+    "shortName": "Big Sky Conference",
+    "abbreviation": "BSKY",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 40,
+    "name": "Big South",
+    "shortName": "Big South Conference",
+    "abbreviation": "BSOUTH",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 179,
+    "name": "Big South-OVC",
+    "shortName": "Big South-Ohio Valley Conference Football Association",
+    "abbreviation": "BSOVC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 5,
+    "name": "Big Ten",
+    "shortName": "Big Ten Conference",
+    "abbreviation": "B1G",
+    "classification": "fbs",
+    "memberCount": 18
+  },
+  {
+    "id": 221,
+    "name": "Big West",
+    "shortName": "Big West Conference",
+    "abbreviation": "BW",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 305,
     "name": "Border",
     "shortName": "Border Intercollegiate Athletic Association",
     "abbreviation": "BIAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 306,
-    "name": "CIAA",
-    "shortName": "Central Intercollegiate Athletic Association",
-    "abbreviation": "CIAA",
-    "classification": "ii/iii"
+    "id": 223,
+    "name": "Border",
+    "shortName": "Border Intercollegiate Athletic Association",
+    "abbreviation": "BIAA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 228,
+    "name": "Buckeye",
+    "shortName": "Buckeye Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 229,
+    "name": "Buckeye Athletic",
+    "shortName": "Buckeye Athletic Association",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 48,
+    "name": "CAA",
+    "shortName": "Colonial Athletic Association",
+    "abbreviation": "CAA",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 230,
+    "name": "California Coast",
+    "shortName": "California Coast Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 307,
     "name": "California Collegiate Athletic",
     "shortName": "California Collegiate Athletic Association",
     "abbreviation": "CCAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 231,
+    "name": "California Collegiate Athletic",
+    "shortName": "California Collegiate Athletic Association",
+    "abbreviation": "CCAA",
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 308,
     "name": "Carolinas",
     "shortName": "Conference Carolinas",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 187,
+    "name": "Carolinas",
+    "shortName": "Conference Carolinas",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 7
+  },
+  {
+    "id": 102,
+    "name": "CCIW",
+    "shortName": "CCIW",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 103,
+    "name": "Centennial",
+    "shortName": "Centennial",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
+  },
+  {
+    "id": 306,
+    "name": "CIAA",
+    "shortName": "Central Intercollegiate Athletic Association",
+    "abbreviation": "CIAA",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 104,
+    "name": "CIAA",
+    "shortName": "CIAA",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 12
+  },
+  {
+    "id": 301,
+    "name": "Coastal Athletic",
+    "shortName": "Coastal Athletic Association Football Conference",
+    "abbreviation": "CAA",
+    "classification": "fcs",
+    "memberCount": 13
   },
   {
     "id": 309,
     "name": "College Division Independents",
     "shortName": "College Division Independents",
     "abbreviation": "IND-CD",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 300,
+    "name": "Colonial",
+    "shortName": "Colonial League",
+    "abbreviation": "CL",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 232,
+    "name": "Colorado Football",
+    "shortName": "Colorado Football Association",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 123,
+    "name": "Commonwealth Coast",
+    "shortName": "Commonwealth Coast Conference",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
+  },
+  {
+    "id": 12,
+    "name": "Conference USA",
+    "shortName": "Conference USA",
+    "abbreviation": "CUSA",
+    "classification": "fbs",
+    "memberCount": 10
+  },
+  {
+    "id": 233,
+    "name": "Dixie",
+    "shortName": "Dixie Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 310,
     "name": "Eastern Collegiate Football (historical)",
     "shortName": "Eastern Collegiate Football Conference (historical)",
     "abbreviation": "ECFC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 311,
     "name": "Eastern Collegiate Football (historical)",
     "shortName": "Eastern Collegiate Football Conference (historical)",
     "abbreviation": "ECFC",
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
   },
   {
     "id": 312,
     "name": "Eastern Football (1965\u20131974)",
     "shortName": "Eastern Football Conference (1965\u20131974)",
     "abbreviation": "EFC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 313,
     "name": "Eastern Football (1965\u20131974)",
     "shortName": "Eastern Football Conference (1965\u20131974)",
     "abbreviation": "EFC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 314,
     "name": "Eastern Football (1997\u20132000)",
     "shortName": "Eastern Football Conference (1997\u20132000)",
     "abbreviation": "EFC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 315,
     "name": "Eastern Intercollegiate Athletic",
     "shortName": "Eastern Intercollegiate Athletic Conference",
     "abbreviation": "EIAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 316,
     "name": "Eastern Intercollegiate Football",
     "shortName": "Eastern Intercollegiate Football Association",
     "abbreviation": "EIFA",
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 234,
+    "name": "Eastern Virginia Intercollegiate Athletic",
+    "shortName": "Eastern Virginia Intercollegiate Athletic Association",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 105,
+    "name": "ECFC",
+    "shortName": "ECFC",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 1
+  },
+  {
+    "id": 106,
+    "name": "Empire 8",
+    "shortName": "Empire 8",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
   },
   {
     "id": 317,
     "name": "Evergreen",
     "shortName": "Evergreen Conference",
     "abbreviation": null,
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 318,
     "name": "Far Western",
     "shortName": "Far Western Conference",
     "abbreviation": "FWC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 235,
+    "name": "Far Western",
+    "shortName": "Far Western Conference",
+    "abbreviation": "FWC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 18,
+    "name": "FBS Independents",
+    "shortName": "FBS Independents",
+    "abbreviation": "Ind",
+    "classification": "fbs",
+    "memberCount": 2
+  },
+  {
+    "id": 32,
+    "name": "FCS Independents",
+    "shortName": "FCS Independents",
+    "abbreviation": "INDAA",
+    "classification": "fcs",
+    "memberCount": 2
   },
   {
     "id": 319,
     "name": "Freedom Football",
     "shortName": "Freedom Football Conference",
     "abbreviation": "FFC",
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 298,
+    "name": "Gateway Collegiate Athletic",
+    "shortName": "Gateway Collegiate Athletic Conference",
+    "abbreviation": "GCAC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 299,
+    "name": "Gateway Football",
+    "shortName": "Gateway Football Conference",
+    "abbreviation": "GFC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 107,
+    "name": "GLIAC",
+    "shortName": "GLIAC",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 8
+  },
+  {
+    "id": 146,
+    "name": "Great American",
+    "shortName": "Great American Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 12
+  },
+  {
+    "id": 108,
+    "name": "Great Lakes",
+    "shortName": "Great Lakes",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 10
   },
   {
     "id": 320,
     "name": "Great Lakes Valley",
     "shortName": "Great Lakes Valley Conference",
     "abbreviation": "GLVC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 165,
+    "name": "Great Midwest Athletic",
+    "shortName": "Great Midwest Athletic Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 11
+  },
+  {
+    "id": 109,
+    "name": "Great Northwest",
+    "shortName": "Great Northwest",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 321,
     "name": "Great Plains Athletic",
     "shortName": "Great Plains Athletic Conference",
     "abbreviation": "GPAC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 322,
     "name": "Great Plains Athletic",
     "shortName": "Great Plains Athletic Conference",
     "abbreviation": "GPAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 43,
+    "name": "Great West",
+    "shortName": "Great West Conference",
+    "abbreviation": "GWEST",
+    "classification": "fcs",
+    "memberCount": 0
   },
   {
     "id": 323,
     "name": "Gulf Coast",
     "shortName": "Gulf Coast Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 236,
+    "name": "Gulf Coast",
+    "shortName": "Gulf Coast Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 324,
     "name": "Gulf Coast Athletic Association",
     "shortName": "Gulf Coast Athletic Association",
     "abbreviation": "GCAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 325,
     "name": "Gulf South",
     "shortName": "Gulf South Conference",
     "abbreviation": "GSC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 110,
+    "name": "Gulf South",
+    "shortName": "Gulf South",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 4
+  },
+  {
+    "id": 238,
+    "name": "Gulf Star",
+    "shortName": "Gulf Star Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 237,
+    "name": "Gulf Star",
+    "shortName": "Gulf Star Conference",
+    "abbreviation": null,
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 239,
+    "name": "Gulf States",
+    "shortName": "Gulf States Conference",
+    "abbreviation": "GSC",
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 326,
     "name": "Gulf States",
     "shortName": "Gulf States Conference",
     "abbreviation": "GSC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 111,
+    "name": "Heartland",
+    "shortName": "Heartland",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
   },
   {
     "id": 327,
     "name": "Heartland",
     "shortName": "Heartland Collegiate Conference",
     "abbreviation": null,
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 240,
+    "name": "Illinois Intercollegiate Athletic",
+    "shortName": "Illinois Intercollegiate Athletic Conference",
+    "abbreviation": "IIAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 112,
+    "name": "Independent DII",
+    "shortName": "Independent DII",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 3
+  },
+  {
+    "id": 113,
+    "name": "Independent DIII",
+    "shortName": "Independent DIII",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 2
   },
   {
     "id": 328,
     "name": "Indiana College Athletic League",
     "shortName": "Indiana College Athletic League",
     "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 329,
-    "name": "Indiana Collegiate",
-    "shortName": "Indiana Collegiate Conference",
-    "abbreviation": null,
-    "classification": "ii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 330,
     "name": "Indiana Collegiate",
     "shortName": "Indiana Collegiate Conference",
     "abbreviation": null,
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 241,
+    "name": "Indiana Collegiate",
+    "shortName": "Indiana Collegiate Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 329,
+    "name": "Indiana Collegiate",
+    "shortName": "Indiana Collegiate Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 242,
+    "name": "Indiana Intercollegiate",
+    "shortName": "Indiana Intercollegiate Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 243,
+    "name": "Indiana Intercollegiate Athletic",
+    "shortName": "Indiana Intercollegiate Athletic Association",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 244,
+    "name": "Intercollegiate Athletic Association of the Northwest",
+    "shortName": "Intercollegiate Athletic Association of the Northwest",
+    "abbreviation": "IAANW",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 245,
+    "name": "Interstate Intercollegiate Athletic",
+    "shortName": "Interstate Intercollegiate Athletic Conference",
+    "abbreviation": "IIAC",
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 331,
     "name": "Iowa Intercollegiate Athletic",
     "shortName": "Iowa Intercollegiate Athletic Conference",
     "abbreviation": "IIAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 212,
+    "name": "Ivy",
+    "shortName": "The Ivy League",
+    "abbreviation": "Ivy",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 22,
+    "name": "Ivy",
+    "shortName": "Ivy League",
+    "abbreviation": "IVY",
+    "classification": "fcs",
+    "memberCount": 8
+  },
+  {
+    "id": 246,
+    "name": "Kansas Intercollegiate Athletic",
+    "shortName": "Kansas Intercollegiate Athletic Association",
+    "abbreviation": "KIAA",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 247,
+    "name": "Kentucky Intercollegiate Athletic",
+    "shortName": "Kentucky Intercollegiate Athletic Conference",
+    "abbreviation": "KIAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 178,
+    "name": "Landmark Conference",
+    "shortName": "Landmark Conference",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
   },
   {
     "id": 332,
     "name": "Liberty Football",
     "shortName": "Liberty Football Conference",
     "abbreviation": "LFC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 333,
     "name": "Liberty Football",
     "shortName": "Liberty Football Conference",
     "abbreviation": "LFC",
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 115,
+    "name": "Liberty League",
+    "shortName": "Liberty League",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
+  },
+  {
+    "id": 116,
+    "name": "Lone Star",
+    "shortName": "Lone Star",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 11
+  },
+  {
+    "id": 248,
+    "name": "Louisiana Intercollegiate",
+    "shortName": "Louisiana Intercollegiate Conference",
+    "abbreviation": "LIC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 249,
+    "name": "Louisiana Intercollegiate Athletic",
+    "shortName": "Louisiana Intercollegiate Athletic Association",
+    "abbreviation": "LIAA",
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 334,
     "name": "Maine Intercollegiate Athletic",
     "shortName": "Maine Intercollegiate Athletic Association",
     "abbreviation": "MIAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 250,
+    "name": "Maryland Intercollegiate Football",
+    "shortName": "Maryland Intercollegiate Football Association",
+    "abbreviation": "MIFA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 251,
+    "name": "Mason-Dixon",
+    "shortName": "Mason-Dixon Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 335,
     "name": "Mason-Dixon",
     "shortName": "Mason-Dixon Conference",
     "abbreviation": null,
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 294,
+    "name": "MEAC",
+    "shortName": "Mid-Eastern Athletic Conference",
+    "abbreviation": "MEAC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 293,
+    "name": "MEAC",
+    "shortName": "Mid-Eastern Athletic Conference",
+    "abbreviation": "MEAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 24,
+    "name": "MEAC",
+    "shortName": "Mid-Eastern Athletic Conference",
+    "abbreviation": "MEAC",
+    "classification": "fcs",
+    "memberCount": 6
+  },
+  {
+    "id": 23,
+    "name": "Metro Atlantic Athletic",
+    "shortName": "Metro Atlantic Athletic Conference",
+    "abbreviation": "MAAC",
+    "classification": "fcs",
+    "memberCount": 0
   },
   {
     "id": 336,
     "name": "Metropolitan Collegiate",
     "shortName": "Metropolitan Collegiate Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
-  },
-  {
-    "id": 337,
-    "name": "Metropolitan Intercollegiate",
-    "shortName": "Metropolitan Intercollegiate Conference",
-    "abbreviation": "MIC",
-    "classification": "ii"
-  },
-  {
-    "id": 338,
-    "name": "Metropolitan Intercollegiate",
-    "shortName": "Metropolitan Intercollegiate Conference",
-    "abbreviation": "MIC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 339,
     "name": "Metropolitan Intercollegiate",
     "shortName": "Metropolitan Intercollegiate Conference",
     "abbreviation": "MIC",
-    "classification": "iii"
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 337,
+    "name": "Metropolitan Intercollegiate",
+    "shortName": "Metropolitan Intercollegiate Conference",
+    "abbreviation": "MIC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 338,
+    "name": "Metropolitan Intercollegiate",
+    "shortName": "Metropolitan Intercollegiate Conference",
+    "abbreviation": "MIC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 117,
+    "name": "Michigan",
+    "shortName": "Michigan",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 8
+  },
+  {
+    "id": 252,
+    "name": "Michigan Collegiate",
+    "shortName": "Michigan Collegiate Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 118,
+    "name": "Mid America",
+    "shortName": "Mid America",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 10
   },
   {
     "id": 340,
     "name": "Mid America",
     "shortName": "Mid-America Intercollegiate Athletics Association",
     "abbreviation": "MIAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 341,
-    "name": "Mid Atlantic",
-    "shortName": "Middle Atlantic Conference",
-    "abbreviation": null,
-    "classification": "ii/iii"
+    "id": 15,
+    "name": "Mid-American",
+    "shortName": "Mid-American Conference",
+    "abbreviation": "MAC",
+    "classification": "fbs",
+    "memberCount": 13
   },
   {
     "id": 342,
     "name": "Mid-American",
     "shortName": "Mid-American Conference",
     "abbreviation": "MAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 343,
-    "name": "Mid-South Athletic",
-    "shortName": "Mid-South Athletic Conference",
+    "id": 119,
+    "name": "Mid Atlantic",
+    "shortName": "Middle Atlantic Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "iii",
+    "memberCount": 10
+  },
+  {
+    "id": 341,
+    "name": "Mid Atlantic",
+    "shortName": "Middle Atlantic Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 253,
+    "name": "Mid-Continent",
+    "shortName": "Mid-Continent Conference",
+    "abbreviation": null,
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 254,
+    "name": "Mid-Continent",
+    "shortName": "Mid-Continent Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 344,
     "name": "Middle Atlantic Athletic Association",
     "shortName": "Middle Atlantic Athletic Association",
     "abbreviation": "MAAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 255,
+    "name": "Middle Atlantic University",
+    "shortName": "Middle Atlantic Conference (University Division)",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 345,
     "name": "Middle Atlantic University",
     "shortName": "Middle Atlantic Conference (University Division)",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 256,
+    "name": "Middle Atlantic University",
+    "shortName": "Middle Atlantic Conference (University Division)",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 257,
+    "name": "Middle States Intercollegiate Football",
+    "shortName": "Middle States Intercollegiate Football League",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 258,
+    "name": "Middle Three",
+    "shortName": "Middle Three Conference",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 343,
+    "name": "Mid-South Athletic",
+    "shortName": "Mid-South Athletic Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 120,
+    "name": "Midwest",
+    "shortName": "Midwest",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 11
   },
   {
     "id": 346,
     "name": "Midwest Athletic",
     "shortName": "Midwest Athletic Association",
     "abbreviation": "MAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 259,
+    "name": "Midwestern Universities",
+    "shortName": "Conference of Midwestern Universities",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 347,
     "name": "Midwest Intercollegiate Football",
     "shortName": "Midwest Intercollegiate Football Conference",
     "abbreviation": "MIFC",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 121,
+    "name": "Minnesota",
+    "shortName": "Minnesota",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 10
+  },
+  {
+    "id": 260,
+    "name": "Mississippi Valley",
+    "shortName": "Mississippi Valley Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 297,
+    "name": "Missouri Valley",
+    "shortName": "Missouri Valley Conference",
+    "abbreviation": "MVC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 202,
+    "name": "Missouri Valley",
+    "shortName": "Missouri Valley Intercollegiate Athletic Association",
+    "abbreviation": "MVIAA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 208,
+    "name": "Missouri Valley",
+    "shortName": "Missouri Valley Conference",
+    "abbreviation": "MVC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 144,
+    "name": "Mountain East",
+    "shortName": "Mountain East Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 11
+  },
+  {
+    "id": 209,
+    "name": "Mountain State",
+    "shortName": "Mountain State Athletic Conference",
+    "abbreviation": "MSAC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 17,
+    "name": "Mountain West",
+    "shortName": "Mountain West Conference",
+    "abbreviation": "MWC",
+    "classification": "fbs",
+    "memberCount": 10
+  },
+  {
+    "id": 160,
+    "name": "MSCAC",
+    "shortName": "Massachusetts State Collegiate Athletic Conference",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 21,
+    "name": "MVFC",
+    "shortName": "Missouri Valley Football Conference",
+    "abbreviation": "MVFC",
+    "classification": "fcs",
+    "memberCount": 9
+  },
+  {
+    "id": 128,
+    "name": "NACC",
+    "shortName": "Northern Athletics Collegiate Conference",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 25,
+    "name": "NEC",
+    "shortName": "Northeast Conference",
+    "abbreviation": "NEC",
+    "classification": "fcs",
+    "memberCount": 8
+  },
+  {
+    "id": 122,
+    "name": "NESCAC",
+    "shortName": "NESCAC",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 10
+  },
+  {
+    "id": 261,
+    "name": "New England",
+    "shortName": "New England Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 348,
     "name": "New England",
     "shortName": "New England Conference",
     "abbreviation": null,
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 124,
+    "name": "New Jersey",
+    "shortName": "New Jersey",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 8
+  },
+  {
+    "id": 166,
+    "name": "NEWMAC",
+    "shortName": "New England Women's and Men's Athletic Conference",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 8
+  },
+  {
+    "id": 262,
+    "name": "New York State",
+    "shortName": "New York State Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 263,
+    "name": "North Central",
+    "shortName": "North Central Conference",
+    "abbreviation": "NCC",
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 349,
     "name": "North Central",
     "shortName": "North Central Conference",
     "abbreviation": "NCC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 126,
+    "name": "North Coast",
+    "shortName": "North Coast",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 127,
+    "name": "Northeast 10",
+    "shortName": "Northeast 10",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 8
+  },
+  {
+    "id": 265,
+    "name": "Northern California Athletic",
+    "shortName": "Northern California Athletic Conference",
+    "abbreviation": "NCAC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 129,
+    "name": "Northern Sun",
+    "shortName": "Northern Sun",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 14
+  },
+  {
+    "id": 264,
+    "name": "North State",
+    "shortName": "North State Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 350,
     "name": "North State",
     "shortName": "North State Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 351,
-    "name": "OVC-Big South",
-    "shortName": "OVC-Big South Football Association",
-    "abbreviation": "OVCBS",
-    "classification": "fcs"
+    "id": 130,
+    "name": "Northwest",
+    "shortName": "Northwest",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 8
+  },
+  {
+    "id": 266,
+    "name": "Northwest (historical)",
+    "shortName": "Northwest Conference",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 267,
+    "name": "Northwest Intercollegiate Athletic",
+    "shortName": "Northwest Intercollegiate Athletic Association",
+    "abbreviation": "NIAA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 268,
+    "name": "Northwest Ohio",
+    "shortName": "Northwest Ohio League",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 352,
     "name": "Ohio",
     "shortName": "Ohio Athletic Conference",
     "abbreviation": "OAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 131,
+    "name": "Ohio",
+    "shortName": "Ohio",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 10
+  },
+  {
+    "id": 269,
+    "name": "Oklahoma Intercollegiate",
+    "shortName": "Oklahoma Intercollegiate Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 132,
+    "name": "Old Dominion",
+    "shortName": "Old Dominion",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
   },
   {
     "id": 353,
     "name": "Oregon Collegiate",
     "shortName": "Oregon Collegiate Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 270,
+    "name": "Oregon Intercollegiate Football",
+    "shortName": "Oregon Intercollegiate Football Association",
+    "abbreviation": "OIFA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 288,
+    "name": "OVC",
+    "shortName": "Ohio Valley Conference",
+    "abbreviation": "OVC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 287,
+    "name": "OVC",
+    "shortName": "Ohio Valley Conference",
+    "abbreviation": "OVC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 26,
+    "name": "OVC",
+    "shortName": "Ohio Valley Conference",
+    "abbreviation": "OVC",
+    "classification": "fcs",
+    "memberCount": 8
+  },
+  {
+    "id": 351,
+    "name": "OVC-Big South",
+    "shortName": "OVC-Big South Football Association",
+    "abbreviation": "OVCBS",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 220,
+    "name": "Pac-10",
+    "shortName": "Pacific 10",
+    "abbreviation": "Pac-10",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 9,
+    "name": "Pac-12",
+    "shortName": "Pac-12 Conference",
+    "abbreviation": "PAC",
+    "classification": "fbs",
+    "memberCount": 8
+  },
+  {
+    "id": 216,
+    "name": "Pac-8",
+    "shortName": "Pacific 8 Conference",
+    "abbreviation": "Pac-8",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 354,
     "name": "Pacific",
     "shortName": "Pacific Coast Conference",
     "abbreviation": "PCC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 205,
+    "name": "Pacific",
+    "shortName": "Pacific Coast Conference",
+    "abbreviation": "PCC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 27,
+    "name": "Patriot",
+    "shortName": "Patriot League",
+    "abbreviation": "PAT",
+    "classification": "fcs",
+    "memberCount": 10
+  },
+  {
+    "id": 217,
+    "name": "PCAA",
+    "shortName": "Pacific Coast Athletic Association",
+    "abbreviation": "PCAA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 271,
+    "name": "Pennsylvania Intercollegiate Football",
+    "shortName": "Pennsylvania Intercollegiate Football Association",
+    "abbreviation": "PIFA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 133,
+    "name": "Pennsylvania State Athletic",
+    "shortName": "Pennsylvania State Athletic Conference",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 16
+  },
+  {
+    "id": 28,
+    "name": "Pioneer",
+    "shortName": "Pioneer Football League",
+    "abbreviation": "PFL",
+    "classification": "fcs",
+    "memberCount": 11
+  },
+  {
+    "id": 272,
+    "name": "Pre-classification Independents",
+    "shortName": "Pre-classification Independents",
+    "abbreviation": "IND-PC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 134,
+    "name": "Presidents'",
+    "shortName": "Presidents'",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 13
+  },
+  {
+    "id": 203,
+    "name": "Rocky Mountain",
+    "shortName": "Rocky Mountain Conference",
+    "abbreviation": "RMC",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 355,
     "name": "Rocky Mountain",
     "shortName": "Rocky Mountain Athletic Conference",
     "abbreviation": "RMAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 356,
-    "name": "SIAC",
-    "shortName": "Southern Intercollegiate Athletic Conference",
-    "abbreviation": "SIAC",
-    "classification": "fcs"
+    "id": 135,
+    "name": "Rocky Mountain",
+    "shortName": "Rocky Mountain",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 10
+  },
+  {
+    "id": 8,
+    "name": "SEC",
+    "shortName": "Southeastern Conference",
+    "abbreviation": "SEC",
+    "classification": "fbs",
+    "memberCount": 16
+  },
+  {
+    "id": 274,
+    "name": "SIAA",
+    "shortName": "Southern Intercollegiate Athletic Association",
+    "abbreviation": "SIAA",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 273,
+    "name": "SIAA",
+    "shortName": "Southern Intercollegiate Athletic Association",
+    "abbreviation": "SIAA",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 357,
     "name": "SIAC",
     "shortName": "Southern Intercollegiate Athletic Conference",
     "abbreviation": "SIAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 356,
+    "name": "SIAC",
+    "shortName": "Southern Intercollegiate Athletic Conference",
+    "abbreviation": "SIAC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 136,
+    "name": "SIAC",
+    "shortName": "SIAC",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 13
+  },
+  {
+    "id": 211,
+    "name": "Skyline",
+    "shortName": "Skyline Conference",
+    "abbreviation": "Skyline",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 358,
     "name": "Smoky Mountain",
     "shortName": "Smoky Mountain Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 138,
+    "name": "So. Cal.",
+    "shortName": "So. Cal.",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 139,
+    "name": "South Atlantic",
+    "shortName": "South Atlantic",
+    "abbreviation": null,
+    "classification": "ii",
+    "memberCount": 11
+  },
+  {
+    "id": 275,
+    "name": "South Atlantic Intercollegiate Athletic",
+    "shortName": "South Atlantic Intercollegiate Athletic Association",
+    "abbreviation": "SAIAA",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 359,
     "name": "South Carolina Little Three",
     "shortName": "South Carolina Little Three",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 360,
     "name": "South Central Athletic",
     "shortName": "South Central Athletic Conference",
     "abbreviation": "SCAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 361,
     "name": "Southeastern Athletic",
     "shortName": "Southeastern Athletic Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 206,
+    "name": "Southern",
+    "shortName": "Southern Conference",
+    "abbreviation": "Southern",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 362,
     "name": "Southern",
     "shortName": "Southern Conference",
     "abbreviation": "SOCON",
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 363,
     "name": "Southern",
     "shortName": "Southern Conference",
     "abbreviation": "SOCON",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 29,
+    "name": "Southern",
+    "shortName": "Southern Conference",
+    "abbreviation": "SOCON",
+    "classification": "fcs",
+    "memberCount": 10
+  },
+  {
+    "id": 147,
+    "name": "Southern Athletic",
+    "shortName": "Southern Athletic Association",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 276,
+    "name": "Southern California Intercollegiate Athletic",
+    "shortName": "Southern California Intercollegiate Athletic Conference",
+    "abbreviation": "SCIAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 148,
+    "name": "Southern Collegiate Athletic",
+    "shortName": "Southern Collegiate Athletic Conference",
+    "abbreviation": "SCAC",
+    "classification": "iii",
+    "memberCount": 5
+  },
+  {
+    "id": 218,
+    "name": "Southland",
+    "shortName": "Southland Conference",
+    "abbreviation": "Southland",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 30,
+    "name": "Southland",
+    "shortName": "Southland Conference",
+    "abbreviation": "SLC",
+    "classification": "fcs",
+    "memberCount": 10
+  },
+  {
+    "id": 289,
+    "name": "Southland",
+    "shortName": "Southland Conference",
+    "abbreviation": "SLC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 290,
+    "name": "Southland",
+    "shortName": "Southland Conference",
+    "abbreviation": "SLC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 204,
+    "name": "Southwest",
+    "shortName": "Southwest Conference",
+    "abbreviation": "SWC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 37,
+    "name": "Sun Belt",
+    "shortName": "Sun Belt Conference",
+    "abbreviation": "SBC",
+    "classification": "fbs",
+    "memberCount": 14
+  },
+  {
+    "id": 219,
+    "name": "SWAC",
+    "shortName": "Southwest Athletic Conference",
+    "abbreviation": "SWAC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 292,
+    "name": "SWAC",
+    "shortName": "Southwestern Athletic Conference",
+    "abbreviation": "SWAC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 291,
+    "name": "SWAC",
+    "shortName": "Southwestern Athletic Conference",
+    "abbreviation": "SWAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 31,
+    "name": "SWAC",
+    "shortName": "Southwestern Athletic Conference",
+    "abbreviation": "SWAC",
+    "classification": "fcs",
+    "memberCount": 12
   },
   {
     "id": 364,
     "name": "Texas Conference",
     "shortName": "Texas Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 365,
     "name": "Texas Intercollegiate Athletic",
     "shortName": "Texas Intercollegiate Athletic Association",
     "abbreviation": "TIAA",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 366,
-    "name": "Tri-State",
-    "shortName": "Tri-State Conference",
-    "abbreviation": null,
-    "classification": "fbs"
+    "id": 277,
+    "name": "Texas Intercollegiate Athletic",
+    "shortName": "Texas Intercollegiate Athletic Association",
+    "abbreviation": "TIAA",
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 367,
     "name": "Triangular Football League",
     "shortName": "Triangular Football League",
     "abbreviation": null,
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 366,
+    "name": "Tri-State",
+    "shortName": "Tri-State Conference",
+    "abbreviation": null,
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 177,
+    "name": "UAC",
+    "shortName": "United Athletic Conference",
+    "abbreviation": "UAC",
+    "classification": "fcs",
+    "memberCount": 8
+  },
+  {
+    "id": 141,
+    "name": "University",
+    "shortName": "University",
+    "abbreviation": "UNI",
+    "classification": "iii",
+    "memberCount": 0
+  },
+  {
+    "id": 142,
+    "name": "Upper Midwest",
+    "shortName": "Upper Midwest",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 7
+  },
+  {
+    "id": 143,
+    "name": "USA South",
+    "shortName": "USA South",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 9
+  },
+  {
+    "id": 278,
+    "name": "Virginia Collegiate Athletic",
+    "shortName": "Virginia Collegiate Athletic Association",
+    "abbreviation": "VCAA",
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 368,
     "name": "Virginia Conference",
     "shortName": "Virginia Conference",
     "abbreviation": null,
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 369,
     "name": "Virginia Intercollegiate Athletic",
     "shortName": "Virginia Intercollegiate Athletic Association",
     "abbreviation": "VIAA",
-    "classification": "fbs"
+    "classification": "fbs",
+    "memberCount": 0
   },
   {
     "id": 370,
     "name": "Volunteer State Athletic",
     "shortName": "Volunteer State Athletic Conference",
     "abbreviation": "VSAC",
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
-    "id": 371,
-    "name": "West Virginia Intercollegiate Athletic",
-    "shortName": "West Virginia Intercollegiate Athletic Conference",
-    "abbreviation": "WVIAC",
-    "classification": "ii/iii"
+    "id": 201,
+    "name": "Western",
+    "shortName": "Western Conference",
+    "abbreviation": "Western",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 215,
+    "name": "Western Athletic",
+    "shortName": "Western Athletic Conference",
+    "abbreviation": "WAC",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 16,
+    "name": "Western Athletic",
+    "shortName": "Western Athletic Conference",
+    "abbreviation": "WAC",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 281,
+    "name": "Western Football",
+    "shortName": "Western Football Conference",
+    "abbreviation": null,
+    "classification": "ii/iii",
+    "memberCount": 0
   },
   {
     "id": 372,
     "name": "Western Football",
     "shortName": "Western Football Conference",
     "abbreviation": null,
-    "classification": "ii"
+    "classification": "ii",
+    "memberCount": 0
   },
   {
     "id": 373,
     "name": "Western Interstate",
     "shortName": "Western Interstate Conference",
     "abbreviation": null,
-    "classification": "ii/iii"
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 282,
+    "name": "Western Interstate University Football",
+    "shortName": "Western Interstate University Football Association",
+    "abbreviation": "WIUFA",
+    "classification": "fbs",
+    "memberCount": 0
+  },
+  {
+    "id": 279,
+    "name": "West Virginia Athletic",
+    "shortName": "West Virginia Athletic Conference",
+    "abbreviation": "WVAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 280,
+    "name": "West Virginia Intercollegiate Athletic",
+    "shortName": "West Virginia Intercollegiate Athletic Conference",
+    "abbreviation": "WVIAC",
+    "classification": "ii",
+    "memberCount": 0
+  },
+  {
+    "id": 371,
+    "name": "West Virginia Intercollegiate Athletic",
+    "shortName": "West Virginia Intercollegiate Athletic Conference",
+    "abbreviation": "WVIAC",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 145,
+    "name": "Wisconsin",
+    "shortName": "Wisconsin",
+    "abbreviation": null,
+    "classification": "iii",
+    "memberCount": 8
+  },
+  {
+    "id": 283,
+    "name": "Yankee",
+    "shortName": "Yankee Conference",
+    "abbreviation": "YANKEE",
+    "classification": "fcs",
+    "memberCount": 0
+  },
+  {
+    "id": 295,
+    "name": "Yankee",
+    "shortName": "Yankee Conference",
+    "abbreviation": "YANKEE",
+    "classification": "ii/iii",
+    "memberCount": 0
+  },
+  {
+    "id": 296,
+    "name": "Yankee",
+    "shortName": "Yankee Conference",
+    "abbreviation": "YANKEE",
+    "classification": "ii",
+    "memberCount": 0
   }
 ]
