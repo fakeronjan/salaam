@@ -132,13 +132,21 @@ def sw_to_date_str(sw):
 df['date'] = df['season_week'].apply(sw_to_date_str)
 
 
-# ── Per-(team, season) conference from cached teams_*.json ─────────────────────
+# ── Per-(team, season) conference + current mascot from cached teams_*.json ────
 print('Loading per-season team conferences...')
 team_conf_raw = {}    # (team, season) → raw CFBD conference string
+team_mascot    = {}    # team (school) → current mascot (CFBD always reports the
+                        # CURRENT mascot regardless of which year's file you read
+                        # - verified teams_1990.json already shows Arkansas State
+                        # as "Red Wolves", 20 years before the real 2008 rename -
+                        # so this is only ever the present-day mascot, never an
+                        # era-accurate one; see NCAA_TEAM_DISPLAY_HISTORY below)
 for f in sorted((DATA_DIR / 'teams').glob('teams_*.json')):
     year = int(f.stem.split('_')[1])
     for t in json.loads(f.read_text()):
         team_conf_raw[(t['school'], year)] = t.get('conference') or 'Other'
+        if t.get('mascot'):
+            team_mascot[t['school']] = t['mascot']
 
 
 def conf_raw(team, season):
@@ -147,6 +155,100 @@ def conf_raw(team, season):
 
 def conf(team, season):
     return conf_bucket(conf_raw(team, season), season)
+
+
+# ── Era-aware full-name history ─────────────────────────────────────────────
+# CFBD's `school`/`mascot` fields are always the CURRENT identity, backfilled
+# onto every historical season (confirmed empirically - see comment above).
+# Unlike DILLON, where PFR's raw game data already carried era-accurate names
+# and the work was CONSOLIDATING old names into one canonical key, here the
+# API gives us one stable canonical key for free but no historical accuracy,
+# so it has to be hand-maintained. Canonical CFBD `school` → list of
+# (start_season, end_season_inclusive, display_school, display_mascot).
+# Only covers researched/sourced renames within SALAAM's 1982+ window; not
+# guaranteed exhaustive across 130+ programs and 44 seasons.
+NCAA_TEAM_DISPLAY_HISTORY = {
+    'Miami (OH)': [
+        (1982, 1996, 'Miami (OH)', 'Redskins'),
+        (1997, 9999, 'Miami (OH)', 'RedHawks'),
+    ],
+    'Eastern Michigan': [
+        (1982, 1990, 'Eastern Michigan', 'Hurons'),
+        (1991, 9999, 'Eastern Michigan', 'Eagles'),
+    ],
+    'Louisiana': [
+        (1982, 1998, 'Southwestern Louisiana', "Ragin' Cajuns"),
+        (1999, 9999, 'Louisiana', "Ragin' Cajuns"),
+    ],
+    'UL Monroe': [
+        (1982, 1998, 'Northeast Louisiana', 'Indians'),
+        (1999, 2005, 'Louisiana-Monroe', 'Indians'),
+        (2006, 9999, 'Louisiana-Monroe', 'Warhawks'),
+    ],
+    'Syracuse': [
+        (1982, 2003, 'Syracuse', 'Orangemen'),
+        (2004, 9999, 'Syracuse', 'Orange'),
+    ],
+    "Hawai'i": [
+        (1982, 1999, "Hawai'i", 'Rainbow Warriors'),
+        (2000, 2012, "Hawai'i", 'Warriors'),
+        (2013, 9999, "Hawai'i", 'Rainbow Warriors'),
+    ],
+    'Arkansas State': [
+        (1982, 2007, 'Arkansas State', 'Indians'),
+        (2008, 9999, 'Arkansas State', 'Red Wolves'),
+    ],
+    'Troy': [
+        (1982, 2004, 'Troy State', 'Trojans'),
+        (2005, 9999, 'Troy', 'Trojans'),
+    ],
+    'North Texas': [
+        (1982, 1987, 'North Texas State', 'Mean Green'),
+        (1988, 9999, 'North Texas', 'Mean Green'),
+    ],
+}
+
+
+def _full_name_of(school, mascot):
+    return f'{school} {mascot}'.strip() if mascot else school
+
+
+def full_name(team, season):
+    """Era-appropriate 'School Mascot' display name for the given canonical
+    team and season."""
+    history = NCAA_TEAM_DISPLAY_HISTORY.get(team)
+    if history:
+        s = int(season)
+        for start, end, school, mascot in history:
+            if start <= s <= end:
+                return _full_name_of(school, mascot)
+    return _full_name_of(team, team_mascot.get(team))
+
+
+def current_full_name(team):
+    """The team's most recent display name (dropdowns / current snapshot)."""
+    history = NCAA_TEAM_DISPLAY_HISTORY.get(team)
+    if history:
+        _, _, school, mascot = history[-1]
+        return _full_name_of(school, mascot)
+    return _full_name_of(team, team_mascot.get(team))
+
+
+def historical_full_names(team):
+    """Prior display names (most recent first), excluding the current one.
+    Used to render '(formerly X / Y)' hints in the Team Summary dropdown."""
+    history = NCAA_TEAM_DISPLAY_HISTORY.get(team)
+    if not history:
+        return []
+    current = _full_name_of(history[-1][2], history[-1][3])
+    seen = {current}
+    out = []
+    for _, _, school, mascot in reversed(history[:-1]):
+        name = _full_name_of(school, mascot)
+        if name not in seen:
+            out.append(name)
+            seen.add(name)
+    return out
 
 
 # ── CFP + Conference championship attribution ────────────────────────────────
@@ -436,6 +538,23 @@ def slug(name):
     return re.sub(r'[^\w]', '_', name).strip('_')
 
 
+# generate_data.py builds last_match strings using the canonical school name
+# (e.g. "W 27-21 vs. Arkansas State" for a 1995 game when the opponent was
+# actually the Indians, not the Red Wolves yet). Rewrite the opponent portion
+# with the era-appropriate full name so historical Team Summary / Standings
+# views read correctly. Handles `vs.`, `@`, and `vs. (N)` (neutral-site).
+_LAST_MATCH_RE = re.compile(r'^([WLT])\s+(\d+\s*-\s*\d+)\s+(vs\.?(?:\s*\(N\))?|@)\s+(.+)$')
+
+def era_aware_last_match(raw, season):
+    if not raw:
+        return raw
+    m = _LAST_MATCH_RE.match(str(raw))
+    if not m:
+        return raw
+    letter, score, venue, opponent = m.groups()
+    return f"{letter} {score} {venue} {full_name(opponent.strip(), season)}"
+
+
 def _played(result):
     """True iff this row represents an actual game played. Upstream now
     writes empty strings for non-game-days (was 'Bye / No Game' previously)
@@ -564,6 +683,7 @@ standings_data = {
             'rank':            int(r['rank']),
             'conf_rank':       conf_rank(r['name'], r['ranking_id']),
             'team':            r['name'],
+            'display_name':    full_name(r['name'], r['season']),
             'conference':      conf(r['name'], r['season']),
             'conference_raw':  conf_raw(r['name'], r['season']),
             'rating':          round(float(r['rating']), 3),
@@ -572,7 +692,7 @@ standings_data = {
             'rank_o':          int(r['rank_o']) if 'rank_o' in r and not pd.isna(r['rank_o']) else None,
             'rank_d':          int(r['rank_d']) if 'rank_d' in r and not pd.isna(r['rank_d']) else None,
             'record':          clean(r['record']),
-            'last_match':      clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(r['name'], r['season_week'], r['season']),
+            'last_match':      era_aware_last_match(clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(r['name'], r['season_week'], r['season']), r['season']),
             'cfp_status':       cfp_status(r['name'], r['season']),
             'cfp_appearance':   cfp_appearance(r['name'], r['season']),
             'champ_era':        champ_era(r['season']),
@@ -615,6 +735,7 @@ def _build_goat(rows, sort_field='rating'):
         out.append({
             'rank':            i + 1,
             'team':            r['name'],
+            'display_name':    full_name(r['name'], r['season']),
             'conference':      conf(r['name'], r['season']),
             'conference_raw':  conf_raw(r['name'], r['season']),
             'season':          s,
@@ -681,10 +802,12 @@ for team in all_teams:
     team_seasons_played = sorted(tdf['season'].unique())
     all_confs = sorted(set(conf(team, s) for s in team_seasons_played))
     teams_index.append({
-        'name':            team,
-        'conference':      conf(team, most_recent_season),
-        'all_conferences': all_confs,
-        'slug':            team_slug,
+        'name':              team,
+        'display_name':      current_full_name(team),
+        'historical_names':  historical_full_names(team),
+        'conference':        conf(team, most_recent_season),
+        'all_conferences':   all_confs,
+        'slug':              team_slug,
     })
 
     seasons = {}
@@ -705,6 +828,7 @@ for team in all_teams:
                 'season_week':       float(r['season_week']),
                 'week':              int(r['week']),
                 'week_label':        week_label(season, r['week']),
+                'display_name':      full_name(team, season),
                 'rating':            round(float(r['rating']), 3),
                 'rating_o':          round(float(r['rating_o']), 3) if 'rating_o' in r and not pd.isna(r['rating_o']) else None,
                 'rating_d':          round(float(r['rating_d']), 3) if 'rating_d' in r and not pd.isna(r['rating_d']) else None,
@@ -715,7 +839,7 @@ for team in all_teams:
                 'record':            clean(r['record']),
                 'regular_record':    reg,
                 'playoff_record':    po,
-                'last_match':        clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(team, r['season_week'], season),
+                'last_match':        era_aware_last_match(clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(team, r['season_week'], season), season),
                 'is_end_of_season':  int(r['is_end_of_season']),
                 'season_flag':       int(r['season_flag']),
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
@@ -731,9 +855,10 @@ for team in all_teams:
 
     with open(OUT_DIR / 'teams' / f'{team_slug}.json', 'w') as f:
         json.dump({
-            'team':       team,
-            'conference': conf(team, most_recent_season),
-            'seasons':    seasons,
+            'team':          team,
+            'display_name':  current_full_name(team),
+            'conference':    conf(team, most_recent_season),
+            'seasons':       seasons,
         }, f, separators=(',', ':'))
 
 teams_index.sort(key=lambda x: x['name'])
@@ -771,6 +896,7 @@ for season in all_seasons:
                 'rank':            int(r['rank']),
                 'conf_rank':       conf_rank(r['name'], r['ranking_id']),
                 'team':            r['name'],
+                'display_name':    full_name(r['name'], season),
                 'conference':      conf(r['name'], season),
                 'conference_raw':  conf_raw(r['name'], season),
                 'rating':          round(float(r['rating']), 3),
@@ -781,7 +907,7 @@ for season in all_seasons:
                 'record':          clean(r['record']),
                 'regular_record':  reg,
                 'playoff_record':  po,
-                'last_match':      clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw, season),
+                'last_match':      era_aware_last_match(clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw, season), season),
                 'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw, season),
                 'cfp_status':       cfp_status(r['name'], season),
                 'cfp_appearance':   cfp_appearance(r['name'], season),
@@ -826,6 +952,7 @@ def _team_block(team_name, season, sdf, selectors):
     reg = _reg_record_lookup.get((team_name, season), '')
     base = {
         'team':             team_name,
+        'display_name':     full_name(team_name, season),
         'conference':       conf(team_name, season),
         'conference_raw':   conf_raw(team_name, season),
         'conference_champ': conf_champ(team_name, season),

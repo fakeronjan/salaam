@@ -852,9 +852,10 @@ function renderStandings() {
   const rows = teams.map(t => {
     const isStale = !!(prevDate && t.last_match_date && t.last_match_date <= prevDate);
     const slug = nameToSlug[t.team];
+    const teamLabel = t.display_name || t.team;
     const teamTd = slug
-      ? `<td class="team-cell linked" data-team-slug="${slug}" data-season="${season}">${t.team}</td>`
-      : `<td class="team-cell">${t.team}</td>`;
+      ? `<td class="team-cell linked" data-team-slug="${slug}" data-season="${season}">${teamLabel}</td>`
+      : `<td class="team-cell">${teamLabel}</td>`;
     return `<tr>
     <td class="rank-cell">${t.rank}</td>
     <td class="rank-cell col-hide-mobile">${t.conf_rank != null ? t.conf_rank : '-'}</td>
@@ -900,7 +901,11 @@ async function loadTeamsIndex() {
     const res = await fetch(`${BASE}/teams_index.json`);
     teamsIndex = await res.json();
     nameToSlug = {};
-    teamsIndex.forEach(t => { nameToSlug[t.name] = t.slug; });
+    teamsIndex.forEach(t => {
+      nameToSlug[t.name] = t.slug;
+      if (t.display_name) nameToSlug[t.display_name] = t.slug;
+      (t.historical_names || []).forEach(h => { nameToSlug[h] = t.slug; });
+    });
     populateTeamSelect();
   } catch(e) {
     document.getElementById('team-select').innerHTML = '<option>Could not load teams</option>';
@@ -917,7 +922,11 @@ function populateTeamSelect() {
   filtered.forEach(t => {
     const opt = document.createElement('option');
     opt.value = t.slug;
-    opt.textContent = t.name;
+    const display = t.display_name || t.name;
+    const priors = (t.historical_names || []);
+    // For programs that renamed (school and/or mascot), append prior names
+    // in parens so search-by-typing finds them too.
+    opt.textContent = priors.length ? `${display} (${priors.join(' / ')})` : display;
     sel.appendChild(opt);
   });
 }
@@ -1197,9 +1206,10 @@ function renderChampions() {
       ? ` <span style="color:#888;font-size:0.85em;font-weight:400">(${t.runner_up_count} 🥈)</span>`
       : '';
     const slug = nameToSlug[t.team];
+    const teamLabel = t.display_name || t.team;
     const nameHtml = slug
-      ? `<span class="team-link linked" data-team-slug="${slug}" data-season="${season}">${t.team}</span>`
-      : t.team;
+      ? `<span class="team-link linked" data-team-slug="${slug}" data-season="${season}">${teamLabel}</span>`
+      : teamLabel;
     return `<div style="font-weight:600">${nameHtml}${selTag}${cnt}</div>
             <div style="margin-top:3px">${conf}</div>`;
   }
@@ -1321,9 +1331,10 @@ function renderGoat() {
   const rows = filtered.map(t => {
     const covidTag = seasonTag(t.season);
     const slug = nameToSlug[t.team];
+    const teamLabel = t.display_name || t.team;
     const teamTd = slug
-      ? `<td class="team-cell linked" data-team-slug="${slug}" data-season="${t.season}">${t.team}</td>`
-      : `<td class="team-cell">${t.team}</td>`;
+      ? `<td class="team-cell linked" data-team-slug="${slug}" data-season="${t.season}">${teamLabel}</td>`
+      : `<td class="team-cell">${teamLabel}</td>`;
     return `<tr>
       <td class="rank-cell">${t.rank}</td>
       <td class="season-cell linked" data-season-link="${t.season}" style="white-space:nowrap">${t.season}${covidTag}</td>
