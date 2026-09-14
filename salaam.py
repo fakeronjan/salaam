@@ -39,6 +39,13 @@ WEIGHTING_MODE = "wls"
 # after regular-season weeks within the same season.
 POSTSEASON_WEEK_OFFSET = 100
 
+# Pooled opponent name for the REACT solve: every FBS-vs-FCS game's FCS side
+# collapses to this single node instead of being dropped, so a huge upset
+# (or a too-close-for-comfort win) shows up as real signal against the FBS
+# team's rating. Solve-only - display columns (winner/loser) always keep the
+# real opponent name. See compute_ratings() / _solve_wls().
+FCS_ANCHOR_NAME = 'FCS'
+
 
 # =========================================================
 # LOAD GAMES FROM CACHED JSON
@@ -101,8 +108,11 @@ def prepare_game_data(raw_df):
     # _solve_wls rather than here. Per-game HCA gates neutral-site
     # games (kickoffs in Ireland/Dublin, CFP semis/finals, bowls) to 0.
     df['neutralSite'] = df['neutralSite'].fillna(False).astype(bool)
-    df['home_team_name']    = df['homeTeam']
-    df['visitor_team_name'] = df['awayTeam']
+    # Solve-facing names: an FCS side collapses to FCS_ANCHOR_NAME so the
+    # REACT solve treats every FCS opponent as one pooled node instead of
+    # dropping the game. Display columns (winner/loser) keep the real name.
+    df['home_team_name']    = np.where(df['homeClassification'] == 'fbs', df['homeTeam'], FCS_ANCHOR_NAME)
+    df['visitor_team_name'] = np.where(df['awayClassification'] == 'fbs', df['awayTeam'], FCS_ANCHOR_NAME)
     df['home_pts']          = df['homePoints']
     df['visitor_pts']       = df['awayPoints']
     df['is_neutral']        = df['neutralSite'].astype(int)
@@ -302,8 +312,13 @@ def _solve_wls(window_df, weighting_mode, margin_transform, margin_cap):
     else:
         raise ValueError(f"Unknown WEIGHTING_MODE: {weighting_mode}")
 
-    # Zero-sum constraint via high-weight extra row.
+    # Zero-sum constraint via high-weight extra row. FCS_ANCHOR_NAME is
+    # excluded: it's a pooled stand-in for every FCS opponent, not a real
+    # FBS team, and its (deliberately very low) rating shouldn't be part of
+    # what the FBS rating scale centers on.
     X[-1, :] = 1.0
+    if FCS_ANCHOR_NAME in team_idx:
+        X[-1, team_idx[FCS_ANCHOR_NAME]] = 0.0
     y[-1] = 0.0
     w[-1] = 1.0e8
 
@@ -435,7 +450,6 @@ def compute_ratings(master_df, existing_ratings_df, window, label, compute_od=Fa
             continue
 
         win = master_df[
-            master_df['rated'] &
             (master_df['cume_week_id'] >= i - (window - 1)) &
             (master_df['cume_week_id'] <= i)
         ].copy()
@@ -445,14 +459,27 @@ def compute_ratings(master_df, existing_ratings_df, window, label, compute_od=Fa
         current_week = win['season_week'].max()
         season       = int(win['season'].max())
 
+        # REACT gets FBS-vs-FBS + FCS-collapsed games (FCS_ANCHOR_NAME pools
+        # every FCS opponent into one node, so an upset/close call shows up
+        # as real signal - see prepare_game_data()). The O/D split stays
+        # FBS-vs-FBS only: it centers on raw mean points/game across the
+        # window with no margin cap, and FCS blowout scores would skew that
+        # mean for every team in the window, not just the one that played FCS.
         ranked = _solve_wls(
             win,
             weighting_mode=WEIGHTING_MODE,
             margin_transform=MARGIN_TRANSFORM,
             margin_cap=MARGIN_CAP,
         )
+        # Drop the pooled FCS node, and any team whose only games this window
+        # were against it - a rating needs at least one real FBS opponent to
+        # mean anything; a team with zero rated games this window has no O/D
+        # split to merge against either.
+        rated_teams = set(win.loc[win['rated'], 'home_team_name']) | set(win.loc[win['rated'], 'visitor_team_name'])
+        ranked = ranked[ranked['name'].isin(rated_teams)].reset_index(drop=True)
         if compute_od:
-            ranked_od = _solve_wls_od(win, weighting_mode=WEIGHTING_MODE)
+            win_od = win[win['rated']]
+            ranked_od = _solve_wls_od(win_od, weighting_mode=WEIGHTING_MODE)
             ranked = ranked.merge(ranked_od, on='name', how='left')
             # REACT-calibrated O/D: shift each team's (O_raw, D_raw) by the same
             # delta so O+D == REACT exactly. The shape of the split (O - D, i.e.
