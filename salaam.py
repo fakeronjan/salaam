@@ -63,13 +63,17 @@ def load_games(min_season=MIN_SEASON):
 
 def prepare_game_data(raw_df):
     """
-    Filter to completed FBS-vs-FBS games, convert home/away to winner/loser
-    frame, attach margins, week IDs, and result strings.
+    Convert home/away to winner/loser frame, attach margins, week IDs, and
+    result strings, for every FBS-involved game (FBS-vs-FBS and FBS-vs-FCS).
+    FBS-vs-FCS games are kept for schedule/record display but flagged via
+    'rated' so they never enter the ratings solve.
     """
     df = raw_df.copy()
 
-    # FBS-vs-FBS only (per ZIDANE-style filter - exclude FCS opponents entirely)
-    df = df[(df['homeClassification'] == 'fbs') & (df['awayClassification'] == 'fbs')].copy()
+    # rated: FBS-vs-FBS only. FBS-vs-FCS games stay in the frame (real wins
+    # and losses belong in a team's record and last-game display) but are
+    # excluded from the ratings solve - see compute_ratings().
+    df['rated'] = (df['homeClassification'] == 'fbs') & (df['awayClassification'] == 'fbs')
 
     # Completed games with valid scores only
     df = df[df['completed'] == True].copy()
@@ -203,6 +207,21 @@ def prepare_game_data(raw_df):
         'L ' + df['ptsl'].astype(str) + '-' + df['ptsw'].astype(str) + df['loser_marker'] + df['winner']
     )
 
+    # Flag FCS opponents inline in the last-game display so an unrated result
+    # reads as self-explanatory rather than looking like any other game.
+    # Checked against the OPPONENT's classification specifically (not just
+    # "unrated") - some older CFBD rows have a blank classification for one
+    # side (e.g. North Texas's 1983 games) even though the opponent is
+    # clearly FBS (Texas, Oklahoma State); those must not be mislabeled FCS.
+    winner_opp_is_fcs = np.where(
+        df['winner'] == df['homeTeam'], df['awayClassification'] == 'fcs', df['homeClassification'] == 'fcs'
+    )
+    loser_opp_is_fcs = np.where(
+        df['winner'] == df['homeTeam'], df['homeClassification'] == 'fcs', df['awayClassification'] == 'fcs'
+    )
+    df.loc[winner_opp_is_fcs, 'winner_last_game'] += ' (FCS)'
+    df.loc[loser_opp_is_fcs, 'loser_last_game']  += ' (FCS)'
+
     # IDs
     df = df.sort_values(['season', 'week', 'date']).reset_index(drop=True)
     df['season_week']  = df['season'] + df['week'] / 1000
@@ -213,7 +232,8 @@ def prepare_game_data(raw_df):
 
     df = df.drop_duplicates(subset=['id'], keep='first').reset_index(drop=True)
     df.to_csv('all_NCAA_games.csv', index=False)
-    print(f'Prepared {len(df):,} FBS-vs-FBS games across {df["cume_week_id"].max()} game-weeks')
+    print(f'Prepared {len(df):,} FBS-involved games ({df["rated"].sum():,} FBS-vs-FBS rated) '
+          f'across {df["cume_week_id"].max()} game-weeks')
     return df
 
 
@@ -415,6 +435,7 @@ def compute_ratings(master_df, existing_ratings_df, window, label, compute_od=Fa
             continue
 
         win = master_df[
+            master_df['rated'] &
             (master_df['cume_week_id'] >= i - (window - 1)) &
             (master_df['cume_week_id'] <= i)
         ].copy()
