@@ -694,7 +694,8 @@ def odds_fields(team, season, week):
     rk = lambda v: None if pd.isna(v) else int(v)
     return {'title_odds': round(float(o.champ), 4), 'title_odds_rank': rk(o.champ_rank),
             'cfp_odds': round(float(o.field), 4), 'cfp_odds_rank': rk(o.field_rank),
-            'bye_odds': round(float(o.bye), 4) if playoff_sim.fmt(season) != 'four' else None}
+            'bye_odds': round(float(o.bye), 4) if playoff_sim.fmt(season) != 'four' else None,
+            'conf_odds': round(float(o.conf), 4)}
 
 
 # ── 1. Current standings ──────────────────────────────────────────────────────
