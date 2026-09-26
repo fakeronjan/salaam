@@ -42,7 +42,10 @@ N_SIMS_PLAYOFFS = 100_000
 # (first season, A, home points), fit per era.
 ERA_PARAMS = [(2000, 0.0575, 4.16), (2010, 0.0586, 3.25), (2020, 0.0523, 3.32)]
 FCS_C0, FCS_C1 = 1.351, 0.0310
-DRIFT_SD0, DRIFT_K = 8.79, 0.57
+# SD0 fit to how far ratings moved to season's end; K checked against
+# history (2014-2025 log loss at 0/25/50/75/100% of the season): the fitted
+# 0.57 left too much drift mid-season, 1.5 (as LOBO's) was best overall.
+DRIFT_SD0, DRIFT_K = 8.79, 1.5
 
 POWER4 = ('SEC', 'Big Ten', 'Big 12', 'ACC')
 INDEPENDENT = 'FBS Independents'
