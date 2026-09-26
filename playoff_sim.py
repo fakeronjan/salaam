@@ -51,8 +51,21 @@ DRIFT_LEFT = [0.0, 0.22, 0.37, 0.53, 0.69, 0.84, 0.96, 1.0]
 DRIFT_SD = [0.0, 0.0, 0.57, 4.93, 7.70, 10.60, 12.50, 12.50]
 
 
+# Each team's random offset also leans toward the league average, by this
+# share of how far its rating sits from it (from the same fit: early ratings
+# still carry last season's roster). Fades out by midseason. On top of the
+# full random spread this mutes early odds past what 2014-2025 backtests
+# best (a deliberate choice, 2026-09-26): the 12-team format has two seasons
+# of history, and transfer-portal / NIL roster churn can remake a team fast.
+DRIFT_LEAN = [0.0, 0.0, 0.0, 0.03, 0.06, 0.23, 0.28, 0.28]
+
+
 def drift_sd(frac_left):
     return float(np.interp(frac_left, DRIFT_LEFT, DRIFT_SD))
+
+
+def drift_lean(frac_left):
+    return float(np.interp(frac_left, DRIFT_LEFT, DRIFT_LEAN))
 
 POWER4 = ('SEC', 'Big Ten', 'Big 12', 'ACC')
 INDEPENDENT = 'FBS Independents'
@@ -262,7 +275,8 @@ class SeasonSim:
             self.seeds = {self.teams[t]: i + 1 for i, t in enumerate(seeds[0])}
         else:
             n = n_sims
-            E = rng.normal(0.0, sd, (n, T)) if sd > 0 else np.zeros((1, T))
+            lean = -drift_lean(frac_left) * (R - R.mean())       # centered toward the average
+            E = rng.normal(lean, sd, (n, T)) if sd > 0 else lean[None, :]
             Fr = R[None, :] + E                                  # (n or 1, T)
             Fx = np.concatenate([np.broadcast_to(Fr, (n, T)), np.full((n, 1), Rmin)], axis=1)
             h = rs['h'].to_numpy(); a = rs['a'].to_numpy()
