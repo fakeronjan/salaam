@@ -980,7 +980,6 @@ with open(OUT_DIR / 'seasons_index.json', 'w') as f:
 print('Writing playoff_odds/...')
 (OUT_DIR / 'playoff_odds').mkdir(parents=True, exist_ok=True)
 _rt = df.set_index(['season', 'week', 'name'])
-_po_idx = _po.set_index(['season', 'week', 'team'])
 _po_seasons = []
 _int_or_none = lambda v: None if pd.isna(v) else int(v)
 for season in sorted(_brackets, reverse=True):
@@ -990,7 +989,8 @@ for season in sorted(_brackets, reverse=True):
     keys = ['F', 'champ'] if four else ['QF', 'SF', 'F', 'champ']
     rnd_ix = {'R1': 1, 'QF': 2, 'SF': 3 - four * 2, 'F': 4 - four * 2}
     snaps = []
-    for wk, (seeds, matchups, n_sims) in sorted(_brackets[season].items()):
+    for snap_date, (seeds, matchups, n_sims, odds, wk) in sorted(_brackets[season].items()):
+        odds = odds.set_index('team')
         series = {}
         for rnd, ta, tb, sc, winner in matchups:
             for me, opp in ((ta, tb), (tb, ta)):
@@ -1002,9 +1002,9 @@ for season in sorted(_brackets, reverse=True):
                 series.setdefault(me, []).append(e)
         teams_ = []
         for team, seed in seeds.items():
-            if (season, wk, team) not in _po_idx.index or (season, wk, team) not in _rt.index:
+            if team not in odds.index or (season, wk, team) not in _rt.index:
                 continue
-            pr = _po_idx.loc[(season, wk, team)]
+            pr = odds.loc[team]
             r = _rt.loc[(season, wk, team)]
             ser = series.get(team, [])
             teams_.append({
@@ -1026,7 +1026,6 @@ for season in sorted(_brackets, reverse=True):
             stage = 'Before playoffs'
         else:
             stage = names[min(rnd_ix[m[0]] for m in live) - 1]
-        snap_date = clean(df[(df['season'] == season) & (df['week'] == wk)]['date'].iloc[0])
         snaps.append({'date': snap_date, 'stage': stage, 'n_sims': int(n_sims), 'results': [],
                       'teams': teams_})
     _po_seasons.append({'season': int(season), 'rounds': names, 'rounds_short': short, 'snapshots': snaps})

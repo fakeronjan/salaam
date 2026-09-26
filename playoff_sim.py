@@ -226,12 +226,13 @@ class SeasonSim:
         return select(self.fmt, pos, champ, self.tier, self.is_nd)[0]
 
     # ── one snapshot ────────────────────────────────────────────────────
-    def odds_at(self, w, n_sims=N_SIMS):
+    def odds_at(self, w, n_sims=N_SIMS, d=None):
+        """Odds with week w's ratings, as of date d (default: end of week w)."""
         T = len(self.teams)
-        rng = np.random.default_rng(self.season * 1000 + int(w))
+        rng = np.random.default_rng(self.season * 1000 + int(w) + (0 if d is None else d.dayofyear * 7))
         R, Rmin = self.rating_vec(w)
         A, hp = self.A, self.hp
-        d = self.snap_date(w)
+        d = self.snap_date(w) if d is None else d
         selection_known = self.final_ranking is not None and w >= 100
         out = {k: np.zeros(T) for k in ('conf', 'field', 'bye', 'QF', 'SF', 'F', 'champ')}
         rs = self.rs
@@ -456,13 +457,37 @@ def compute(g, r, cfp, current_season, seasons=None, log=print):
         for w in sorted(ratings):
             n = N_SIMS_PLAYOFFS if (final_ranking is not None and w >= 100) else N_SIMS
             o = sim.odds_at(w, n_sims=n)
-            if sim.seeds:
-                brackets.setdefault(season, {})[w] = (dict(sim.seeds), list(sim.matchups), n)
             o.index.name = 'team'
             o = o.reset_index()
             o['season'] = season
             o['week'] = w
             o['n_sims'] = n
             out.append(o)
+        if final_ranking is not None:
+            brackets[season] = playoff_snapshots(sim)
         log(f'  {season}: {len(ratings)} snapshots, used_actual={sim.used_actual}')
     return pd.concat(out, ignore_index=True), brackets
+
+
+def playoff_snapshots(sim):
+    """Bracket snapshots for the Playoff tab: selection day (the day after
+    the title games), then the end of every day with playoff games. SALAAM's
+    weeks don't line up with the rounds (bowl week runs past the
+    quarterfinals), so these use real dates, each with the latest ratings.
+    {date: (seeds, matchups, n_sims, odds DataFrame, ratings week)}"""
+    # Game times are UTC; a US night game belongs to the day before.
+    local = lambda t: (pd.Timestamp(t) - pd.Timedelta(hours=6)).normalize()
+    day_end = lambda day: day + pd.Timedelta(days=1, hours=6) - pd.Timedelta(minutes=1)   # in UTC
+    ccg_dates = [pd.Timestamp(v[4]) for v in sim.ccg_actual.values()]
+    sel = local(max(ccg_dates) if ccg_dates else sim.snap_date(100)) + pd.Timedelta(days=1)
+    sim.odds_at(100, n_sims=1, d=day_end(sel))
+    field = set(sim.seeds)
+    game_days = sorted({local(dt) for pair, dt in sim.ps_date.items() if pair <= field})
+    out = {}
+    for day in [sel] + game_days:
+        d = day_end(day)
+        wk = max([w for w in sim.ratings if w >= 100 and sim.week_date.get(w, pd.Timestamp.max) <= d] or [100])
+        o = sim.odds_at(wk, n_sims=N_SIMS_PLAYOFFS, d=d)
+        o.index.name = 'team'
+        out[day.date().isoformat()] = (dict(sim.seeds), list(sim.matchups), N_SIMS_PLAYOFFS, o.reset_index(), wk)
+    return out
