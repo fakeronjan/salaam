@@ -15,8 +15,8 @@ Game model (probit on FBS-vs-FBS games 2000-2025, pre-game snapshot ratings):
     P(home win) = Phi(A * (rating_home - rating_away + home_pts)), neutral: no home_pts
     P(FBS team beats a non-FBS team) = Phi(FCS_C0 + FCS_C1 * rating)
 Ratings drift for the rest of the season: each simulation offsets every
-team's rating by N(0, DRIFT_SD0 * (share of season left)**DRIFT_K), fit to
-how far SALAAM ratings moved from each week to the end of the regular season.
+team's rating by N(0, drift_sd(share of season left)), the rating error
+measured against how the rest of past seasons actually went.
 The offset rating also stands in for the rating the committee sees.
 
 Output per (snapshot, team): conference title, selection, bye, each round
@@ -42,10 +42,17 @@ N_SIMS_PLAYOFFS = 100_000
 # (first season, A, home points), fit per era.
 ERA_PARAMS = [(2000, 0.0575, 4.16), (2010, 0.0586, 3.25), (2020, 0.0523, 3.32)]
 FCS_C0, FCS_C1 = 1.351, 0.0310
-# SD0 fit to how far ratings moved to season's end; K checked against
-# history (2014-2025 log loss at 0/25/50/75/100% of the season): the fitted
-# 0.57 left too much drift mid-season, 1.5 (as LOBO's) was best overall.
-DRIFT_SD0, DRIFT_K = 8.79, 1.5
+# Rating error for the rest of the season, by share of the season left:
+# the per-team rating SD that best explains 2005-2025 results after each
+# week, given that week's ratings (beyond the game model's own noise).
+# SALAAM's long rating window carries last season into September, so early
+# ratings are far less reliable than how far they later move suggests.
+DRIFT_LEFT = [0.0, 0.22, 0.37, 0.53, 0.69, 0.84, 0.96, 1.0]
+DRIFT_SD = [0.0, 0.0, 0.57, 4.93, 7.70, 10.60, 12.50, 12.50]
+
+
+def drift_sd(frac_left):
+    return float(np.interp(frac_left, DRIFT_LEFT, DRIFT_SD))
 
 POWER4 = ('SEC', 'Big Ten', 'Big 12', 'ACC')
 INDEPENDENT = 'FBS Independents'
@@ -241,7 +248,7 @@ class SeasonSim:
         rs = self.rs
         played = rs['hpts'].notna() & (rs['date'] <= d)
         frac_left = 1.0 - played.mean() if len(rs) else 0.0
-        sd = DRIFT_SD0 * frac_left ** DRIFT_K if frac_left > 0 else 0.0
+        sd = drift_sd(frac_left)
         self.matchups = []
 
         if selection_known:
