@@ -668,6 +668,35 @@ def playoff_record(full_record, regular_record):
     return f'{pw}-{pl}'
 
 
+# ── Title odds (season + CFP Monte Carlo, playoff_sim.py) ──────────────────────
+# Every weekly snapshot from 2014 on simulates the rest of the season, the
+# conference title games, the selection committee (committee_model.py) and the
+# playoff. ~6s a season, so no cache.
+print('Computing title odds (season + CFP Monte Carlo)...')
+import playoff_sim
+_g_sim, _r_sim, _cfp_sim = playoff_sim.load_inputs()
+_po, _brackets = playoff_sim.compute(_g_sim, _r_sim, _cfp_sim, int(df['season'].max()))
+_odds = {}
+for (s_, w_), x in _po.groupby(['season', 'week']):
+    x = x.copy()
+    for col in ('champ', 'field'):
+        pos = x[x[col] > 0].sort_values(col, ascending=False)
+        x[col + '_rank'] = x['team'].map(dict(zip(pos['team'], range(1, len(pos) + 1))))
+    for row in x.itertuples(index=False):
+        _odds[(int(s_), int(w_), row.team)] = row
+
+
+def odds_fields(team, season, week):
+    """Title / playoff / bye odds for a snapshot row (none before 2014)."""
+    o = _odds.get((int(season), int(week), team))
+    if o is None:
+        return {}
+    rk = lambda v: None if pd.isna(v) else int(v)
+    return {'title_odds': round(float(o.champ), 4), 'title_odds_rank': rk(o.champ_rank),
+            'cfp_odds': round(float(o.field), 4), 'cfp_odds_rank': rk(o.field_rank),
+            'bye_odds': round(float(o.bye), 4) if playoff_sim.fmt(season) != 'four' else None}
+
+
 # ── 1. Current standings ──────────────────────────────────────────────────────
 print('Writing current_standings.json...')
 latest_id = int(df['ranking_id'].max())
@@ -698,6 +727,7 @@ standings_data = {
             'champ_era':        champ_era(r['season']),
             'title_selectors':  title_selectors(r['name'], r['season']),
             'conference_champ': conf_champ(r['name'], r['season']),
+            **odds_fields(r['name'], r['season'], r['week']),
         }
         for _, r in latest.iterrows()
     ],
@@ -850,6 +880,7 @@ for team in all_teams:
                 'conference_champ':  conf_champ(team, season),
                 'conference':        conf(team, season),
                 'conference_raw':    conf_raw(team, season),
+                **odds_fields(team, season, r['week']),
             })
         seasons[int(season)] = entries
 
@@ -914,6 +945,7 @@ for season in all_seasons:
                 'champ_era':        champ_era(season),
                 'title_selectors':  title_selectors(r['name'], season),
                 'conference_champ': conf_champ(r['name'], season),
+                **odds_fields(r['name'], season, wk),
             })
         snapshots.append({
             'date':        snap_date,
@@ -939,6 +971,70 @@ seasons_meta = {
 }
 with open(OUT_DIR / 'seasons_index.json', 'w') as f:
     json.dump(seasons_meta, f, separators=(',', ':'))
+
+# ── Playoff odds tab (docs/data/playoff_odds/) ────────────────────────────────
+# Same schema as the other fleet sites: per season, a snapshot for every week
+# from selection day on, with seeds, games so far, and the chance to get past
+# each round (last = title odds).
+print('Writing playoff_odds/...')
+(OUT_DIR / 'playoff_odds').mkdir(parents=True, exist_ok=True)
+_rt = df.set_index(['season', 'week', 'name'])
+_po_idx = _po.set_index(['season', 'week', 'team'])
+_po_seasons = []
+_int_or_none = lambda v: None if pd.isna(v) else int(v)
+for season in sorted(_brackets, reverse=True):
+    names, short = playoff_sim.round_names(season)
+    enter = playoff_sim.entry_rounds(season)
+    four = playoff_sim.fmt(season) == 'four'
+    keys = ['F', 'champ'] if four else ['QF', 'SF', 'F', 'champ']
+    rnd_ix = {'R1': 1, 'QF': 2, 'SF': 3 - four * 2, 'F': 4 - four * 2}
+    snaps = []
+    for wk, (seeds, matchups, n_sims) in sorted(_brackets[season].items()):
+        series = {}
+        for rnd, ta, tb, sc, winner in matchups:
+            for me, opp in ((ta, tb), (tb, ta)):
+                e = {'round': short[rnd_ix[rnd] - 1], 'opp': full_name(opp, season), 'w': int(winner == me),
+                     'l': int(winner == opp), 'best_of': 1, 'done': winner is not None, 'won': winner == me}
+                if sc is not None:
+                    mine, theirs = (sc[2], sc[3]) if sc[0] == me else (sc[3], sc[2])
+                    e['score'] = f"{int(mine)}-{int(theirs)}"
+                series.setdefault(me, []).append(e)
+        teams_ = []
+        for team, seed in seeds.items():
+            if (season, wk, team) not in _po_idx.index or (season, wk, team) not in _rt.index:
+                continue
+            pr = _po_idx.loc[(season, wk, team)]
+            r = _rt.loc[(season, wk, team)]
+            ser = series.get(team, [])
+            teams_.append({
+                'team': full_name(team, season), 'seed': int(seed), 'enter': int(enter[seed]),
+                'rating': round(float(r['rating']), 2), 'rank': _int_or_none(r['rank']),
+                'rating_o': None if pd.isna(r['rating_o']) else round(float(r['rating_o']), 2),
+                'rank_o': _int_or_none(r['rank_o']),
+                'rating_d': None if pd.isna(r['rating_d']) else round(float(r['rating_d']), 2),
+                'rank_d': _int_or_none(r['rank_d']),
+                'adv': [round(float(pr[k]), 4) for k in keys],
+                'eliminated': any(x['done'] and not x['won'] for x in ser),
+                'series': ser,
+            })
+        played = [m for m in matchups if m[4] is not None]
+        live = [m for m in matchups if m[4] is None]
+        if any(t['adv'][-1] >= 1.0 for t in teams_):
+            stage = 'Champion'
+        elif not played:
+            stage = 'Before playoffs'
+        else:
+            stage = names[min(rnd_ix[m[0]] for m in live) - 1]
+        snap_date = clean(df[(df['season'] == season) & (df['week'] == wk)]['date'].iloc[0])
+        snaps.append({'date': snap_date, 'stage': stage, 'n_sims': int(n_sims), 'results': [],
+                      'teams': teams_})
+    _po_seasons.append({'season': int(season), 'rounds': names, 'rounds_short': short, 'snapshots': snaps})
+    with open(OUT_DIR / 'playoff_odds' / f'{season}.json', 'w') as f:
+        json.dump(_po_seasons[-1], f, separators=(',', ':'))
+with open(OUT_DIR / 'playoff_odds' / 'index.json', 'w') as f:
+    json.dump({'n_sims': playoff_sim.N_SIMS, 'current_season': int(df['season'].max()),
+               'seasons': [x['season'] for x in _po_seasons]}, f, separators=(',', ':'))
+print(f'  {len(_po_seasons)} seasons of playoff odds written')
 
 # ── 5. Champions table (CFP + BCS + Poll eras) ────────────────────────────────
 print('Writing champions.json...')

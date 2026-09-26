@@ -24,6 +24,7 @@ GAMES_DIR = DATA_DIR / 'games'
 TEAMS_DIR = DATA_DIR / 'teams'
 CONFERENCES_FILE = DATA_DIR / 'conferences.json'
 META_FILE = DATA_DIR / '_meta.json'
+CFP_RANKINGS_FILE = DATA_DIR / 'cfp_rankings.json'
 
 START_SEASON = 1982  # NCAA Division I-A formalized - 24 programs (Ivy + old SoCon) reclassified down
 API_BASE = 'https://api.collegefootballdata.com'
@@ -67,6 +68,24 @@ def fetch_year_games(year, key):
     games = reg + post
     return [g for g in games if g.get('homeClassification') == 'fbs'
             or g.get('awayClassification') == 'fbs']
+
+
+def fetch_year_cfp_rankings(year, key):
+    """The selection committee's weekly top 25 -> {'<seasonType>-<week>': [[rank, school], ...]}."""
+    out = {}
+    for stype in ('regular', 'postseason'):
+        try:
+            weeks = fetch(f'/rankings?year={year}&seasonType={stype}', key)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                continue
+            raise
+        for w in weeks:
+            for p in w['polls']:
+                if 'Playoff' in p['poll']:
+                    out[f"{w['seasonType']}-{w['week']}"] = sorted([r['rank'], r['school']] for r in p['ranks'])
+        time.sleep(RATE_LIMIT_SLEEP)
+    return out
 
 
 def fetch_year_teams(year, key):
@@ -130,6 +149,15 @@ def main():
             time.sleep(RATE_LIMIT_SLEEP)
         else:
             print(f'  teams {year}: cached')
+
+    # CFP committee rankings (2014+): playoff_sim.py uses the final one as
+    # the real field; committee_model.py fits to past seasons' final ones.
+    cfp = json.loads(CFP_RANKINGS_FILE.read_text()) if CFP_RANKINGS_FILE.exists() else {}
+    for year in [y for y in years if y >= 2014]:
+        if args.force or year == cur or str(year) not in cfp:
+            cfp[str(year)] = fetch_year_cfp_rankings(year, key)
+            print(f'  cfp rankings {year}: {len(cfp[str(year)])} weeks')
+    CFP_RANKINGS_FILE.write_text(json.dumps(cfp, indent=0))
 
     meta = {}
     if META_FILE.exists():
