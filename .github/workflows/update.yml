@@ -2,7 +2,7 @@ name: Update SALAAM Ratings
 
 on:
   schedule:
-    - cron: '13 16 * * *'   # 16:13 UTC daily - staggered +20 min after DILLON; CFBD API (separate source from sports-reference)
+    - cron: '13 19 * * *'  # backstop, 19:13 UTC. The droplet (157.245.209.249) dispatches this at 16:13 UTC; GitHub's own cron starts hours late, see /opt/fleet-dispatch there
   workflow_dispatch:        # allow manual trigger from GitHub UI
 
 permissions:
