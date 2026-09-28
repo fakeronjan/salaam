@@ -683,16 +683,17 @@ def playoff_record(full_record, regular_record):
 # ── Title odds (season + CFP Monte Carlo, playoff_sim.py) ──────────────────────
 # Every weekly snapshot from 2014 on simulates the rest of the season, the
 # conference title games, the selection committee (committee_model.py) and the
-# playoff. ~6s a season, so no cache.
+# playoff. Finished seasons come from a per-season cache (title_odds_cache/).
 print('Computing title odds (season + CFP Monte Carlo)...')
 import playoff_sim
 _g_sim, _r_sim, _cfp_sim = playoff_sim.load_inputs()
-_po, _brackets = playoff_sim.compute(_g_sim, _r_sim, _cfp_sim, int(df['season'].max()))
+_po, _brackets = playoff_sim.compute_cached(_g_sim, _r_sim, _cfp_sim, int(df['season'].max()))
 _odds = {}
 for (s_, w_), x in _po.groupby(['season', 'week']):
     x = x.copy()
     for col in ('champ', 'field'):
-        pos = x[x[col] > 0].sort_values(col, ascending=False)
+        # Ties (e.g. several teams at 100%) break by name so ranks don't depend on pandas' sort.
+        pos = x[x[col] > 0].sort_values([col, 'team'], ascending=[False, True], kind='stable')
         x[col + '_rank'] = x['team'].map(dict(zip(pos['team'], range(1, len(pos) + 1))))
     for row in x.itertuples(index=False):
         _odds[(int(s_), int(w_), row.team)] = row

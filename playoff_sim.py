@@ -493,15 +493,88 @@ def compute(g, r, cfp, current_season, seasons=None, log=print):
     return pd.concat(out, ignore_index=True), brackets
 
 
+
+# ---------------------------------------------------------------------------
+# Per-season cache. Every snapshot seeds its own RNG from its season/week/day,
+# so a season's odds depend only on the engine and that season's inputs;
+# finished seasons are reused until one of those changes. Fingerprint = the
+# engine files + the season's games (full sort key, so tie order can't change
+# the hash) + its ratings and last season's (week-0 carry-forward) to 3dp +
+# its teams file and committee rankings + the raw schedule if current.
+_ENGINE_FILES = ('playoff_sim.py', 'committee_model.py', 'postseason_overrides.py')
+_JOB = {}
+
+
+def _fingerprint(season, g, r, cfp, current_season):
+    h = hashlib.sha256()
+    for f in _ENGINE_FILES + (os.path.relpath(MODEL_JSON, HERE),
+                              os.path.join('data', 'teams', f'teams_{season}.json')):
+        p = os.path.join(HERE, f)
+        if os.path.exists(p):
+            h.update(open(p, 'rb').read())
+    gs = g[g['season'] == season]
+    h.update(gs.sort_values(list(gs.columns), kind='stable').to_csv(index=False).encode())
+    rs = r[r['season'].isin([season - 1, season])].sort_values(['season', 'week', 'name']).copy()
+    rs['rating'] = rs['rating'].round(3)
+    h.update(rs[['season', 'week', 'name', 'rating']].to_csv(index=False).encode())
+    h.update(json.dumps(cfp.get(str(season), {}), sort_keys=True).encode())
+    h.update(str(season == current_season).encode())
+    if season == current_season:
+        h.update(open(os.path.join(HERE, 'data', 'games', f'games_{season}.json'), 'rb').read())
+    return h.hexdigest()
+
+
+def _one(season):
+    j = _JOB
+    return season, compute(j['g'], j['r'], j['cfp'], j['current'], seasons={season}, log=lambda *_: None)
+
+
+def compute_cached(g, r, cfp, current_season, cache_dir=os.path.join(HERE, 'title_odds_cache'),
+                   workers=None, log=print):
+    """compute() over every season, reusing cached seasons whose fingerprint
+    still matches and recomputing the rest in parallel."""
+    os.makedirs(cache_dir, exist_ok=True)
+    seasons = [s for s in range(FIRST_SEASON, current_season + 1) if (r['season'] == s).any()]
+    results, todo, sigs = {}, [], {}
+    for s in seasons:
+        sigs[s] = _fingerprint(s, g, r, cfp, current_season)
+        path = os.path.join(cache_dir, f'{s}.pkl')
+        if os.path.exists(path):
+            try:
+                sig, payload = pickle.load(open(path, 'rb'))
+                if sig == sigs[s]:
+                    results[s] = payload
+                    continue
+            except Exception:
+                pass
+        todo.append(s)
+    log(f"  {len(results)} seasons from cache, computing {len(todo)}: {todo}")
+    if todo:
+        _JOB.update(g=g, r=r, cfp=cfp, current=current_season)
+        ctx = _mp.get_context('fork')   # workers inherit _JOB; no re-import of the caller
+        with ctx.Pool(workers or os.cpu_count()) as pool:
+            for s, payload in pool.imap_unordered(_one, todo):
+                results[s] = payload
+                pickle.dump((sigs[s], payload), open(os.path.join(cache_dir, f'{s}.pkl'), 'wb'))
+                log(f"  {s} done")
+    odds = pd.concat([results[s][0] for s in seasons if len(results[s][0])], ignore_index=True)
+    brackets = {}
+    for s in seasons:
+        brackets.update(results[s][1])
+    return odds, brackets
+
 def playoff_snapshots(sim):
     """Bracket snapshots for the Playoff tab: selection day (the day after
     the title games), then the end of every day with playoff games. SALAAM's
     weeks don't line up with the rounds (bowl week runs past the
     quarterfinals), so these use real dates, each with the latest ratings.
     {date: (seeds, matchups, n_sims, odds DataFrame, ratings week)}"""
-    # Game times are UTC; a US night game belongs to the day before.
+    # Game times are US Pacific wall-clock (salaam.py). The 6h offsets date
+    # from when they were UTC; no game starts 00:00-06:00 Pacific, so they
+    # pick the same days. Kept because day_end's day-of-year seeds the RNG,
+    # and changing it would reshuffle every published playoff snapshot.
     local = lambda t: (pd.Timestamp(t) - pd.Timedelta(hours=6)).normalize()
-    day_end = lambda day: day + pd.Timedelta(days=1, hours=6) - pd.Timedelta(minutes=1)   # in UTC
+    day_end = lambda day: day + pd.Timedelta(days=1, hours=6) - pd.Timedelta(minutes=1)
     ccg_dates = [pd.Timestamp(v[4]) for v in sim.ccg_actual.values()]
     sel = local(max(ccg_dates) if ccg_dates else sim.snap_date(100)) + pd.Timedelta(days=1)
     sim.odds_at(100, n_sims=1, d=day_end(sel))

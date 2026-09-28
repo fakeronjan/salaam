@@ -34,8 +34,24 @@ jobs:
       - name: Run ratings engine
         run: python salaam.py
 
+      # title_odds_cache/ holds per-season Monte Carlo results (playoff_sim.py),
+      # fingerprinted by engine code + each season's games and ratings, so a
+      # stale entry recomputes itself. A miss rebuilds everything.
+      - name: Restore title-odds cache
+        uses: actions/cache/restore@v4
+        with:
+          path: title_odds_cache
+          key: salaam-odds-${{ github.run_id }}
+          restore-keys: salaam-odds-
+
       - name: Generate web data
         run: python generate_data.py
+
+      - name: Save title-odds cache
+        uses: actions/cache/save@v4
+        with:
+          path: title_odds_cache
+          key: salaam-odds-${{ github.run_id }}
 
       - name: Commit and push updated data
         run: |
