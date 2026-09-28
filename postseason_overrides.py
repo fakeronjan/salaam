@@ -42,8 +42,9 @@ NOT_CCG_IDS = {
     283550012,  # 2008 Las Vegas Bowl: Arizona 31, BYU 21 (Sat Dec 20)
 }
 
-# Games the engine files at week 100 that aren't conference title games.
-# conf_champions() skips them so the conference falls back to its best record.
-NOT_TITLE_GAME_IDS = {
-    400547899,  # 2014 Texas Tech vs Baylor at Arlington (Sat Nov 29), regular season
+# Regular-season games CFBD flags as neutral-site conference games late
+# enough that the neutral+conf prong reads them as title games.
+NOT_CCG_IDS |= {
+    400547899,  # 2014 Baylor 48, Texas Tech 46 at Arlington (Sat Nov 29)
 }
+

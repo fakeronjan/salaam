@@ -184,6 +184,19 @@ def prepare_game_data(raw_df):
         )
     ) | df['id'].isin(CCG_OVERRIDE_IDS)  # 2001-2007 CCGs CFBD misclassifies (see postseason_overrides)
     ccg_mask &= ~df['id'].isin(NOT_CCG_IDS)
+    # A conference plays one title game a season. Thanksgiving-weekend
+    # rivalry games at neutral sites (Border War at Arrowhead, Illinois-
+    # Northwestern at Wrigley) pass the neutral+conf prong too, so keep the
+    # game CFBD labels as the championship if there is one, else the latest.
+    # Army-Navy (an American conference game since 2024) is played the week
+    # after the title games and stays in week 100 to keep date order;
+    # committee_model.conf_champions() skips it.
+    army_navy = df['homeTeam'].isin(['Army', 'Navy']) & df['awayTeam'].isin(['Army', 'Navy'])
+    conf_key  = df['season'].astype(str) + '|' + df['homeConference'].fillna('')
+    labeled   = ccg_mask & (has_champ_note | df['id'].isin(CCG_OVERRIDE_IDS))
+    cands     = ccg_mask & ~army_navy
+    latest    = df['date'] == df['date'].where(cands).groupby(conf_key).transform('max')
+    ccg_mask &= labeled | army_navy | (~conf_key.isin(conf_key[labeled]) & latest)
     df.loc[ccg_mask, 'week'] = POSTSEASON_WEEK_OFFSET  # week 100
 
     # Step 2: Tier-classify remaining postseason games (101-104).

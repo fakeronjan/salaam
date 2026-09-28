@@ -23,8 +23,6 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from postseason_overrides import NOT_TITLE_GAME_IDS
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL_JSON = os.path.join(HERE, 'data', 'cfp_committee_model.json')
 RANKINGS_JSON = os.path.join(HERE, 'data', 'cfp_rankings.json')
@@ -47,7 +45,7 @@ def conf_champions(g):
             & (x.homeConference != 'FBS Independents'))
     army_navy = x.homeTeam.isin(['Army', 'Navy']) & x.awayTeam.isin(['Army', 'Navy'])
     late = (x.d.dt.month == 12) | ((x.d.dt.month == 11) & (x.d.dt.day >= 28))
-    ccg = x[same & (x.week == 100) & ~army_navy & late & ~x.id.isin(NOT_TITLE_GAME_IDS)]
+    ccg = x[same & (x.week == 100) & ~army_navy & late]
     ccg = ccg.sort_values('d').groupby('homeConference').tail(1)
     champs = {c.homeConference: [c.winner] for c in ccg.itertuples()}
     cg = x[same & (x.week < 100) & (x.conferenceGame == True)]
