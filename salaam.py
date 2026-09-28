@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from postseason_overrides import CCG_OVERRIDE_IDS, TITLE_OVERRIDE_IDS
+from postseason_overrides import CCG_OVERRIDE_IDS, NOT_CCG_IDS, TITLE_OVERRIDE_IDS
 
 
 # =========================================================
@@ -88,8 +88,16 @@ def prepare_game_data(raw_df):
     df['homePoints'] = pd.to_numeric(df['homePoints']).astype(int)
     df['awayPoints'] = pd.to_numeric(df['awayPoints']).astype(int)
 
-    # Date
-    df['date'] = pd.to_datetime(df['startDate'], utc=True).dt.tz_convert(None)
+    # Date = the local calendar day the game was played. CFBD's startDate
+    # is UTC, so a Saturday 8pm ET kickoff reads as Sunday. US Pacific puts
+    # every venue on its own day (Hawai'i night games and Ireland openers
+    # included). Seasons through 2000 have no kickoff times, just midnight-UTC
+    # placeholders that already hold the local date, so those stay as-is.
+    utc = pd.to_datetime(df['startDate'], utc=True, format='ISO8601')
+    has_times = df.groupby('season')['startDate'].transform(
+        lambda s: (s.str[11:19] != '00:00:00').any())
+    df['date'] = utc.dt.tz_convert('America/Los_Angeles').dt.tz_localize(None).where(
+        has_times, utc.dt.tz_convert(None))
 
     # Winner/loser frame (home team wins ties on points; ties handled via is_tie)
     df['home_won'] = df['homePoints'] >= df['awayPoints']
@@ -175,6 +183,7 @@ def prepare_game_data(raw_df):
             | (is_neutral & is_conf & (df['week'] >= 13))
         )
     ) | df['id'].isin(CCG_OVERRIDE_IDS)  # 2001-2007 CCGs CFBD misclassifies (see postseason_overrides)
+    ccg_mask &= ~df['id'].isin(NOT_CCG_IDS)
     df.loc[ccg_mask, 'week'] = POSTSEASON_WEEK_OFFSET  # week 100
 
     # Step 2: Tier-classify remaining postseason games (101-104).

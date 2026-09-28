@@ -23,6 +23,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
+from postseason_overrides import NOT_TITLE_GAME_IDS
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL_JSON = os.path.join(HERE, 'data', 'cfp_committee_model.json')
 RANKINGS_JSON = os.path.join(HERE, 'data', 'cfp_rankings.json')
@@ -36,14 +38,16 @@ def is_power(conf, season):
 
 def conf_champions(g):
     """{conference: [champion(s)]} for one season's games (SALAAM weeks).
-    Title game = the conference's last December week-100 game between two
-    members (Army-Navy excluded); no title game = best conference record."""
+    Title game = the conference's last week-100 game between two members
+    from Nov 28 on (Army-Navy excluded; salaam.py's CCG window starts the
+    same day); no title game = best conference record."""
     x = g.copy()
     x['d'] = pd.to_datetime(x['date'])
     same = ((x.homeConference == x.awayConference) & x.homeConference.notna()
             & (x.homeConference != 'FBS Independents'))
     army_navy = x.homeTeam.isin(['Army', 'Navy']) & x.awayTeam.isin(['Army', 'Navy'])
-    ccg = x[same & (x.week == 100) & ~army_navy & (x.d.dt.month == 12)]
+    late = (x.d.dt.month == 12) | ((x.d.dt.month == 11) & (x.d.dt.day >= 28))
+    ccg = x[same & (x.week == 100) & ~army_navy & late & ~x.id.isin(NOT_TITLE_GAME_IDS)]
     ccg = ccg.sort_values('d').groupby('homeConference').tail(1)
     champs = {c.homeConference: [c.winner] for c in ccg.itertuples()}
     cg = x[same & (x.week < 100) & (x.conferenceGame == True)]

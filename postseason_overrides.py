@@ -35,3 +35,15 @@ CCG_OVERRIDE_IDS = {
 TITLE_OVERRIDE_IDS = {
     280070194,  # 2007 BCS National Championship: LSU 38, Ohio State 24
 }
+
+# Bowls CFBD flags as conference games that land inside the CCG date window,
+# so the postseason+conf prong would misfile them as week 100.
+NOT_CCG_IDS = {
+    283550012,  # 2008 Las Vegas Bowl: Arizona 31, BYU 21 (Sat Dec 20)
+}
+
+# Games the engine files at week 100 that aren't conference title games.
+# conf_champions() skips them so the conference falls back to its best record.
+NOT_TITLE_GAME_IDS = {
+    400547899,  # 2014 Texas Tech vs Baylor at Arlington (Sat Nov 29), regular season
+}

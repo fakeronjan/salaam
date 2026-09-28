@@ -186,7 +186,7 @@ class SeasonSim:
                            'conf_game': rs['conferenceGame'].fillna(False).astype(bool)})
         if schedule is not None and len(schedule):
             sc = pd.DataFrame({'home': schedule['homeTeam'], 'away': schedule['awayTeam'],
-                               'date': pd.to_datetime(schedule['startDate']).dt.tz_localize(None),
+                               'date': pd.to_datetime(schedule['startDate'], utc=True).dt.tz_convert('America/Los_Angeles').dt.tz_localize(None),
                                'hpts': np.nan, 'apts': np.nan,
                                'neutral': schedule['neutralSite'].fillna(False).astype(bool),
                                'conf_game': schedule['conferenceGame'].fillna(False).astype(bool)})

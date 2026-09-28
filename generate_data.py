@@ -131,6 +131,18 @@ def sw_to_date_str(sw):
 
 df['date'] = df['season_week'].apply(sw_to_date_str)
 
+# Per-(team, season_week) date the team actually played. The week's snapshot
+# date above is its LAST game, so a Saturday game shown under it can read a
+# day or more late.
+_team_game_date = {}
+for _col in ('winner', 'loser'):
+    for (_t, _sw), _d in games.dropna(subset=['date']).groupby([_col, 'season_week'])['date'].max().items():
+        _team_game_date[(_t, float(_sw))] = str(_d.date())
+
+
+def team_game_date(team, sw, fallback):
+    return _team_game_date.get((team, float(sw)), fallback)
+
 
 # ── Per-(team, season) conference + current mascot from cached teams_*.json ────
 print('Loading per-season team conferences...')
@@ -597,7 +609,7 @@ for (team, season), tdf in df[df['is_game_day'] == 1].sort_values('season_week')
     _last_game_history[(team, int(season))] = (
         list(tdf['season_week']),
         list(tdf['lastgame']),
-        list(tdf['date']),
+        [team_game_date(team, sw, d) for sw, d in zip(tdf['season_week'], tdf['date'])],
     )
 
 
@@ -871,6 +883,7 @@ for team in all_teams:
                 'regular_record':    reg,
                 'playoff_record':    po,
                 'last_match':        era_aware_last_match(clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(team, r['season_week'], season), season),
+                'last_match_date':   last_game_date_as_of(team, r['season_week'], season),
                 'is_end_of_season':  int(r['is_end_of_season']),
                 'season_flag':       int(r['season_flag']),
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
@@ -940,7 +953,7 @@ for season in all_seasons:
                 'regular_record':  reg,
                 'playoff_record':  po,
                 'last_match':      era_aware_last_match(clean(r['lastgame']) if played_today else last_game_as_of(r['name'], snap_sw, season), season),
-                'last_match_date': snap_date if played_today else last_game_date_as_of(r['name'], snap_sw, season),
+                'last_match_date': team_game_date(r['name'], snap_sw, snap_date) if played_today else last_game_date_as_of(r['name'], snap_sw, season),
                 'cfp_status':       cfp_status(r['name'], season),
                 'cfp_appearance':   cfp_appearance(r['name'], season),
                 'champ_era':        champ_era(season),
