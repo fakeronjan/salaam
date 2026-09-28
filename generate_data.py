@@ -883,7 +883,7 @@ for team in all_teams:
                 'regular_record':    reg,
                 'playoff_record':    po,
                 'last_match':        era_aware_last_match(clean(r['lastgame']) if _played(r['lastgame']) else last_game_as_of(team, r['season_week'], season), season),
-                'last_match_date':   last_game_date_as_of(team, r['season_week'], season),
+                'game_date':         team_game_date(team, r['season_week'], None) if _played(r['lastgame']) else None,
                 'is_end_of_season':  int(r['is_end_of_season']),
                 'season_flag':       int(r['season_flag']),
                 'is_playoff':        int(is_postseason(season, r['season_week'])),
