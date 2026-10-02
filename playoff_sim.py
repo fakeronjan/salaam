@@ -36,8 +36,7 @@ from committee_model import MODEL_JSON, RANKINGS_JSON, conf_champions, final_key
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIRST_SEASON = 2014
-N_SIMS = 10_000
-N_SIMS_PLAYOFFS = 100_000
+N_SIMS = 10_000            # every snapshot, playoffs included (fleet standard since 2026-10-02)
 
 # (first season, A, home points), fit per era.
 ERA_PARAMS = [(2000, 0.0575, 4.16), (2010, 0.0586, 3.25), (2020, 0.0523, 3.32)]
@@ -257,8 +256,8 @@ class SeasonSim:
         'ps_games' [(round, team a, team b, a_wins)] for fixed playoff
         games, 'seeds' (n, field) and 'champ' (n,). Draws no random numbers,
         so the odds are the same with or without it. seed: nonzero runs an
-        independent batch of the same snapshot (Weekly Matchups splits 100k
-        sims into batches to bound memory)."""
+        independent batch of the same snapshot (Weekly Matchups splits runs
+        over BATCH sims into batches to bound memory)."""
         T = len(self.teams)
         base = self.season * 1000 + int(w) + (0 if d is None else d.dayofyear * 7)
         rng = np.random.default_rng([base, seed] if seed else base)
@@ -505,7 +504,7 @@ def compute(g, r, cfp, current_season, seasons=None, log=print):
             continue
         sim = SeasonSim(season, gs, teams, ratings, sched, final_ranking)
         for w in sorted(ratings):
-            n = N_SIMS_PLAYOFFS if (final_ranking is not None and w >= 100) else N_SIMS
+            n = N_SIMS
             o = sim.odds_at(w, n_sims=n)
             o.index.name = 'team'
             o = o.reset_index()
@@ -610,7 +609,7 @@ def playoff_snapshots(sim):
     for day in [sel] + game_days:
         d = day_end(day)
         wk = max([w for w in sim.ratings if w >= 100 and sim.week_date.get(w, pd.Timestamp.max) <= d] or [100])
-        o = sim.odds_at(wk, n_sims=N_SIMS_PLAYOFFS, d=d)
+        o = sim.odds_at(wk, n_sims=N_SIMS, d=d)
         o.index.name = 'team'
-        out[day.date().isoformat()] = (dict(sim.seeds), list(sim.matchups), N_SIMS_PLAYOFFS, o.reset_index(), wk)
+        out[day.date().isoformat()] = (dict(sim.seeds), list(sim.matchups), N_SIMS, o.reset_index(), wk)
     return out
