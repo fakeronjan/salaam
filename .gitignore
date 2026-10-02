@@ -12,3 +12,6 @@ Backup*/
 
 # Per-season title-odds cache (Actions cache, regenerable)
 title_odds_cache/
+
+# Per-season Weekly Matchups cache (Actions cache, regenerable)
+matchups_cache/

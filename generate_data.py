@@ -1050,6 +1050,31 @@ with open(OUT_DIR / 'playoff_odds' / 'index.json', 'w') as f:
                'seasons': [x['season'] for x in _po_seasons]}, f, separators=(',', ':'))
 print(f'  {len(_po_seasons)} seasons of playoff odds written')
 
+# ── Weekly Matchups tab (docs/data/weekly_matchups/) ──────────────────────────
+# Every FBS game of a week previewed from the ratings going into it (win
+# probability, line, O/U) plus its stakes: each team's CFP and title odds
+# with a win vs a loss, from the season sim split by that game's result.
+# 2014 on; finished seasons are cached (weekly_matchups.py, matchups_cache/).
+import weekly_matchups
+print('Writing weekly_matchups/...')
+(OUT_DIR / 'weekly_matchups').mkdir(parents=True, exist_ok=True)
+_cur = int(df['season'].max())
+_wm_all = weekly_matchups.build_cached(_g_sim, _r_sim, _cfp_sim, _cur)
+weekly_matchups.add_juice(_wm_all)          # ranked against every game in the pool
+for _s, _weeks in _wm_all.items():
+    for _w in _weeks:
+        for _g in _w['games']:
+            if _g['stakes'] is not None:
+                _g['stakes'] = {'home': _g['stakes'][_g['home']], 'away': _g['stakes'][_g['away']]}
+            _g['home_school'], _g['away_school'] = _g['home'], _g['away']
+            _g['home'], _g['away'] = full_name(_g['home'], _s), full_name(_g['away'], _s)
+    with open(OUT_DIR / 'weekly_matchups' / f'{_s}.json', 'w') as f:
+        json.dump({'season': _s, 'weeks': _weeks}, f, separators=(',', ':'))
+with open(OUT_DIR / 'weekly_matchups' / 'index.json', 'w') as f:
+    json.dump({'seasons': sorted(_wm_all, reverse=True), 'current_season': _cur,
+               'n_sims': weekly_matchups.N_SIMS}, f, separators=(',', ':'))
+print(f'  {len(_wm_all)} season(s) of weekly matchups written')
+
 # ── 5. Champions table (CFP + BCS + Poll eras) ────────────────────────────────
 print('Writing champions.json...')
 

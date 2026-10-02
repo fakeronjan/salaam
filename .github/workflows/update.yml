@@ -44,6 +44,15 @@ jobs:
           key: salaam-odds-${{ github.run_id }}
           restore-keys: salaam-odds-
 
+      # matchups_cache/: per-season Weekly Matchups (weekly_matchups.py), same
+      # fingerprint scheme.
+      - name: Restore matchups cache
+        uses: actions/cache/restore@v4
+        with:
+          path: matchups_cache
+          key: salaam-matchups-${{ github.run_id }}
+          restore-keys: salaam-matchups-
+
       - name: Generate web data
         run: python generate_data.py
 
@@ -52,6 +61,12 @@ jobs:
         with:
           path: title_odds_cache
           key: salaam-odds-${{ github.run_id }}
+
+      - name: Save matchups cache
+        uses: actions/cache/save@v4
+        with:
+          path: matchups_cache
+          key: salaam-matchups-${{ github.run_id }}
 
       - name: Commit and push updated data
         run: |

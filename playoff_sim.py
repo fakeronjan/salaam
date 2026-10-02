@@ -180,12 +180,12 @@ class SeasonSim:
 
         # Regular season (+ week-100 games that aren't title games), played and scheduled.
         rs = g[(g['week'] <= 100) & ~g['id'].isin(self.ccg_ids)]
-        rs = pd.DataFrame({'home': rs['homeTeam'], 'away': rs['awayTeam'], 'date': rs['date'],
+        rs = pd.DataFrame({'id': rs['id'], 'home': rs['homeTeam'], 'away': rs['awayTeam'], 'date': rs['date'],
                            'hpts': rs['homePoints'], 'apts': rs['awayPoints'],
                            'neutral': rs['neutralSite'].fillna(False).astype(bool),
                            'conf_game': rs['conferenceGame'].fillna(False).astype(bool)})
         if schedule is not None and len(schedule):
-            sc = pd.DataFrame({'home': schedule['homeTeam'], 'away': schedule['awayTeam'],
+            sc = pd.DataFrame({'id': schedule['id'], 'home': schedule['homeTeam'], 'away': schedule['awayTeam'],
                                'date': pd.to_datetime(schedule['startDate'], utc=True).dt.tz_convert('America/Los_Angeles').dt.tz_localize(None),
                                'hpts': np.nan, 'apts': np.nan,
                                'neutral': schedule['neutralSite'].fillna(False).astype(bool),
@@ -249,10 +249,19 @@ class SeasonSim:
         return select(self.fmt, pos, champ, self.tier, self.is_nd)[0]
 
     # ── one snapshot ────────────────────────────────────────────────────
-    def odds_at(self, w, n_sims=N_SIMS, d=None):
-        """Odds with week w's ratings, as of date d (default: end of week w)."""
+    def odds_at(self, w, n_sims=N_SIMS, d=None, capture=None, seed=0):
+        """Odds with week w's ratings, as of date d (default: end of week w).
+        capture: optional dict for Weekly Matchups (weekly_matchups.py). Pass
+        capture['ids'] (game ids) to get each one's per-simulation home win
+        ('hw' {id: (n,) bool}); also filled: 'ccg' [(conf, a, b, a_wins)],
+        'ps_games' [(round, team a, team b, a_wins)] for fixed playoff
+        games, 'seeds' (n, field) and 'champ' (n,). Draws no random numbers,
+        so the odds are the same with or without it. seed: nonzero runs an
+        independent batch of the same snapshot (Weekly Matchups splits 100k
+        sims into batches to bound memory)."""
         T = len(self.teams)
-        rng = np.random.default_rng(self.season * 1000 + int(w) + (0 if d is None else d.dayofyear * 7))
+        base = self.season * 1000 + int(w) + (0 if d is None else d.dayofyear * 7)
+        rng = np.random.default_rng([base, seed] if seed else base)
         R, Rmin = self.rating_vec(w)
         A, hp = self.A, self.hp
         d = self.snap_date(w) if d is None else d
@@ -263,6 +272,9 @@ class SeasonSim:
         frac_left = 1.0 - played.mean() if len(rs) else 0.0
         sd = drift_sd(frac_left)
         self.matchups = []
+        self._cap = capture
+        if capture is not None:
+            capture.update(hw={}, ccg=[], ps_games=[], lean=0.0)
 
         if selection_known:
             n = n_sims
@@ -296,6 +308,11 @@ class SeasonSim:
                 af = (au < T) & ~both
                 p[:, af] = 1 - ndtr(FCS_C0 + FCS_C1 * Fx[:, au[af]])
                 HW[:, up] = rng.random((n, up.sum())) < p
+            if capture is not None:
+                capture['lean'] = drift_lean(frac_left)
+                ids = rs['id'].to_numpy()
+                for gi in np.flatnonzero(np.isin(ids, list(capture.get('ids', ())))):
+                    capture['hw'][ids[gi]] = HW[:, gi] > 0.5
             Hm = np.zeros((G, T + 1), np.float32); Hm[np.arange(G), h] = 1
             Am = np.zeros((G, T + 1), np.float32); Am[np.arange(G), a] = 1
             W = HW @ Hm + (1 - HW) @ Am
@@ -348,6 +365,8 @@ class SeasonSim:
                 win = np.where(a_wins, ta, tb); lose = np.where(a_wins, tb, ta)
                 champ[np.arange(n), win] = True
                 ccg_games.append((ta, tb, a_wins))
+                if capture is not None:
+                    capture['ccg'].append((c, ta, tb, a_wins))
                 np.add.at(W, (np.arange(n), win), 1); np.add.at(L, (np.arange(n), lose), 1)
             out['conf'] = champ.mean(0)
 
@@ -400,10 +419,14 @@ class SeasonSim:
                                       self.ps_scores[key] if done else None, self.ps[key] if done else None))
             if done:
                 self.used_actual += 1
-                return np.where(self.ps[key] == self.teams[a[0]], a, b)
-            edge = 0.0 if home_a is None else hp * home_a
-            pa = ndtr(A * (Fr[ar, a] - Fr[ar, b] + edge))
-            return np.where(rng.random(n) < pa, a, b)
+                won = np.where(self.ps[key] == self.teams[a[0]], a, b)
+            else:
+                edge = 0.0 if home_a is None else hp * home_a
+                pa = ndtr(A * (Fr[ar, a] - Fr[ar, b] + edge))
+                won = np.where(rng.random(n) < pa, a, b)
+            if fixed and self._cap is not None:
+                self._cap['ps_games'].append((rnd, self.teams[a[0]], self.teams[b[0]], won == a))
+            return won
 
         if self.fmt == 'four':
             s = seeds
@@ -425,6 +448,9 @@ class SeasonSim:
             np.add.at(out['F'], f1, 1); np.add.at(out['F'], f2, 1)
             c = play(f1, f2, 'F')
         np.add.at(out['champ'], c, 1)
+        if self._cap is not None:
+            self._cap['seeds'] = seeds
+            self._cap['champ'] = c
         for k in ('field', 'bye', 'QF', 'SF', 'F', 'champ'):
             out[k] /= n
 
