@@ -173,10 +173,7 @@ def build_season(season, g, r, rf, cfp, current_season, n_sims=N_SIMS, log=print
         return []
     sim = playoff_sim.SeasonSim(season, gs, teams, ratings, sched, final_ranking)
     snaps, snap_ranks = _snapshots(season, rf)
-    # The full pool: the standings CSV drops 0-0 teams, which would sim a
-    # team that hasn't played yet (Houston, 2020 Week 6) on last season's
-    # final rating instead of the engine's current one.
-    sim.ratings = {w: {t: v[0] for t, v in sn.items()} for w, sn in snaps.items()}
+    sim.ratings[-1] = {t: v[0] for t, v in snaps[-1].items()}
     A, hp = sim.A, sim.hp
     games = _season_games(season, gs, current_season)
     games = games[games['homeTeam'].isin(sim.idx) | games['awayTeam'].isin(sim.idx)]
@@ -214,8 +211,11 @@ def build_season(season, g, r, rf, cfp, current_season, n_sims=N_SIMS, log=print
         margin = LINE_LAM * (rh[0] - ra[0] + (0.0 if x.neutralSite else hp))
         total = 2 * mu + TOTAL_B * ((rh[1] + ra[1]) - (rh[2] + ra[2]))
         line = round(float(margin) * 2) / 2
-        if abs(line) <= 0.5 and (line > 0) != (p_home >= 0.5):
-            line = 0.0              # coin flip the sim tips the other way: Pick'em
+        if line and (line > 0) != (p_home >= 0.5):
+            # Coin flip the sim tips the other way (2014-26: all within 1.5
+            # pts, the sim at 50-54%; early weeks, where the drift lean pulls
+            # ratings to the middle but not home edge): Pick'em.
+            line = 0.0
         kick, date = _kickoff(x.startDate, x.startTimeTBD)
         game = {
             'id': int(x.id), 'home': x.homeTeam, 'away': x.awayTeam, 'neutral': bool(x.neutralSite),

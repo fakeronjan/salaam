@@ -457,8 +457,12 @@ class SeasonSim:
 # ── Driver ───────────────────────────────────────────────────────────────
 def load_inputs():
     g = pd.read_csv(os.path.join(HERE, 'all_NCAA_games.csv'), low_memory=False)
-    r = pd.read_csv(os.path.join(HERE, 'salaam_ratings_with_standings.csv'),
+    # The engine's full pool. salaam_ratings_with_standings.csv drops 0-0
+    # rows, which left a team that hadn't played yet (most of the FBS at
+    # Week 0; Houston through 2020 Week 5) on last season's final rating.
+    r = pd.read_csv(os.path.join(HERE, 'salaam_react_ratings.csv'),
                     usecols=['ranking_id', 'season', 'week', 'name', 'rating'])
+    r['week'] = r['week'].round().astype(int)
     cfp = json.load(open(RANKINGS_JSON)) if os.path.exists(RANKINGS_JSON) else {}
     return g, r, cfp
 
