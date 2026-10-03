@@ -906,6 +906,7 @@ for team in all_teams:
                 'conference':        conf(team, season),
                 'conference_raw':    conf_raw(team, season),
                 **odds_fields(team, season, r['week']),
+                **proj_fields(team, season, r['week']),
             })
         seasons[int(season)] = entries
 
