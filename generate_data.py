@@ -701,11 +701,11 @@ for (s_, w_), x in _po.groupby(['season', 'week']):
 
 def proj_fields(team, season, week):
     """Projected regular-season record for Standings' Proj Record bar: the
-    20th/50th/80th percentile of simulated wins, while games remain."""
+    10th/50th/90th percentile of simulated wins, while games remain."""
     o = _odds.get((int(season), int(week), team))
-    if o is None or not hasattr(o, 'proj_w50') or pd.isna(o.proj_w50):
+    if o is None or not hasattr(o, 'proj_mid') or pd.isna(o.proj_mid):
         return {}
-    return {'proj': [int(o.proj_w20), int(o.proj_w50), int(o.proj_w80)], 'proj_games': int(o.proj_games)}
+    return {'proj': [int(o.proj_lo), int(o.proj_mid), int(o.proj_hi)], 'proj_games': int(o.proj_games)}
 
 
 def odds_fields(team, season, week):
