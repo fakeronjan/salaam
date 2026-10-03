@@ -265,6 +265,7 @@ class SeasonSim:
         A, hp = self.A, self.hp
         d = self.snap_date(w) if d is None else d
         selection_known = self.final_ranking is not None and w >= 100
+        proj = None
         out = {k: np.zeros(T) for k in ('conf', 'field', 'bye', 'QF', 'SF', 'F', 'champ')}
         rs = self.rs
         played = rs['hpts'].notna() & (rs['date'] <= d)
@@ -316,6 +317,12 @@ class SeasonSim:
             Am = np.zeros((G, T + 1), np.float32); Am[np.arange(G), a] = 1
             W = HW @ Hm + (1 - HW) @ Am
             L = (1 - HW) @ Hm + HW @ Am
+            # Projected record (Standings' Proj Record bar): 20th/50th/80th
+            # percentile of regular-season wins (title games and bowls left
+            # out), while regular-season games remain. Actual simulated values.
+            if up.any():
+                proj = (np.quantile(W[:, :T], [0.2, 0.5, 0.8], axis=0, method='inverted_cdf'),
+                        (Hm + Am).sum(0)[:T])
 
             # Conference standings -> title games
             cg = rs['cg'].to_numpy()
@@ -400,7 +407,10 @@ class SeasonSim:
             self.seeds = None
 
         self._bracket(seeds, Fr, out, rng, d)
-        return pd.DataFrame(out, index=self.teams)
+        res = pd.DataFrame(out, index=self.teams)
+        if proj is not None:
+            (res['proj_w20'], res['proj_w50'], res['proj_w80']), res['proj_games'] = proj
+        return res
 
     # ── bracket ─────────────────────────────────────────────────────────
     def _bracket(self, seeds, Fr, out, rng, d):

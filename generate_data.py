@@ -699,6 +699,15 @@ for (s_, w_), x in _po.groupby(['season', 'week']):
         _odds[(int(s_), int(w_), row.team)] = row
 
 
+def proj_fields(team, season, week):
+    """Projected regular-season record for Standings' Proj Record bar: the
+    20th/50th/80th percentile of simulated wins, while games remain."""
+    o = _odds.get((int(season), int(week), team))
+    if o is None or not hasattr(o, 'proj_w50') or pd.isna(o.proj_w50):
+        return {}
+    return {'proj': [int(o.proj_w20), int(o.proj_w50), int(o.proj_w80)], 'proj_games': int(o.proj_games)}
+
+
 def odds_fields(team, season, week):
     """Title / playoff / bye odds for a snapshot row (none before 2014)."""
     o = _odds.get((int(season), int(week), team))
@@ -742,6 +751,7 @@ standings_data = {
             'title_selectors':  title_selectors(r['name'], r['season']),
             'conference_champ': conf_champ(r['name'], r['season']),
             **odds_fields(r['name'], r['season'], r['week']),
+            **proj_fields(r['name'], r['season'], r['week']),
         }
         for _, r in latest.iterrows()
     ],
@@ -961,6 +971,7 @@ for season in all_seasons:
                 'title_selectors':  title_selectors(r['name'], season),
                 'conference_champ': conf_champ(r['name'], season),
                 **odds_fields(r['name'], season, wk),
+                **proj_fields(r['name'], season, wk),
             })
         snapshots.append({
             'date':        snap_date,
