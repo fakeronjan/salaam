@@ -394,6 +394,12 @@ for f in sorted((DATA_DIR / 'games').glob('games_*.json')):
             by_conf.setdefault(c, set()).add(t['school'])
 
     for conf_name, members in by_conf.items():
+        # No champion while any game between two members is still unplayed
+        # (the title game included). Otherwise the best-record fallback
+        # crowns whoever leads the conference in October.
+        if any(not g.get('completed') and g.get('homeTeam') in members
+               and g.get('awayTeam') in members for g in raw):
+            continue
         title_winner = _detect_title_game(raw, members)
         if title_winner:
             # Title game determined - single official champion
