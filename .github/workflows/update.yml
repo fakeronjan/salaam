@@ -4,6 +4,16 @@ on:
   schedule:
     - cron: '13 19 * * *'  # backstop, 19:13 UTC. The droplet (157.245.209.249) dispatches this at 16:13 UTC; GitHub's own cron starts hours late, see /opt/fleet-dispatch there
   workflow_dispatch:        # allow manual trigger from GitHub UI
+    inputs:
+      light:
+        description: "Current season's games only (game-day hourly runs from the droplet)"
+        type: boolean
+        default: false
+
+# One run at a time: the game-day hourly runs can land on top of the backstop.
+concurrency:
+  group: update
+  cancel-in-progress: false
 
 permissions:
   contents: write           # needed for git push
@@ -29,7 +39,7 @@ jobs:
       - name: Fetch latest CFB data
         env:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
-        run: python fetch_data.py
+        run: python fetch_data.py ${{ inputs.light && '--light' || '' }}
 
       - name: Run ratings engine
         run: python salaam.py

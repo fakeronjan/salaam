@@ -7,7 +7,8 @@ Reads API key from $CFBD_API_KEY (env) or ~/.cfbd_api_key (file).
 
 Default behavior: backfills any missing years, refreshes the current season,
 and skips already-cached prior seasons. Use --force to re-fetch everything,
-or --year YYYY for a single season.
+or --year YYYY for a single season. --light refreshes only the current
+season's games (2 API calls) for the game-day hourly runs.
 """
 
 import argparse
@@ -66,8 +67,11 @@ def fetch_year_games(year, key):
         else:
             raise
     games = reg + post
-    return [g for g in games if g.get('homeClassification') == 'fbs'
-            or g.get('awayClassification') == 'fbs']
+    # CFBD returns games in a different order on every call. Sort so an
+    # unchanged season writes an identical file: playoff_sim fingerprints its
+    # bytes and breaks same-day ties in file order.
+    return sorted((g for g in games if g.get('homeClassification') == 'fbs'
+                   or g.get('awayClassification') == 'fbs'), key=lambda g: g['id'])
 
 
 def fetch_year_cfp_rankings(year, key):
@@ -101,6 +105,8 @@ def main():
     parser.add_argument('--force', action='store_true', help='Re-fetch all years even if cached')
     parser.add_argument('--year', type=int, help='Fetch only this single season')
     parser.add_argument('--start', type=int, default=START_SEASON)
+    parser.add_argument('--light', action='store_true',
+                        help="Current season's games only; skip conferences, teams, CFP rankings and the run log")
     args = parser.parse_args()
 
     key = load_key()
@@ -109,6 +115,12 @@ def main():
 
     cur = current_season()
     print(f'Current season detected: {cur}')
+
+    if args.light:
+        games = fetch_year_games(cur, key)
+        write_json(GAMES_DIR / f'games_{cur}.json', games)
+        print(f'  games {cur}: {len(games)} FBS-involved games (light)')
+        return
 
     print('Fetching /conferences...')
     confs = fetch(f'/conferences', key)
