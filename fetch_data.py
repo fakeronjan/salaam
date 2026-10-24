@@ -47,13 +47,26 @@ def current_season():
     return today.year if today.month >= 8 else today.year - 1
 
 
-def fetch(path, key):
+def fetch(path, key, attempts=4):
+    # CFBD returns the odd transient 5xx (502 on 2026-10-24 failed a whole
+    # run): retry those with backoff; 4xx (bad key, bad path) fails at once.
     req = urllib.request.Request(
         f'{API_BASE}{path}',
         headers={'Authorization': f'Bearer {key}'},
     )
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+    for i in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or i == attempts - 1:
+                raise
+            print(f'  {path}: HTTP {e.code}, retrying in {10 * 2 ** i}s')
+        except urllib.error.URLError as e:
+            if i == attempts - 1:
+                raise
+            print(f'  {path}: {e.reason}, retrying in {10 * 2 ** i}s')
+        time.sleep(10 * 2 ** i)
 
 
 def fetch_year_games(year, key):
