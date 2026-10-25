@@ -62,10 +62,12 @@ def fetch(path, key, attempts=4):
             if e.code < 500 or i == attempts - 1:
                 raise
             print(f'  {path}: HTTP {e.code}, retrying in {10 * 2 ** i}s')
-        except urllib.error.URLError as e:
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            # A stalled response raises a bare TimeoutError, not URLError
+            # (2026-10-25 07:13 run).
             if i == attempts - 1:
                 raise
-            print(f'  {path}: {e.reason}, retrying in {10 * 2 ** i}s')
+            print(f'  {path}: {getattr(e, "reason", e)}, retrying in {10 * 2 ** i}s')
         time.sleep(10 * 2 ** i)
 
 
