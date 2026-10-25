@@ -3578,7 +3578,7 @@
     "awayPostgameElo": null,
     "excitementIndex": null,
     "highlights": "",
-    "notes": "FLEX: 3:30 - 4:30pm OR 6 - 8pm ET start",
+    "notes": null,
     "playoff": null
   },
   {
@@ -3650,7 +3650,7 @@
     "awayPostgameElo": null,
     "excitementIndex": null,
     "highlights": "",
-    "notes": "EARLY: Noon - 1pm ET start",
+    "notes": null,
     "playoff": null
   },
   {
@@ -3686,7 +3686,7 @@
     "awayPostgameElo": null,
     "excitementIndex": null,
     "highlights": "",
-    "notes": "FLEX: 3:30 - 4:30pm OR 6 - 8pm ET start",
+    "notes": null,
     "playoff": null
   },
   {
@@ -3722,7 +3722,7 @@
     "awayPostgameElo": null,
     "excitementIndex": null,
     "highlights": "",
-    "notes": "NIGHT: 6 - 8pm ET start",
+    "notes": null,
     "playoff": null
   },
   {
@@ -18552,8 +18552,8 @@
     "season": 2026,
     "week": 9,
     "seasonType": "regular",
-    "startDate": "2026-10-31T04:00:00.000Z",
-    "startTimeTBD": true,
+    "startDate": "2026-10-31T19:30:00.000Z",
+    "startTimeTBD": false,
     "completed": false,
     "neutralSite": false,
     "conferenceGame": true,
@@ -18588,8 +18588,8 @@
     "season": 2026,
     "week": 9,
     "seasonType": "regular",
-    "startDate": "2026-10-31T04:00:00.000Z",
-    "startTimeTBD": true,
+    "startDate": "2026-10-31T20:15:00.000Z",
+    "startTimeTBD": false,
     "completed": false,
     "neutralSite": false,
     "conferenceGame": true,
@@ -28274,7 +28274,7 @@
     "season": 2026,
     "week": 11,
     "seasonType": "regular",
-    "startDate": "2026-11-15T04:59:00.000Z",
+    "startDate": "2026-11-15T04:00:00.000Z",
     "startTimeTBD": false,
     "completed": false,
     "neutralSite": false,
